@@ -1,0 +1,6 @@
+package com.example.hksa
+
+import io.flutter.embedding.android.FlutterActivity
+
+class MainActivity: FlutterActivity() {
+}
