@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'constant/colors.dart';
+import 'package:hksa/constant/colors.dart';
+import 'package:hksa/constant/navigation_bar.dart';
+
 
 void main() {
   runApp(const MyApp());
@@ -15,11 +17,12 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Palette.royalGreen,
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: const Navigation(),
     );
   }
 }
 
+/*
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
   final String title;
@@ -62,3 +65,4 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 }
+ */
