@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import '/constant/colors.dart';
-import '../widgets/logInWidgets/log_in_header.dart';
-import '../widgets/logInWidgets/log_in_inputs.dart';
+import 'package:hksa/constant/colors.dart';
+import 'package:hksa/widgets/registerWidgets/register_header.dart';
+import 'package:hksa/widgets/registerWidgets/register_inputs.dart';
 
-class Login extends StatelessWidget {
-  const Login({super.key});
+class RegisterScholarPage extends StatelessWidget {
+  const RegisterScholarPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +22,7 @@ class Login extends StatelessWidget {
                 minHeight: constraints.maxHeight,
               ),
               child: const IntrinsicHeight(
-                child: LogInContainer(),
+                child: RegisterContainer(),
               ),
             ),
           ),
@@ -32,19 +32,21 @@ class Login extends StatelessWidget {
   }
 }
 
-class LogInContainer extends StatelessWidget {
-  const LogInContainer({super.key});
+class RegisterContainer extends StatelessWidget {
+  const RegisterContainer({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(20),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: const [
-          LoginHeader(),
-          LogInInputs(),
-        ],
+    return Center(
+      child: Container(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: const [
+            RegisterHeader(),
+            RegisterInputs(),
+          ],
+        ),
       ),
     );
   }

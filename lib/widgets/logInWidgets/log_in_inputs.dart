@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hksa/pages/register_scholar.dart';
 import '/constant/colors.dart';
 import 'package:hksa/constant/string.dart';
 
@@ -15,8 +16,6 @@ class _LogInInputsState extends State<LogInInputs> {
   bool _passwordVisible = false;
   final _inputControllerUserID = TextEditingController();
   final _inputControllerPassword = TextEditingController();
-  final _focusNodeUserID = FocusNode();
-  final _focusNodePassword = FocusNode();
 
   final _formKey = GlobalKey<FormState>();
 
@@ -199,7 +198,14 @@ class _LogInInputsState extends State<LogInInputs> {
                         ColorPalette.accentDarkWhite),
                   ),
                   onPressed: (() {
-                    setState(() {});
+                    setState(() {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: ((context) => const RegisterScholarPage()),
+                        ),
+                      );
+                    });
                   }),
                   child: const Text(
                     "Register",
