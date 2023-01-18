@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "620394483026",
+    "firebase_url": "https://hksa-3f5d4-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "hksa-3f5d4",
+    "storage_bucket": "hksa-3f5d4.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:620394483026:android:1604b14b5abdad9ae6be8b",
+        "android_client_info": {
+          "package_name": "com.example.hksa"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "620394483026-4u4tk4ggudkchb0jnu8rloglm0ip60r1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAy8UZ0yDidA7nTW8H70ibuk_Ow9WPt47A"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "620394483026-4u4tk4ggudkchb0jnu8rloglm0ip60r1.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "620394483026-rjfqqkjsakfr9n1c2hmbm717ml15j269.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.hksa"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

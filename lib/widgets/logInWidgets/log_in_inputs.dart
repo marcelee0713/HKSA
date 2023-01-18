@@ -1,7 +1,9 @@
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:hksa/pages/register_scholar.dart';
 import '/constant/colors.dart';
 import 'package:hksa/constant/string.dart';
+import 'package:firebase_core/firebase_core.dart';
 
 class LogInInputs extends StatefulWidget {
   const LogInInputs({super.key});
@@ -11,6 +13,11 @@ class LogInInputs extends StatefulWidget {
 }
 
 class _LogInInputsState extends State<LogInInputs> {
+  // Firebase
+  final Future<FirebaseApp> _fApp = Firebase.initializeApp();
+  String realTimeValue = '0';
+  String getOnceValue = '0';
+
   // For DropDown
   String? value = "Scholar";
   bool _passwordVisible = false;
@@ -27,6 +34,17 @@ class _LogInInputsState extends State<LogInInputs> {
 
   @override
   Widget build(BuildContext context) {
+    DatabaseReference _testReference =
+        FirebaseDatabase.instance.ref().child('count');
+
+    // This is a "real time" getting the data example;
+    _testReference.onValue.listen(
+      (event) {
+        setState(() {
+          realTimeValue = event.snapshot.value.toString();
+        });
+      },
+    );
     return Form(
       key: _formKey,
       child: Column(
@@ -245,6 +263,8 @@ class _LogInInputsState extends State<LogInInputs> {
                       debugPrint(value!.toLowerCase());
                       debugPrint(_inputControllerUserID.text);
                       debugPrint(_inputControllerPassword.text);
+                      debugPrint(realTimeValue);
+                      debugPrint(getOnceValue);
                     });
                   }),
                   child: const Text(
