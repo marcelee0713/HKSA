@@ -85,11 +85,13 @@ class _LogInInputsState extends State<LogInInputs> {
               const SizedBox(height: 4),
               TextFormField(
                 controller: _inputControllerUserID,
-                maxLength: 12,
+                maxLength: 20,
                 validator: (value) {
-                  if (value!.isNotEmpty && value.length >= 12) {
+                  final bool studentIdValid =
+                      RegExp(r"^[0-9-]+$").hasMatch(value!);
+                  if (studentIdValid && value.length >= 10) {
                     return null;
-                  } else if (value.length <= 11 && value.isNotEmpty) {
+                  } else if (value.length <= 9 && value.isNotEmpty) {
                     return "Input is too short.";
                   } else {
                     return "Enter your input.";
@@ -97,6 +99,7 @@ class _LogInInputsState extends State<LogInInputs> {
                 },
                 keyboardType: TextInputType.number,
                 decoration: InputDecoration(
+                  counterText: "",
                   enabledBorder: OutlineInputBorder(
                     borderSide: const BorderSide(color: Colors.transparent),
                     borderRadius: BorderRadius.circular(5.0),
