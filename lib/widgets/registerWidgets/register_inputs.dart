@@ -12,13 +12,15 @@ class RegisterInputs extends StatefulWidget {
 
 class _RegisterInputsState extends State<RegisterInputs> {
   // For DropDown Default Values
-  String? coursesValue = "Bachelor of Science in Information Technology";
-  String? hkTypeValue = "25%";
+  String? coursesValue;
+  String? hkTypeValue;
 
   bool _passwordVisible = false;
   bool _cfrmPasswordVisible = false;
   final _inputControllerStudentNumberID = TextEditingController();
-  final _inputControllerFullName = TextEditingController();
+  final _inputControllerLastName = TextEditingController();
+  final _inputControllerFirstName = TextEditingController();
+  final _inputControllerMiddleName = TextEditingController();
   final _inputControllerEmail = TextEditingController();
   final _inputControllerPhoneNumber = TextEditingController();
   final _inputControllerPassword = TextEditingController();
@@ -42,17 +44,17 @@ class _RegisterInputsState extends State<RegisterInputs> {
         children: [
           TextFormField(
             controller: _inputControllerStudentNumberID,
-            maxLength: 12,
+            maxLength: 20,
             validator: (value) {
-              final bool studentIdValid = RegExp(r"^[0-9]+$").hasMatch(value!);
-              if (studentIdValid && value.length >= 12) {
+              final bool studentIdValid = RegExp(r"^[0-9-]+$").hasMatch(value!);
+              if (studentIdValid && value.length >= 10) {
                 return null;
-              } else if (value.length <= 11 && value.isNotEmpty) {
+              } else if (value.length <= 9 && value.isNotEmpty) {
                 return "Input is too short.";
               } else if (value.isEmpty) {
                 return "Enter Input.";
               } else {
-                return "Invalid Input. Please only put numbers.";
+                return "Enter valid school ID.";
               }
             },
             keyboardType: TextInputType.number,
@@ -72,7 +74,7 @@ class _RegisterInputsState extends State<RegisterInputs> {
                 fontWeight: FontWeight.w300,
                 fontStyle: FontStyle.italic,
               ),
-              hintText: "Student Number",
+              hintText: "Student Number (XX-XNXX-XXXXX)",
             ),
             style: const TextStyle(
               color: ColorPalette.primary,
@@ -83,12 +85,12 @@ class _RegisterInputsState extends State<RegisterInputs> {
           ),
           const SizedBox(height: 18),
           TextFormField(
-            controller: _inputControllerFullName,
+            controller: _inputControllerLastName,
             validator: (value) {
               if (value!.isNotEmpty) {
                 return null;
               } else {
-                return "Enter your full name.";
+                return "Enter your last name.";
               }
             },
             keyboardType: TextInputType.name,
@@ -107,8 +109,76 @@ class _RegisterInputsState extends State<RegisterInputs> {
                 fontWeight: FontWeight.w300,
                 fontStyle: FontStyle.italic,
               ),
-              hintText: "Full Name",
+              hintText: "Last Name",
             ),
+            style: const TextStyle(
+              color: ColorPalette.primary,
+              fontFamily: 'Inter',
+              fontSize: 14,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          const SizedBox(height: 18),
+          TextFormField(
+            controller: _inputControllerFirstName,
+            validator: (value) {
+              if (value!.isNotEmpty) {
+                return null;
+              } else {
+                return "Enter your first name.";
+              }
+            },
+            keyboardType: TextInputType.name,
+            decoration: InputDecoration(
+                enabledBorder: OutlineInputBorder(
+                  borderSide: const BorderSide(color: Colors.transparent),
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: const BorderSide(color: Colors.transparent),
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+                filled: true,
+                fillColor: ColorPalette.accentDarkWhite,
+                hintStyle: const TextStyle(
+                  fontWeight: FontWeight.w300,
+                  fontStyle: FontStyle.italic,
+                ),
+                hintText: "First name"),
+            style: const TextStyle(
+              color: ColorPalette.primary,
+              fontFamily: 'Inter',
+              fontSize: 14,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          const SizedBox(height: 18),
+          TextFormField(
+            controller: _inputControllerMiddleName,
+            validator: (value) {
+              if (value!.isNotEmpty) {
+                return null;
+              } else {
+                return "Enter your middle name.";
+              }
+            },
+            keyboardType: TextInputType.name,
+            decoration: InputDecoration(
+                enabledBorder: OutlineInputBorder(
+                  borderSide: const BorderSide(color: Colors.transparent),
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: const BorderSide(color: Colors.transparent),
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+                filled: true,
+                fillColor: ColorPalette.accentDarkWhite,
+                hintStyle: const TextStyle(
+                  fontWeight: FontWeight.w300,
+                  fontStyle: FontStyle.italic,
+                ),
+                hintText: "Middle name"),
             style: const TextStyle(
               color: ColorPalette.primary,
               fontFamily: 'Inter',
@@ -125,16 +195,25 @@ class _RegisterInputsState extends State<RegisterInputs> {
             ),
             child: DropdownButtonHideUnderline(
               child: DropdownButton(
+                hint: const Text(
+                  "Courses",
+                  style: TextStyle(
+                    fontFamily: 'Inter',
+                    fontSize: 14,
+                    fontStyle: FontStyle.italic,
+                    fontWeight: FontWeight.w300,
+                  ),
+                ),
+                value: coursesValue,
                 isExpanded: true,
                 iconSize: 32,
                 icon: const Icon(
                   Icons.arrow_drop_down,
                   color: ColorPalette.primary,
                 ),
-                value: coursesValue,
                 items: HKSAStrings.courses.map(buildMenuItemCourses).toList(),
                 onChanged: ((coursesValue) => setState(() {
-                      this.coursesValue = coursesValue;
+                      this.coursesValue = coursesValue ?? "";
                     })),
               ),
             ),
@@ -148,16 +227,25 @@ class _RegisterInputsState extends State<RegisterInputs> {
             ),
             child: DropdownButtonHideUnderline(
               child: DropdownButton(
+                hint: const Text(
+                  "HK Type",
+                  style: TextStyle(
+                    fontFamily: 'Inter',
+                    fontSize: 14,
+                    fontStyle: FontStyle.italic,
+                    fontWeight: FontWeight.w300,
+                  ),
+                ),
+                value: hkTypeValue,
                 isExpanded: true,
                 iconSize: 32,
                 icon: const Icon(
                   Icons.arrow_drop_down,
                   color: ColorPalette.primary,
                 ),
-                value: hkTypeValue,
                 items: HKSAStrings.hkTypes.map(buildMenuItemHKTypes).toList(),
                 onChanged: ((hkTypeValue) => setState(() {
-                      this.hkTypeValue = hkTypeValue;
+                      this.hkTypeValue = hkTypeValue ?? "";
                     })),
               ),
             ),
@@ -252,12 +340,12 @@ class _RegisterInputsState extends State<RegisterInputs> {
             autocorrect: false,
             validator: (value) {
               final bool passwordValid = RegExp(
-                      r"^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-_]).{8,}$")
+                      r"^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-.+=_]).{8,}$")
                   .hasMatch(value!);
               if (passwordValid) {
                 return null;
               } else {
-                return "Must be at least 8 characters, least one uppercase, number, and special characters";
+                return "Invalid Input.";
               }
             },
             keyboardType: TextInputType.visiblePassword,
@@ -293,6 +381,16 @@ class _RegisterInputsState extends State<RegisterInputs> {
               fontFamily: 'Inter',
               fontSize: 14,
               fontWeight: FontWeight.w700,
+            ),
+          ),
+          const SizedBox(height: 2),
+          const Text(
+            "Note: Password must be at least 8 characters, at least one uppercase, number, and special characters.",
+            style: TextStyle(
+              fontFamily: 'Inter',
+              fontSize: 12,
+              fontStyle: FontStyle.italic,
+              fontWeight: FontWeight.w300,
             ),
           ),
           const SizedBox(height: 18),
@@ -363,7 +461,9 @@ class _RegisterInputsState extends State<RegisterInputs> {
               ),
               onPressed: (() {
                 setState(() {
-                  if (!_formKey.currentState!.validate()) {
+                  if (!_formKey.currentState!.validate() ||
+                      coursesValue == null ||
+                      hkTypeValue == null) {
                     return;
                   }
                   // This is where it finds the user in the firebase database
@@ -371,7 +471,9 @@ class _RegisterInputsState extends State<RegisterInputs> {
                   // if not. It will pop up a modal that it will show
                   // NO USER FOUND
                   debugPrint(_inputControllerStudentNumberID.text);
-                  debugPrint(_inputControllerFullName.text);
+                  debugPrint(_inputControllerLastName.text);
+                  debugPrint(_inputControllerFirstName.text);
+                  debugPrint(_inputControllerMiddleName.text);
                   debugPrint(coursesValue);
                   debugPrint(hkTypeValue);
                   debugPrint(_inputControllerEmail.text);
