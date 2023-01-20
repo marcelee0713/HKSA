@@ -8,22 +8,16 @@ class RegisterScholarPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Palette.royalGreen,
-      ),
-      home: Scaffold(
-        backgroundColor: ColorPalette.secondary,
-        body: LayoutBuilder(
-          builder: (context, constraints) => SingleChildScrollView(
-            child: ConstrainedBox(
-              constraints: BoxConstraints(
-                minHeight: constraints.maxHeight,
-              ),
-              child: const IntrinsicHeight(
-                child: RegisterContainer(),
-              ),
+    return Scaffold(
+      backgroundColor: ColorPalette.secondary,
+      body: LayoutBuilder(
+        builder: (context, constraints) => SingleChildScrollView(
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              minHeight: constraints.maxHeight,
+            ),
+            child: const IntrinsicHeight(
+              child: RegisterContainer(),
             ),
           ),
         ),

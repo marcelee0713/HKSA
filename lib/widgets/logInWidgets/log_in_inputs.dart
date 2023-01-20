@@ -34,8 +34,7 @@ class _LogInInputsState extends State<LogInInputs> {
 
   @override
   Widget build(BuildContext context) {
-    DatabaseReference _testReference =
-        FirebaseDatabase.instance.ref().child('count');
+    DatabaseReference _testReference = FirebaseDatabase.instance.ref();
 
     // This is a "real time" getting the data example;
     _testReference.onValue.listen(
@@ -251,7 +250,7 @@ class _LogInInputsState extends State<LogInInputs> {
                     backgroundColor:
                         MaterialStateProperty.all<Color>(ColorPalette.primary),
                   ),
-                  onPressed: (() {
+                  onPressed: (() async {
                     setState(() {
                       if (!_formKey.currentState!.validate()) {
                         return;
@@ -265,6 +264,9 @@ class _LogInInputsState extends State<LogInInputs> {
                       debugPrint(_inputControllerPassword.text);
                       debugPrint(realTimeValue);
                       debugPrint(getOnceValue);
+                      _testReference
+                          .child("ID")
+                          .set(_inputControllerUserID.text);
                     });
                   }),
                   child: const Text(

@@ -24,7 +24,8 @@ class _LoginState extends State<Login> {
       home: Scaffold(
         backgroundColor: ColorPalette.secondary,
         // Always put FutureBuilder if you're using firebase?
-        // Is it? I need to research this up its 11:34pm i have class at 7am omaygot.
+        // Is it? I need to research this up its 11:34pm
+        // I have class at 7am omaygot. -Marcel
         body: FutureBuilder(
           future: _fApp,
           builder: (context, snapshot) {

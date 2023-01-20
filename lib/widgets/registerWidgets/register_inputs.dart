@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:hksa/constant/colors.dart';
-import 'package:hksa/widgets/registerWidgets/register_header.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:hksa/constant/string.dart';
+import 'package:hksa/models/scholar.dart';
+import 'package:hksa/pages/login.dart';
+import 'package:hksa/widgets/dialogs/dialog_loading.dart';
+import 'package:hksa/widgets/dialogs/dialog_success.dart';
+import 'package:hksa/widgets/dialogs/dialog_unsuccessful.dart';
 
 class RegisterInputs extends StatefulWidget {
   const RegisterInputs({super.key});
@@ -37,6 +42,8 @@ class _RegisterInputsState extends State<RegisterInputs> {
 
   @override
   Widget build(BuildContext context) {
+    DatabaseReference _testReference =
+        FirebaseDatabase.instance.ref().child("Users/Scholars/");
     return Form(
       key: _formKey,
       child: Column(
@@ -261,7 +268,7 @@ class _RegisterInputsState extends State<RegisterInputs> {
               if (value.isNotEmpty && emailValid) {
                 return null;
               } else {
-                return "Enter your password.";
+                return "Invalid input.";
               }
             },
             keyboardType: TextInputType.emailAddress,
@@ -470,16 +477,77 @@ class _RegisterInputsState extends State<RegisterInputs> {
                   // And if it did find it will log in depends on the user type
                   // if not. It will pop up a modal that it will show
                   // NO USER FOUND
-                  debugPrint(_inputControllerStudentNumberID.text);
-                  debugPrint(_inputControllerLastName.text);
-                  debugPrint(_inputControllerFirstName.text);
-                  debugPrint(_inputControllerMiddleName.text);
-                  debugPrint(coursesValue);
-                  debugPrint(hkTypeValue);
-                  debugPrint(_inputControllerEmail.text);
-                  debugPrint(_inputControllerPhoneNumber.text);
-                  debugPrint(_inputControllerPassword.text);
-                  debugPrint(_inputControllerCfrmPassword.text);
+
+                  // Show loading screen for 2 seconds
+                  DialogLoading(subtext: "Creating...")
+                      .buildLoadingScreen(context);
+
+                  String studentNumber =
+                      _inputControllerStudentNumberID.text.trim();
+                  String fullName =
+                      "${_inputControllerLastName.text.trim()} ${_inputControllerFirstName.text.trim()} ${_inputControllerMiddleName.text.trim()}";
+                  String? course = coursesValue;
+                  String? hkType = hkTypeValue;
+                  String email = _inputControllerEmail.text.trim();
+                  String phoneNumber = _inputControllerPhoneNumber.text.trim();
+                  String password = _inputControllerCfrmPassword.text.trim();
+                  String hours = "0";
+                  String status = "active";
+                  bool userExist = false;
+
+                  Future.delayed(
+                      const Duration(seconds: 2),
+                      (() => {
+                            _testReference.get().then((snapshot) {
+                              for (final test in snapshot.children) {
+                                if (test.key == studentNumber) {
+                                  Navigator.of(context, rootNavigator: true)
+                                      .pop();
+                                  userExist = true;
+                                  break;
+                                }
+                              }
+                            })
+                          }));
+
+                  Future.delayed(const Duration(milliseconds: 2200), () async {
+                    if (userExist) {
+                      // Show a new a dialog that this user already exist
+                      DialogUnsuccessful(
+                        headertext: "Account already exist!",
+                        subtext:
+                            "If you think this is wrong. Please contact or go to the CSDL Department immediately!",
+                        textButton: "Close",
+                        callback: (() =>
+                            Navigator.of(context, rootNavigator: true).pop()),
+                      ).buildSuccessScreen(context);
+                    } else {
+                      // If it doesn't exist then let's create a new account
+                      // Show a new dialog that this user is now successfully created.
+                      Scholar scholarObj = Scholar(
+                          studentNumber: studentNumber,
+                          name: fullName,
+                          course: course.toString(),
+                          email: email,
+                          phonenumber: phoneNumber,
+                          password: password,
+                          hkType: hkType.toString(),
+                          hours: hours,
+                          status: status);
+
+                      await _testReference
+                          .child(studentNumber)
+                          .set(scholarObj.toJson());
+
+                      // ignore: use_build_context_synchronously
+                      DialogSuccess(
+                              headertext: "Successfully Registered!",
+                              subtext: "You are now registered!",
+                              textButton: "Log in",
+                              callback: goBackToLogin)
+                          .buildSuccessScreen(context);
+                    }
+                  });
                 });
               }),
               child: const Text(
@@ -496,6 +564,13 @@ class _RegisterInputsState extends State<RegisterInputs> {
         ],
       ),
     );
+  }
+
+  void goBackToLogin() {
+    // Will replace literally every page, that includes dialogs and others.
+    Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (context) => const Login()),
+        (Route<dynamic> route) => false);
   }
 
   DropdownMenuItem<String> buildMenuItemCourses(String item) =>
