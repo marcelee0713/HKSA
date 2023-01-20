@@ -1,7 +1,7 @@
 class HKSAStrings {
   static const String appTitle = "Handog Kaibigan Scholar Assistant";
   static const items = ['Scholar', 'Professor', 'Head'];
-  static const hkTypes = ['25%', '50%', '70%', '100%', 'SA'];
+  static const hkTypes = ['25%', '50%', '75%', '100%', 'SA'];
   static const courses = [
     'Bachelor of Science in Information Technology',
     'Bachelor of Science in Architecture',
