@@ -324,7 +324,7 @@ class _LogInInputsState extends State<LogInInputs> {
                                                     context,
                                                     rootNavigator: true)
                                                 .pop()),
-                                          ).buildSuccessScreen(context);
+                                          ).buildUnsuccessfulScreen(context);
                                           userExist = true;
                                           break;
                                         }
@@ -346,7 +346,7 @@ class _LogInInputsState extends State<LogInInputs> {
                             callback: (() =>
                                 Navigator.of(context, rootNavigator: true)
                                     .pop()),
-                          ).buildSuccessScreen(context);
+                          ).buildUnsuccessfulScreen(context);
                         }
                       });
                     });

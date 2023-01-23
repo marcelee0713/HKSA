@@ -237,7 +237,7 @@ class _DialogSignState extends State<DialogSign> {
                                             Navigator.of(context,
                                                     rootNavigator: true)
                                                 .pop()
-                                          }).buildSuccessScreen(context);
+                                          }).buildUnsuccessfulScreen(context);
                                 }
                               });
 

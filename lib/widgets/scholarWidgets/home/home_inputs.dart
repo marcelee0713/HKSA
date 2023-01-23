@@ -208,7 +208,7 @@ class _ScholarHomeInputsState extends State<ScholarHomeInputs> {
                               callback: () => {
                                     Navigator.of(context, rootNavigator: true)
                                         .pop()
-                                  }).buildSuccessScreen(context);
+                                  }).buildUnsuccessfulScreen(context);
                           return;
                         }
 
