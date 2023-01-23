@@ -1,6 +1,12 @@
+import 'dart:convert';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
+import 'package:hksa/models/scholar.dart';
 import 'package:hksa/pages/register_scholar.dart';
+import 'package:hksa/pages/scholarPages/home.dart';
+import 'package:hksa/widgets/dialogs/dialog_loading.dart';
+import 'package:hksa/widgets/dialogs/dialog_unsuccessful.dart';
 import '/constant/colors.dart';
 import 'package:hksa/constant/string.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -14,7 +20,8 @@ class LogInInputs extends StatefulWidget {
 
 class _LogInInputsState extends State<LogInInputs> {
   // Firebase
-  final Future<FirebaseApp> _fApp = Firebase.initializeApp();
+  DatabaseReference dbReference = FirebaseDatabase.instance.ref();
+  final _myLoginBox = Hive.box('myLoginBox');
   String realTimeValue = '0';
   String getOnceValue = '0';
 
@@ -34,16 +41,6 @@ class _LogInInputsState extends State<LogInInputs> {
 
   @override
   Widget build(BuildContext context) {
-    DatabaseReference _testReference = FirebaseDatabase.instance.ref();
-
-    // This is a "real time" getting the data example;
-    _testReference.onValue.listen(
-      (event) {
-        setState(() {
-          realTimeValue = event.snapshot.value.toString();
-        });
-      },
-    );
     return Form(
       key: _formKey,
       child: Column(
@@ -255,18 +252,103 @@ class _LogInInputsState extends State<LogInInputs> {
                       if (!_formKey.currentState!.validate()) {
                         return;
                       }
+                      DialogLoading(subtext: "Logging in...")
+                          .buildLoadingScreen(context);
                       // This is where it finds the user in the firebase database
                       // And if it did find it will log in depends on the user type
                       // if not. It will pop up a modal that it will show
                       // NO USER FOUND
-                      debugPrint(value!.toLowerCase());
-                      debugPrint(_inputControllerUserID.text);
-                      debugPrint(_inputControllerPassword.text);
-                      debugPrint(realTimeValue);
-                      debugPrint(getOnceValue);
-                      _testReference
-                          .child("ID")
-                          .set(_inputControllerUserID.text);
+                      String userType = value!.toLowerCase();
+                      String userID = _inputControllerUserID.text.trim();
+                      String userPassword = _inputControllerPassword.text;
+                      bool userExist = false;
+                      bool doneCheckingUsers = false;
+
+                      Future.delayed(
+                        const Duration(seconds: 2),
+                        (() => {
+                              Navigator.of(context, rootNavigator: true).pop(),
+                              if (userType == "scholar")
+                                {
+                                  dbReference
+                                      .child('Users/Scholars/')
+                                      .get()
+                                      .then((snapshot) {
+                                    for (final test in snapshot.children) {
+                                      if (test.key == userID) {
+                                        Map<String, dynamic> myObj =
+                                            jsonDecode(jsonEncode(test.value));
+
+                                        Scholar myScholarObj =
+                                            Scholar.fromJson(myObj);
+
+                                        // Dito ka gumawa Monce
+
+                                        if (myScholarObj.password ==
+                                            userPassword) {
+                                          debugPrint("IT MATCHES");
+
+                                          // Put it in our LocalStorage
+                                          // Para ma save yung login state niya.
+                                          // And also some other stuff that need
+                                          // to be stored.
+                                          _myLoginBox.put("isLoggedIn", true);
+                                          _myLoginBox.put("hasTimedIn", false);
+                                          _myLoginBox.put(
+                                              "userType", "scholar");
+                                          _myLoginBox.put("userID", userID);
+                                          _myLoginBox.put(
+                                              "userName", myScholarObj.name);
+                                          _myLoginBox.put("getTimeInLS", "");
+
+                                          // Will now go to the ScholarPage
+                                          // And literally replace any pages.
+                                          Navigator.of(
+                                                  context)
+                                              .pushAndRemoveUntil(
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          const HomeScholar()),
+                                                  (Route<dynamic> route) =>
+                                                      false);
+                                          userExist = true;
+                                          doneCheckingUsers = false;
+                                          break;
+                                        } else {
+                                          DialogUnsuccessful(
+                                            headertext: "Wrong Password.",
+                                            subtext:
+                                                "Seems like you entered the wrong password.",
+                                            textButton: "Close",
+                                            callback: (() => Navigator.of(
+                                                    context,
+                                                    rootNavigator: true)
+                                                .pop()),
+                                          ).buildSuccessScreen(context);
+                                          userExist = true;
+                                          break;
+                                        }
+                                      }
+                                    }
+                                    doneCheckingUsers = true;
+                                  })
+                                },
+                            }),
+                      );
+                      Future.delayed(const Duration(milliseconds: 2200),
+                          () async {
+                        if (!userExist && doneCheckingUsers) {
+                          DialogUnsuccessful(
+                            headertext: "USER NOT FOUND",
+                            subtext:
+                                "Sorry, we can't find that user in our database or maybe you're not connected to the internet.",
+                            textButton: "Close",
+                            callback: (() =>
+                                Navigator.of(context, rootNavigator: true)
+                                    .pop()),
+                          ).buildSuccessScreen(context);
+                        }
+                      });
                     });
                   }),
                   child: const Text(

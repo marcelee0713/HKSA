@@ -9,6 +9,8 @@ class Scholar {
     required this.hours,
     required this.hkType,
     required this.status,
+    required this.totalHoursInDisplay,
+    required this.totalHoursInDuration,
   });
 
   String studentNumber;
@@ -20,6 +22,8 @@ class Scholar {
   String hours;
   String hkType;
   String status;
+  String totalHoursInDisplay;
+  String totalHoursInDuration;
 
   factory Scholar.fromJson(Map<String, dynamic> json) => Scholar(
         studentNumber: json["studentNumber"],
@@ -31,6 +35,8 @@ class Scholar {
         hours: json["hours"],
         hkType: json["hkType"],
         status: json["status"],
+        totalHoursInDisplay: json["totalHoursInDisplay"],
+        totalHoursInDuration: json["totalHoursInDuration"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -43,5 +49,7 @@ class Scholar {
         "hours": hours,
         "hkType": hkType,
         "status": status,
+        "totalHoursInDisplay": totalHoursInDisplay,
+        "totalHoursInDuration": totalHoursInDuration,
       };
 }

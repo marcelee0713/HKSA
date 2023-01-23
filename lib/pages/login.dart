@@ -16,41 +16,35 @@ class Login extends StatefulWidget {
 class _LoginState extends State<Login> {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Palette.royalGreen,
-      ),
-      home: Scaffold(
-        backgroundColor: ColorPalette.secondary,
-        // Always put FutureBuilder if you're using firebase?
-        // Is it? I need to research this up its 11:34pm
-        // I have class at 7am omaygot. -Marcel
-        body: FutureBuilder(
-          future: _fApp,
-          builder: (context, snapshot) {
-            if (snapshot.hasError) {
-              // This is supposed to return something like a modal
-              // Modal of an error can't fetch.
-              return const Text("Error fetching the data!");
-            } else if (snapshot.hasData) {
-              return LayoutBuilder(
-                builder: (context, constraints) => SingleChildScrollView(
-                  child: ConstrainedBox(
-                    constraints: BoxConstraints(
-                      minHeight: constraints.maxHeight,
-                    ),
-                    child: const IntrinsicHeight(
-                      child: LogInContainer(),
-                    ),
+    return Scaffold(
+      backgroundColor: ColorPalette.secondary,
+      // Always put FutureBuilder if you're using firebase?
+      // Is it? I need to research this up its 11:34pm
+      // I have class at 7am omaygot. -Marcel
+      body: FutureBuilder(
+        future: _fApp,
+        builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            // This is supposed to return something like a modal
+            // Modal of an error can't fetch.
+            return const Text("Error fetching the data!");
+          } else if (snapshot.hasData) {
+            return LayoutBuilder(
+              builder: (context, constraints) => SingleChildScrollView(
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(
+                    minHeight: constraints.maxHeight,
+                  ),
+                  child: const IntrinsicHeight(
+                    child: LogInContainer(),
                   ),
                 ),
-              );
-            } else {
-              return const CircularProgressIndicator();
-            }
-          },
-        ),
+              ),
+            );
+          } else {
+            return const CircularProgressIndicator();
+          }
+        },
       ),
     );
   }

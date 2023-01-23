@@ -493,6 +493,8 @@ class _RegisterInputsState extends State<RegisterInputs> {
                   String password = _inputControllerCfrmPassword.text.trim();
                   String hours = "0";
                   String status = "active";
+                  String totalHoursInDisplay = "0:00:00";
+                  String totalHoursInDuration = "0:00:00.000000";
                   bool userExist = false;
 
                   Future.delayed(
@@ -501,16 +503,16 @@ class _RegisterInputsState extends State<RegisterInputs> {
                             _testReference.get().then((snapshot) {
                               for (final test in snapshot.children) {
                                 if (test.key == studentNumber) {
+                                  userExist = true;
                                   Navigator.of(context, rootNavigator: true)
                                       .pop();
-                                  userExist = true;
                                   break;
                                 }
                               }
                             })
                           }));
 
-                  Future.delayed(const Duration(milliseconds: 2200), () async {
+                  Future.delayed(const Duration(milliseconds: 2500), () async {
                     if (userExist) {
                       // Show a new a dialog that this user already exist
                       DialogUnsuccessful(
@@ -533,7 +535,9 @@ class _RegisterInputsState extends State<RegisterInputs> {
                           password: password,
                           hkType: hkType.toString(),
                           hours: hours,
-                          status: status);
+                          status: status,
+                          totalHoursInDisplay: totalHoursInDisplay,
+                          totalHoursInDuration: totalHoursInDuration);
 
                       await _testReference
                           .child(studentNumber)

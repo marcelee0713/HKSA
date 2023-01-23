@@ -1,15 +1,35 @@
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:hksa/constant/colors.dart';
 import 'pages/login.dart';
 import 'pages/scholarPages/home.dart';
 import 'package:firebase_core/firebase_core.dart';
 
-bool userLoggedIn = false;
-String user = "scholar";
+bool? userLoggedIn;
+String? userType;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  runApp(const MyApp());
+  await Hive.initFlutter();
+
+  var logInBox = await Hive.openBox("myLoginBox");
+
+  userLoggedIn = await logInBox.get("isLoggedIn");
+  userType = await logInBox.get("userType");
+
+  userLoggedIn ??= false;
+
+  runApp(
+    MaterialApp(
+      title: "HKSA",
+      home: const MyApp(),
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSwatch().copyWith(
+            primary: ColorPalette.primary, secondary: ColorPalette.secondary),
+      ),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -17,8 +37,8 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (userLoggedIn) {
-      if (user == "scholar") {
+    if (userLoggedIn!) {
+      if (userType == "scholar") {
         return const HomeScholar();
       }
     }
