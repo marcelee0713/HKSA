@@ -29,4 +29,5 @@ class HKSAStrings {
     'Bachelor of Science in Pharmacy',
     'Bachelor of Science in Midwifery',
   ];
+  static const multipliers = ["1", "2", "3"];
 }
