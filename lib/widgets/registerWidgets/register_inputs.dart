@@ -510,48 +510,50 @@ class _RegisterInputsState extends State<RegisterInputs> {
                                 }
                               }
                             })
-                          }));
+                          })).whenComplete(() => {
+                        Future.delayed(const Duration(milliseconds: 2500),
+                            () async {
+                          if (userExist) {
+                            // Show a new a dialog that this user already exist
+                            DialogUnsuccessful(
+                              headertext: "Account already exist!",
+                              subtext:
+                                  "If you think this is wrong. Please contact or go to the CSDL Department immediately!",
+                              textButton: "Close",
+                              callback: (() =>
+                                  Navigator.of(context, rootNavigator: true)
+                                      .pop()),
+                            ).buildUnsuccessfulScreen(context);
+                          } else {
+                            // If it doesn't exist then let's create a new account
+                            // Show a new dialog that this user is now successfully created.
+                            Scholar scholarObj = Scholar(
+                                studentNumber: studentNumber,
+                                name: fullName,
+                                course: course.toString(),
+                                email: email,
+                                phonenumber: phoneNumber,
+                                password: password,
+                                hkType: hkType.toString(),
+                                hours: hours,
+                                status: status,
+                                totalHoursInDisplay: totalHoursInDisplay,
+                                totalHoursInDuration: totalHoursInDuration);
 
-                  Future.delayed(const Duration(milliseconds: 2500), () async {
-                    if (userExist) {
-                      // Show a new a dialog that this user already exist
-                      DialogUnsuccessful(
-                        headertext: "Account already exist!",
-                        subtext:
-                            "If you think this is wrong. Please contact or go to the CSDL Department immediately!",
-                        textButton: "Close",
-                        callback: (() =>
-                            Navigator.of(context, rootNavigator: true).pop()),
-                      ).buildSuccessScreen(context);
-                    } else {
-                      // If it doesn't exist then let's create a new account
-                      // Show a new dialog that this user is now successfully created.
-                      Scholar scholarObj = Scholar(
-                          studentNumber: studentNumber,
-                          name: fullName,
-                          course: course.toString(),
-                          email: email,
-                          phonenumber: phoneNumber,
-                          password: password,
-                          hkType: hkType.toString(),
-                          hours: hours,
-                          status: status,
-                          totalHoursInDisplay: totalHoursInDisplay,
-                          totalHoursInDuration: totalHoursInDuration);
+                            await _testReference
+                                .child(studentNumber)
+                                .set(scholarObj.toJson());
 
-                      await _testReference
-                          .child(studentNumber)
-                          .set(scholarObj.toJson());
-
-                      // ignore: use_build_context_synchronously
-                      DialogSuccess(
-                              headertext: "Successfully Registered!",
-                              subtext: "You are now registered!",
-                              textButton: "Log in",
-                              callback: goBackToLogin)
-                          .buildSuccessScreen(context);
-                    }
-                  });
+                            // ignore: use_build_context_synchronously
+                            DialogSuccess(
+                                    headertext: "Successfully Registered!",
+                                    subtext: "You are now registered!",
+                                    textButton: "Log in",
+                                    callback: goBackToLogin)
+                                .buildSuccessScreen(context);
+                          }
+                        })
+                      });
                 });
               }),
               child: const Text(

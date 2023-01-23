@@ -12,7 +12,7 @@ class DialogUnsuccessful {
       required this.textButton,
       required this.callback});
 
-  buildSuccessScreen(BuildContext context) {
+  buildUnsuccessfulScreen(BuildContext context) {
     return showDialog(
         context: context,
         barrierDismissible: false,
