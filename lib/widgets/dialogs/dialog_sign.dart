@@ -266,7 +266,6 @@ class _DialogSignState extends State<DialogSign> {
         ),
       ),
     );
-    ;
   }
 
   DropdownMenuItem<String> buildMenuItem(String item) => DropdownMenuItem(
