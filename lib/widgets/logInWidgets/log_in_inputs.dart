@@ -282,6 +282,22 @@ class _LogInInputsState extends State<LogInInputs> {
                                         Scholar myScholarObj =
                                             Scholar.fromJson(myObj);
 
+                                        if (myScholarObj.status == "inactive") {
+                                          DialogUnsuccessful(
+                                            headertext:
+                                                "Your Status is Inactive! ",
+                                            subtext:
+                                                "Please proceed to csdl for this concern",
+                                            textButton: "Close",
+                                            callback: () {
+                                              Navigator.of(context,
+                                                      rootNavigator: true)
+                                                  .pop();
+                                            },
+                                          ).buildUnsuccessfulScreen(context);
+                                          userExist = false;
+                                          break;
+                                        }
                                         // Dito ka gumawa Monce
 
                                         if (myScholarObj.password ==
