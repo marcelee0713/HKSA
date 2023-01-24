@@ -263,6 +263,7 @@ class _LogInInputsState extends State<LogInInputs> {
                       String userPassword = _inputControllerPassword.text;
                       bool userExist = false;
                       bool doneCheckingUsers = false;
+                      bool userActive = true;
 
                       Future.delayed(
                         const Duration(seconds: 2),
@@ -283,11 +284,12 @@ class _LogInInputsState extends State<LogInInputs> {
                                             Scholar.fromJson(myObj);
 
                                         if (myScholarObj.status == "inactive") {
+                                          userActive = false;
                                           DialogUnsuccessful(
                                             headertext:
                                                 "Your Status is Inactive! ",
                                             subtext:
-                                                "Please proceed to csdl for this concern",
+                                                "Please proceed to CSDL for this concern",
                                             textButton: "Close",
                                             callback: () {
                                               Navigator.of(context,
@@ -350,21 +352,24 @@ class _LogInInputsState extends State<LogInInputs> {
                                   })
                                 },
                             }),
-                      );
-                      Future.delayed(const Duration(milliseconds: 2200),
-                          () async {
-                        if (!userExist && doneCheckingUsers) {
-                          DialogUnsuccessful(
-                            headertext: "USER NOT FOUND",
-                            subtext:
-                                "Sorry, we can't find that user in our database or maybe you're not connected to the internet.",
-                            textButton: "Close",
-                            callback: (() =>
-                                Navigator.of(context, rootNavigator: true)
-                                    .pop()),
-                          ).buildUnsuccessfulScreen(context);
-                        }
-                      });
+                      ).whenComplete(() => {
+                            Future.delayed(const Duration(milliseconds: 500),
+                                () async {
+                              if (!userExist &&
+                                  doneCheckingUsers &&
+                                  userActive) {
+                                DialogUnsuccessful(
+                                  headertext: "USER NOT FOUND",
+                                  subtext:
+                                      "Sorry, we can't find that user in our database or maybe you're not connected to the internet.",
+                                  textButton: "Close",
+                                  callback: (() =>
+                                      Navigator.of(context, rootNavigator: true)
+                                          .pop()),
+                                ).buildUnsuccessfulScreen(context);
+                              }
+                            })
+                          });
                     });
                   }),
                   child: const Text(
