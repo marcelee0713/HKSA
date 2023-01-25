@@ -27,6 +27,7 @@ void main() async {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSwatch().copyWith(
             primary: ColorPalette.primary, secondary: ColorPalette.secondary),
+        scaffoldBackgroundColor: ColorPalette.secondary,
       ),
     ),
   );
