@@ -223,6 +223,7 @@ class _DialogSignState extends State<DialogSign> {
                                   }
                                   doneCheckingUsers = true;
                                 });
+
                               });
 
                               Future.delayed(const Duration(milliseconds: 2500),
@@ -252,6 +253,30 @@ class _DialogSignState extends State<DialogSign> {
                                   Navigator.of(context, rootNavigator: true)
                                       .pop();
                                       */
+
+                              }).whenComplete(() => {
+                                    Future.delayed(
+                                        const Duration(milliseconds: 2500), () {
+                                      if (!userExist && doneCheckingUsers) {
+                                        Navigator.of(context,
+                                                rootNavigator: true)
+                                            .pop();
+                                        debugPrint(signatureInput);
+                                        DialogUnsuccessful(
+                                            headertext: "Unavailable Signature",
+                                            subtext:
+                                                "We currently don't have the signature you input",
+                                            textButton: "Close",
+                                            callback: () => {
+                                                  Navigator.of(context,
+                                                          rootNavigator: true)
+                                                      .pop()
+                                                }).buildUnsuccessfulScreen(
+                                            context);
+                                      }
+                                    }),
+                                    _inputControllerSignature.text = "",
+                                  });
                             },
                           )),
                       child: const Text(

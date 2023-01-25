@@ -206,7 +206,7 @@ class _ScholarHomeInputsState extends State<ScholarHomeInputs> {
                               subtext: "Signature and Multiplier required!",
                               textButton: "Close",
                               callback: () => {
-                                    Navigator.of(context, rootNavigator: true)
+                                    Navigator.of(context, rootNavigator: false)
                                         .pop()
                                   }).buildUnsuccessfulScreen(context);
                           return;
