@@ -23,11 +23,12 @@ class DialogSign extends StatefulWidget {
 class _DialogSignState extends State<DialogSign> {
   String? multiplierValue;
   bool _signatureVisible = false;
+
   @override
   Widget build(BuildContext context) {
     int result = 0;
     DatabaseReference _testReference =
-        FirebaseDatabase.instance.ref().child("Users/Professors/");
+    FirebaseDatabase.instance.ref().child("Users/Professors/");
     return Scaffold(
       backgroundColor: ColorPalette.secondary,
       body: Center(
@@ -87,12 +88,12 @@ class _DialogSignState extends State<DialogSign> {
                             errorStyle: const TextStyle(height: 0),
                             enabledBorder: OutlineInputBorder(
                               borderSide:
-                                  const BorderSide(color: Colors.transparent),
+                              const BorderSide(color: Colors.transparent),
                               borderRadius: BorderRadius.circular(10.0),
                             ),
                             focusedBorder: OutlineInputBorder(
                               borderSide:
-                                  const BorderSide(color: Colors.transparent),
+                              const BorderSide(color: Colors.transparent),
                               borderRadius: BorderRadius.circular(10.0),
                             ),
                             filled: true,
@@ -154,7 +155,8 @@ class _DialogSignState extends State<DialogSign> {
                               items: HKSAStrings.multipliers
                                   .map(buildMenuItem)
                                   .toList(),
-                              onChanged: ((multiplierValue) => setState(() {
+                              onChanged: ((multiplierValue) =>
+                                  setState(() {
                                     this.multiplierValue =
                                         multiplierValue ?? "";
                                   })),
@@ -166,8 +168,9 @@ class _DialogSignState extends State<DialogSign> {
                   ),
                   const SizedBox(height: 8),
                   ElevatedButton(
-                      onPressed: (() => setState(
-                            () {
+                      onPressed: (() =>
+                          setState(
+                                () {
                               if (!_formKey.currentState!.validate()) {
                                 return;
                               }
@@ -188,7 +191,7 @@ class _DialogSignState extends State<DialogSign> {
                               }
 
                               String signatureInput =
-                                  _inputControllerSignature.text.trim();
+                              _inputControllerSignature.text.trim();
                               bool userExist = false;
                               bool doneCheckingUsers = false;
 
@@ -199,10 +202,10 @@ class _DialogSignState extends State<DialogSign> {
                                 _testReference.get().then((snapshot) {
                                   for (final test in snapshot.children) {
                                     Map<String, dynamic> myObj =
-                                        jsonDecode(jsonEncode(test.value));
+                                    jsonDecode(jsonEncode(test.value));
 
                                     Professor myProfessorObj =
-                                        Professor.fromJson(myObj);
+                                    Professor.fromJson(myObj);
 
                                     if (myProfessorObj.signaturecode ==
                                         signatureInput) {
@@ -223,23 +226,24 @@ class _DialogSignState extends State<DialogSign> {
                               });
 
                               Future.delayed(const Duration(milliseconds: 2500),
-                                  () {
-                                if (!userExist && doneCheckingUsers) {
-                                  Navigator.of(context, rootNavigator: true)
-                                      .pop();
-                                  debugPrint(signatureInput);
-                                  DialogUnsuccessful(
-                                      headertext: "Unavailable Signature",
-                                      subtext:
+                                      () {
+                                    if (!userExist && doneCheckingUsers) {
+                                      Navigator.of(context, rootNavigator: true)
+                                          .pop();
+                                      debugPrint(signatureInput);
+                                      DialogUnsuccessful(
+                                          headertext: "Unavailable Signature",
+                                          subtext:
                                           "We currently don't have the signature you input",
-                                      textButton: "Close",
-                                      callback: () => {
+                                          textButton: "Close",
+                                          callback: () =>
+                                          {
                                             Navigator.of(context,
-                                                    rootNavigator: true)
+                                                rootNavigator: true)
                                                 .pop()
                                           }).buildUnsuccessfulScreen(context);
-                                }
-                              });
+                                    }
+                                  });
 
                               _inputControllerSignature.text = "";
 
@@ -266,9 +270,7 @@ class _DialogSignState extends State<DialogSign> {
         ),
       ),
     );
-    ;
   }
-
   DropdownMenuItem<String> buildMenuItem(String item) => DropdownMenuItem(
         value: item,
         child: Text(
