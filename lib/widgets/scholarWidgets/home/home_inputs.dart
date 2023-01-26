@@ -28,6 +28,7 @@ class _ScholarHomeInputsState extends State<ScholarHomeInputs> {
   Widget build(BuildContext context) {
     DateTime now;
     DateTime later;
+    DateTime compare; // For comparing if they're the same day;
     late String timeIn = logInBox.get("getTimeInLS");
     late String timeOut = "";
     late bool hasTimedIn = logInBox.get("hasTimedIn");
@@ -37,8 +38,10 @@ class _ScholarHomeInputsState extends State<ScholarHomeInputs> {
     String formattedTimeInDateForDB = "";
     String formattedTimeOutDateForDB = "";
 
-    DateTime parsedDateIn = DateFormat("E hh:mm:ss aaaaa yyyy-MM-dd")
-        .parse("Mon 07:30:00 AM 2023-01-23");
+    String dateTimedInLS = logInBox.get("dateTimedIn") ?? "";
+
+    compare = DateTime.now();
+    String compareTimeToday = DateFormat("yyyy-MM-dd").format(compare);
 
     // So basically what this functions does is.
     // That it won't make the user time in or out
@@ -48,6 +51,18 @@ class _ScholarHomeInputsState extends State<ScholarHomeInputs> {
     final nowTOD = TimeOfDay.now();
     if (nowTOD.hour >= 20 || (nowTOD.hour <= 7 && nowTOD.minute <= 29)) {
       hasTimedIn = true;
+      hasTimedOut = true;
+      timeIn = "";
+      timeOut = "";
+      logInBox.put("hasTimedIn", false);
+      logInBox.put("getTimeInLS", "");
+    }
+
+    // Also what this does is that, when he timed in
+    // And he forgot to open the app and timed out at that day.
+    // The dtr will reset.
+    if (dateTimedInLS != compareTimeToday) {
+      hasTimedIn = false;
       hasTimedOut = true;
       timeIn = "";
       timeOut = "";
@@ -146,6 +161,7 @@ class _ScholarHomeInputsState extends State<ScholarHomeInputs> {
                             headertext: "Are you sure you want to time in?",
                             callback: () {
                               setState(() {
+                                String dateOnly = "";
                                 logInBox.put("hasTimedIn", true);
                                 hasTimedIn = true;
                                 hasTimedOut = false;
@@ -154,8 +170,10 @@ class _ScholarHomeInputsState extends State<ScholarHomeInputs> {
                                 formattedTimeInDateForDB =
                                     DateFormat("E hh:mm:ss aaaaa yyyy-MM-dd")
                                         .format(now);
+                                dateOnly = DateFormat("yyyy-MM-dd").format(now);
                                 logInBox.put(
                                     "getTimeInLS", formattedTimeInDateForDB);
+                                logInBox.put("dateTimedIn", dateOnly);
                                 timeIn = formattedTimeInDateForDB;
                               });
                             },
@@ -214,6 +232,7 @@ class _ScholarHomeInputsState extends State<ScholarHomeInputs> {
 
                         setState(() {
                           logInBox.put("hasTimedIn", false);
+                          // logInBox.put("hasTimedOut", true);
                           logInBox.put("getTimeInLS", "");
                           hasTimedIn = false;
                           hasTimedOut = true;
@@ -277,31 +296,6 @@ class _ScholarHomeInputsState extends State<ScholarHomeInputs> {
                             timeIn = "";
                             timeOut = "";
                           });
-
-                          // TODOS
-
-                          // 1. IMPORTANT - DONE
-                          // Where we put our data in our firestore database
-                          // Users -> Scholars -> USERID -> Logs -> Object -> timeIn: value, timeOut: value, hoursInDuration: value;
-
-                          // 2. REALLY IMPORTANT
-                          // Where we also compute our (workingHours + totalHoursInDuration)
-                          // and update our totalHoursInDisplay. Where it can only show hours, minutes and seconds.
-                          // Please note that the user in the RealTime Database should have
-                          // (totalHoursInDuration and totalHoursInDisplay) in every scholar
-                          // Default value of totalHoursInDuration = "0:00:00.000000",
-                          // Default value of totalHoursInDisplay = "0:00:00",
-                          // Note: Duration to String.
-
-                          // 3. DONE
-                          // Dialogs (Please check the figma)
-
-                          // 4.
-                          // Don't let the user log in if he is INACTIVE
-
-                          // 5. IMPORTANT - DONE
-                          // Do not let the user time in and time out if the time is not between 7:30 am to 8:00 pm
-                          // If the user did reach the time of 8:00pm. His time in will not count.
                         });
                       }
                     : null,
