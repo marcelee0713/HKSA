@@ -2,11 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:hksa/constant/colors.dart';
 import 'messages.dart';
-import 'chart.dart';
+//import 'chart.dart';
 import 'dtr.dart';
 import 'profile.dart';
 import 'info.dart';
+import 'package:hksa/widgets/scholarWidgets/chart/chart_v00.dart';
 
+/*This class is the bottom navigation bar of the app
+ * 1) Create a UI for navigation bar
+ * 2) Instantiate an array that would hold pages' index
+ * 3) Display appropriate buttons that can be interacted with
+ * 4) Call pages on click to replace existing widget in this Scaffold()
+ */
 class HomeScholar extends StatefulWidget {
   const HomeScholar({super.key});
 
@@ -16,7 +23,8 @@ class HomeScholar extends StatefulWidget {
 
 class _HomeScholarState extends State<HomeScholar> {
   final _myLoginBox = Hive.box('myLoginBox');
-  int pageIndex = 2; // responsible for page priority
+  // #2 is the page index of dtr.dart and is the first priority display
+  int pageIndex = 2;
   final pages = [
     const Messages(),
     const Chart(),
@@ -27,6 +35,7 @@ class _HomeScholarState extends State<HomeScholar> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // responsible for calling respective pages
       body: pages[pageIndex],
       bottomNavigationBar: Container(
         height: 60,
