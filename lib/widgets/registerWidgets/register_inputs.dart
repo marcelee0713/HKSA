@@ -495,7 +495,18 @@ class _RegisterInputsState extends State<RegisterInputs> {
                   String status = "active";
                   String totalHoursInDisplay = "0:00:00";
                   String totalHoursInDuration = "0:00:00.000000";
+                  String totalHoursRequired = "";
                   bool userExist = false;
+
+                  if (hkType == "25%") {
+                    totalHoursRequired = "60";
+                  } else if (hkType == "50%" || hkType == "75") {
+                    totalHoursRequired = "90";
+                  } else if (hkType == "100%") {
+                    totalHoursRequired = "90";
+                  } else if (hkType == "SA") {
+                    totalHoursRequired = "180";
+                  }
 
                   Future.delayed(
                       const Duration(seconds: 2),
@@ -538,7 +549,8 @@ class _RegisterInputsState extends State<RegisterInputs> {
                                 hours: hours,
                                 status: status,
                                 totalHoursInDisplay: totalHoursInDisplay,
-                                totalHoursInDuration: totalHoursInDuration);
+                                totalHoursInDuration: totalHoursInDuration,
+                                totalHoursRequired: totalHoursRequired);
 
                             await _testReference
                                 .child(studentNumber)

@@ -30,4 +30,11 @@ class HKSAStrings {
     'Bachelor of Science in Midwifery',
   ];
   static const multipliers = ["1", "2", "3"];
+  static const members = [
+    "Delgado, Melchor Lorenz",
+    "Magbual, Marcel",
+    "Basadre, Almighto",
+    "Columbres, Charlie",
+    "Duenas, Monico"
+  ];
 }
