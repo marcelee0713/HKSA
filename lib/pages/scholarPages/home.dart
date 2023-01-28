@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:hksa/constant/colors.dart';
+import 'package:hksa/pages/scholarPages/chart.dart';
 import 'messages.dart';
 //import 'chart.dart';
 import 'dtr.dart';
@@ -60,15 +61,15 @@ class _HomeScholarState extends State<HomeScholar> {
               },
               icon: pageIndex == 0
                   ? const Icon(
-                Icons.message,
-                color: Colors.white,
-                size: 35,
-              )
+                      Icons.message,
+                      color: Colors.white,
+                      size: 35,
+                    )
                   : const Icon(
-                Icons.message_outlined,
-                color: Colors.white,
-                size: 35,
-              ),
+                      Icons.message_outlined,
+                      color: Colors.white,
+                      size: 35,
+                    ),
             ),
             IconButton(
               enableFeedback: false,
@@ -79,15 +80,15 @@ class _HomeScholarState extends State<HomeScholar> {
               },
               icon: pageIndex == 1
                   ? const Icon(
-                Icons.pie_chart,
-                color: Colors.white,
-                size: 35,
-              )
+                      Icons.pie_chart,
+                      color: Colors.white,
+                      size: 35,
+                    )
                   : const Icon(
-                Icons.pie_chart_outline,
-                color: Colors.white,
-                size: 35,
-              ),
+                      Icons.pie_chart_outline,
+                      color: Colors.white,
+                      size: 35,
+                    ),
             ),
             IconButton(
               enableFeedback: false,
@@ -98,15 +99,15 @@ class _HomeScholarState extends State<HomeScholar> {
               },
               icon: pageIndex == 2
                   ? const Icon(
-                Icons.timer_rounded,
-                color: Colors.white,
-                size: 35,
-              )
+                      Icons.timer_rounded,
+                      color: Colors.white,
+                      size: 35,
+                    )
                   : const Icon(
-                Icons.timer_outlined,
-                color: Colors.white,
-                size: 35,
-              ),
+                      Icons.timer_outlined,
+                      color: Colors.white,
+                      size: 35,
+                    ),
             ),
             IconButton(
               enableFeedback: false,
@@ -117,15 +118,15 @@ class _HomeScholarState extends State<HomeScholar> {
               },
               icon: pageIndex == 3
                   ? const Icon(
-                Icons.person,
-                color: Colors.white,
-                size: 35,
-              )
+                      Icons.person,
+                      color: Colors.white,
+                      size: 35,
+                    )
                   : const Icon(
-                Icons.person_outline,
-                color: Colors.white,
-                size: 35,
-              ),
+                      Icons.person_outline,
+                      color: Colors.white,
+                      size: 35,
+                    ),
             ),
             IconButton(
               enableFeedback: false,
@@ -136,15 +137,15 @@ class _HomeScholarState extends State<HomeScholar> {
               },
               icon: pageIndex == 4
                   ? const Icon(
-                Icons.info,
-                color: Colors.white,
-                size: 35,
-              )
+                      Icons.info,
+                      color: Colors.white,
+                      size: 35,
+                    )
                   : const Icon(
-                Icons.info_outline,
-                color: Colors.white,
-                size: 35,
-              ),
+                      Icons.info_outline,
+                      color: Colors.white,
+                      size: 35,
+                    ),
             ),
           ],
         ),

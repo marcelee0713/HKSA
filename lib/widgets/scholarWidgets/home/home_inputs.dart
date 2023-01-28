@@ -288,9 +288,7 @@ class _ScholarHomeInputsState extends State<ScholarHomeInputs> {
                                             .substring(0, 8)),
                                     await dbReference
                                         .child('Users/Scholars/$userID/hours')
-                                        .set(totalDuration
-                                            .toString()
-                                            .substring(0, 2)),
+                                        .set(totalDuration.inHours.toString()),
                                   });
 
                           Future.delayed(const Duration(seconds: 2), () {
@@ -339,6 +337,15 @@ class _ScholarHomeInputsState extends State<ScholarHomeInputs> {
       required String workingHoursTodayInDuration,
       required String signature,
       required String date}) async {
+    Map<String, Object> dummyMap = {};
+    final dummyHashMap = FirebaseFirestore.instance
+        .collection('users')
+        .doc("scholars")
+        .collection(userID)
+        .doc("dtrlogs");
+
+    dummyHashMap.set(dummyMap);
+
     final docUser = FirebaseFirestore.instance
         .collection('users')
         .doc("scholars")
