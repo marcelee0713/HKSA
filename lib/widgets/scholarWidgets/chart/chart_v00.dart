@@ -1,5 +1,8 @@
 import 'dart:convert';
-
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:hksa/api/pdf_api.dart';
+import 'package:hksa/models/logs.dart';
+import 'package:pdf/pdf.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
@@ -20,15 +23,18 @@ class _ScholarHoursRadialChartState extends State<ScholarHoursRadialChart> {
   double renderedHours = 0;
   double requiredHours = 10;
 
+  final logInBox = Hive.box("myLoginBox");
+  late var userName = logInBox.get("userName");
+  late var userID = logInBox.get("userID");
+  List<Logs> dataList = [];
+  String totalHours = "";
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     getHoursAndRequiredHours();
+    createLogsCollection();
   }
-
-  final logInBox = Hive.box("myLoginBox");
-
-  late var userID = logInBox.get("userID");
 
   DatabaseReference dbReference = FirebaseDatabase.instance.ref();
   @override
@@ -106,7 +112,13 @@ class _ScholarHoursRadialChartState extends State<ScholarHoursRadialChart> {
                 padding: const EdgeInsets.fromLTRB(100, 10, 100, 10),
                 elevation: 5,
               ),
-              onPressed: () {},
+              onPressed: () async {
+                final pdfFile = await PdfApi.generateTable(
+                    dataListObj: dataList,
+                    fullName: userName,
+                    totalHours: renderedHours.toString());
+                PdfApi.openFile(pdfFile);
+              },
               child: const Text(
                 'Print',
                 style: TextStyle(
@@ -128,11 +140,39 @@ class _ScholarHoursRadialChartState extends State<ScholarHoursRadialChart> {
     dbReference.child('Users/Scholars/$userID').get().then((snapshot) => {
           myObj = jsonDecode(jsonEncode(snapshot.value)),
           myScholarObj = Scholar.fromJson(myObj),
-          setState(() {
-            renderedHours =
-                double.parse(myScholarObj.hours.replaceAll(":", ""));
-            requiredHours = double.parse(myScholarObj.totalHoursRequired);
-          }),
+          if (mounted)
+            {
+              setState(() {
+                renderedHours =
+                    double.parse(myScholarObj.hours.replaceAll(":", ""));
+                requiredHours = double.parse(myScholarObj.totalHoursRequired);
+              }),
+            }
         });
+  }
+
+  Future createLogsCollection() async {
+    var logs = FirebaseFirestore.instance
+        .collection("users")
+        .doc("scholars")
+        .collection(userID)
+        .doc("dtrlogs")
+        .collection("logs");
+    var querySnapshot = await logs.get();
+    if (mounted) {
+      setState(() {
+        for (var queryDocumentSnapshot in querySnapshot.docs) {
+          Map<String, dynamic> data = {};
+          data = queryDocumentSnapshot.data();
+          Logs myLogs = Logs(
+            timeIn: data["timein"],
+            timeOut: data["timeout"],
+            date: data["date"],
+            signature: data["signature"],
+          );
+          dataList.add(myLogs);
+        }
+      });
+    }
   }
 }
