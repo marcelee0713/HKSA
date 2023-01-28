@@ -34,8 +34,8 @@ class _LogsListViewState extends State<LogsListView> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Container(
-            width: 165,
-            height: 55,
+            width: 100,
+            height: 30,
             decoration: const BoxDecoration(
                 borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(10.0),
@@ -49,7 +49,7 @@ class _LogsListViewState extends State<LogsListView> {
                   color: ColorPalette.accentWhite,
                   fontFamily: 'Frank Ruhl Libre',
                   fontWeight: FontWeight.w700,
-                  fontSize: 24,
+                  fontSize: 16,
                 ),
               ),
             ),
@@ -145,19 +145,21 @@ class _LogsListViewState extends State<LogsListView> {
         .doc("dtrlogs")
         .collection("logs");
     var querySnapshot = await logs.get();
-    setState(() {
-      for (var queryDocumentSnapshot in querySnapshot.docs) {
-        Map<String, dynamic> data = {};
-        data = queryDocumentSnapshot.data();
-        Logs myLogs = Logs(
-          timeIn: data["timein"],
-          timeOut: data["timeout"],
-          date: data["date"],
-          signature: data["signature"],
-        );
-        dataList.add(myLogs);
-        isLoading = false;
-      }
-    });
+    if (mounted) {
+      setState(() {
+        for (var queryDocumentSnapshot in querySnapshot.docs) {
+          Map<String, dynamic> data = {};
+          data = queryDocumentSnapshot.data();
+          Logs myLogs = Logs(
+            timeIn: data["timein"],
+            timeOut: data["timeout"],
+            date: data["date"],
+            signature: data["signature"],
+          );
+          dataList.add(myLogs);
+          isLoading = false;
+        }
+      });
+    }
   }
 }
