@@ -211,13 +211,13 @@ class _ScholarHomeInputsState extends State<ScholarHomeInputs> {
                             DateFormat("E hh:mm:ss aaaaa yyyy-MM-dd")
                                 .format(later);
 
-                        final multiplier = await Navigator.push(
+                        final result = await Navigator.push(
                             context,
                             MaterialPageRoute(
                               builder: (context) => const DialogSign(),
                             ));
 
-                        if (multiplier == null) {
+                        if (result == null) {
                           // ignore: use_build_context_synchronously
                           DialogUnsuccessful(
                               headertext: "Input required",
@@ -237,6 +237,10 @@ class _ScholarHomeInputsState extends State<ScholarHomeInputs> {
                           hasTimedIn = false;
                           hasTimedOut = true;
 
+                          int multiplier =
+                              int.parse(result.toString().substring(0, 1));
+                          String signature = result.toString().substring(1);
+
                           DialogLoading(subtext: "Loading...")
                               .buildLoadingScreen(context);
 
@@ -248,10 +252,12 @@ class _ScholarHomeInputsState extends State<ScholarHomeInputs> {
 
                           // Putting it into our logs in our firestore
                           createLog(
-                              timeIn: formattedTimeInDateForDB,
-                              timeOut: formattedTimeOutDateForDB,
-                              workingHoursTodayInDuration:
-                                  totalHoursInDuration);
+                            timeIn: formattedTimeInDateForDB,
+                            timeOut: formattedTimeOutDateForDB,
+                            workingHoursTodayInDuration: totalHoursInDuration,
+                            signature: signature,
+                            date: compareTimeToday,
+                          );
 
                           // Getting the totalHoursInDuration
                           Duration dbDuration;
@@ -279,7 +285,11 @@ class _ScholarHomeInputsState extends State<ScholarHomeInputs> {
                                             'Users/Scholars/$userID/totalHoursInDisplay')
                                         .set(totalDuration
                                             .toString()
-                                            .substring(0, 8)),
+                                            .substring(0, 8)
+                                            .replaceAll('.', '')),
+                                    await dbReference
+                                        .child('Users/Scholars/$userID/hours')
+                                        .set(totalDuration.inHours.toString()),
                                   });
 
                           Future.delayed(const Duration(seconds: 2), () {
@@ -325,17 +335,35 @@ class _ScholarHomeInputsState extends State<ScholarHomeInputs> {
   Future createLog(
       {required String timeIn,
       required String timeOut,
-      required String workingHoursTodayInDuration}) async {
+      required String workingHoursTodayInDuration,
+      required String signature,
+      required String date}) async {
+    Map<String, Object> dummyMap = {};
+    final dummyHashMap = FirebaseFirestore.instance
+        .collection('users')
+        .doc("scholars")
+        .collection(userID)
+        .doc("dtrlogs");
+
+    dummyHashMap.set(dummyMap);
+
     final docUser = FirebaseFirestore.instance
         .collection('users')
         .doc("scholars")
         .collection(userID)
+        .doc("dtrlogs")
+        .collection("logs")
         .doc(Timestamp.now().seconds.toString());
+
+    debugPrint(signature);
+    debugPrint(date);
 
     final json = {
       'timein': timeIn,
       'timeout': timeOut,
-      'hoursInDuration': workingHoursTodayInDuration
+      'hoursInDuration': workingHoursTodayInDuration,
+      'signature': signature,
+      'date': date,
     };
 
     await docUser.set(json);

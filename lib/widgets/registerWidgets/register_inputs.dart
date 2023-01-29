@@ -495,6 +495,7 @@ class _RegisterInputsState extends State<RegisterInputs> {
                   String status = "active";
                   String totalHoursInDisplay = "0:00:00";
                   String totalHoursInDuration = "0:00:00.000000";
+                  String totalHoursRequired = "";
                   bool userExist = false;
 
                   Future.delayed(
@@ -504,8 +505,6 @@ class _RegisterInputsState extends State<RegisterInputs> {
                               for (final test in snapshot.children) {
                                 if (test.key == studentNumber) {
                                   userExist = true;
-                                  Navigator.of(context, rootNavigator: true)
-                                      .pop();
                                   break;
                                 }
                               }
@@ -515,6 +514,7 @@ class _RegisterInputsState extends State<RegisterInputs> {
                             () async {
                           if (userExist) {
                             // Show a new a dialog that this user already exist
+                            Navigator.of(context, rootNavigator: true).pop();
                             DialogUnsuccessful(
                               headertext: "Account already exist!",
                               subtext:
@@ -527,6 +527,15 @@ class _RegisterInputsState extends State<RegisterInputs> {
                           } else {
                             // If it doesn't exist then let's create a new account
                             // Show a new dialog that this user is now successfully created.
+                            if (hkType == "25%") {
+                              totalHoursRequired = "60";
+                            } else if (hkType == "50%" || hkType == "75") {
+                              totalHoursRequired = "90";
+                            } else if (hkType == "100%") {
+                              totalHoursRequired = "90";
+                            } else if (hkType == "SA") {
+                              totalHoursRequired = "180";
+                            }
                             Scholar scholarObj = Scholar(
                                 studentNumber: studentNumber,
                                 name: fullName,
@@ -538,7 +547,8 @@ class _RegisterInputsState extends State<RegisterInputs> {
                                 hours: hours,
                                 status: status,
                                 totalHoursInDisplay: totalHoursInDisplay,
-                                totalHoursInDuration: totalHoursInDuration);
+                                totalHoursInDuration: totalHoursInDuration,
+                                totalHoursRequired: totalHoursRequired);
 
                             await _testReference
                                 .child(studentNumber)

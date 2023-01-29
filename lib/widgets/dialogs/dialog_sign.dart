@@ -25,7 +25,7 @@ class _DialogSignState extends State<DialogSign> {
   bool _signatureVisible = false;
   @override
   Widget build(BuildContext context) {
-    int result = 0;
+    String result = "";
     DatabaseReference _testReference =
         FirebaseDatabase.instance.ref().child("Users/Professors/");
     return Scaffold(
@@ -210,7 +210,8 @@ class _DialogSignState extends State<DialogSign> {
                                           .pop();
                                       userExist = true;
                                       doneCheckingUsers = false;
-                                      result = int.parse(multiplierValue!);
+                                      result =
+                                          multiplierValue! + signatureInput;
                                       Navigator.pop(context, result);
                                       break;
                                     } else {
@@ -227,7 +228,6 @@ class _DialogSignState extends State<DialogSign> {
                                         Navigator.of(context,
                                                 rootNavigator: true)
                                             .pop();
-                                        debugPrint(signatureInput);
                                         DialogUnsuccessful(
                                             headertext: "Unavailable Signature",
                                             subtext:
