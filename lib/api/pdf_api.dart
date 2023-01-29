@@ -12,7 +12,7 @@ class PdfApi {
       {required List<Logs> dataListObj,
       required String fullName,
       required String totalHours}) async {
-    final headers = ['Date', 'Time In', 'Time-Outs', 'Signature'];
+    final headers = ['Date', 'Time In', 'Time Out', 'Signature'];
     final pdf = Document();
     final data = dataListObj
         .map((logs) => [logs.date, logs.timeIn, logs.timeOut, logs.signature])
@@ -20,14 +20,15 @@ class PdfApi {
 
     pdf.addPage(
       MultiPage(
+        header: (context) => Header(
+          text: fullName,
+          textStyle: TextStyle(
+            color: PdfColors.black,
+            fontWeight: FontWeight.bold,
+            fontSize: 16,
+          ),
+        ),
         build: (Context context) => <Widget>[
-          Paragraph(
-              text: fullName,
-              style: TextStyle(
-                color: PdfColors.black,
-                fontWeight: FontWeight.bold,
-                fontSize: 16,
-              )),
           Table.fromTextArray(
             headers: headers,
             data: data,

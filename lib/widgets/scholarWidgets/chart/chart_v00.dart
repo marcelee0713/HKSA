@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:hksa/api/pdf_api.dart';
 import 'package:hksa/models/logs.dart';
+import 'package:hksa/widgets/dialogs/dialog_unsuccessful.dart';
 import 'package:pdf/pdf.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
@@ -61,34 +62,55 @@ class _ScholarHoursRadialChartState extends State<ScholarHoursRadialChart> {
                   endAngle: 67,
                   annotations: <GaugeAnnotation>[
                     GaugeAnnotation(
-                        positionFactor: 1,
-                        angle: 90,
-                        widget: Column(
-                          children: <Widget>[
-                            Text(
-                              renderedHours == 0
-                                  ? "0"
-                                  : renderedHours.toString(),
-                              style: const TextStyle(
-                                decoration: TextDecoration.underline,
-                                fontSize: 32,
-                                fontFamily: 'Inter',
-                                fontWeight: FontWeight.w700,
+                      positionFactor: 1,
+                      angle: 90,
+                      widget: requiredHours == 10
+                          ? Center(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: const <Widget>[
+                                  SizedBox(
+                                    width: 30,
+                                    height: 30,
+                                    child: CircularProgressIndicator(
+                                      color: Color(0xffffd700),
+                                    ),
+                                  ),
+                                  SizedBox(height: 20),
+                                  Text(
+                                    "Loading...",
+                                    style: TextStyle(color: Color(0xffffd700)),
+                                  ),
+                                ],
                               ),
+                            )
+                          : Column(
+                              children: <Widget>[
+                                Text(
+                                  renderedHours == 0
+                                      ? "0"
+                                      : renderedHours.toString(),
+                                  style: const TextStyle(
+                                    decoration: TextDecoration.underline,
+                                    fontSize: 32,
+                                    fontFamily: 'Inter',
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                                Text(
+                                  requiredHours == 10
+                                      ? "0"
+                                      : requiredHours.toString(),
+                                  style: const TextStyle(
+                                    fontSize: 32,
+                                    fontFamily: 'Inter',
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                                const SizedBox(height: 65),
+                              ],
                             ),
-                            Text(
-                              requiredHours == 10
-                                  ? "0"
-                                  : requiredHours.toString(),
-                              style: const TextStyle(
-                                fontSize: 32,
-                                fontFamily: 'Inter',
-                                fontWeight: FontWeight.w700,
-                              ),
-                            ),
-                            const SizedBox(height: 65),
-                          ],
-                        ))
+                    )
                   ],
                   pointers: <GaugePointer>[
                     RangePointer(
@@ -113,11 +135,22 @@ class _ScholarHoursRadialChartState extends State<ScholarHoursRadialChart> {
                 elevation: 5,
               ),
               onPressed: () async {
-                final pdfFile = await PdfApi.generateTable(
-                    dataListObj: dataList,
-                    fullName: userName,
-                    totalHours: renderedHours.toString());
-                PdfApi.openFile(pdfFile);
+                if (ConnectionState.active == true) {
+                  final pdfFile = await PdfApi.generateTable(
+                      dataListObj: dataList,
+                      fullName: userName,
+                      totalHours: renderedHours.toString());
+                  PdfApi.openFile(pdfFile);
+                  return;
+                } else {
+                  DialogUnsuccessful(
+                      headertext: "No Internet!",
+                      subtext: "Please try again later!",
+                      textButton: "Close",
+                      callback: () {
+                        Navigator.of(context, rootNavigator: true).pop();
+                      }).buildUnsuccessfulScreen(context);
+                }
               },
               child: const Text(
                 'Print',

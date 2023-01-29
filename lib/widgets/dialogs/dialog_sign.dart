@@ -228,7 +228,6 @@ class _DialogSignState extends State<DialogSign> {
                                         Navigator.of(context,
                                                 rootNavigator: true)
                                             .pop();
-                                        debugPrint(signatureInput);
                                         DialogUnsuccessful(
                                             headertext: "Unavailable Signature",
                                             subtext:

@@ -1,11 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:hksa/constant/colors.dart';
 import 'package:hksa/models/logs.dart';
-import 'package:hksa/widgets/dialogs/dialog_loading.dart';
-import 'package:hksa/widgets/dialogs/dialog_unsuccessful.dart';
+import 'package:hksa/widgets/scholarWidgets/chart/log_box.dart';
 
 final logInBox = Hive.box("myLoginBox");
 var userID = logInBox.get("userID");
@@ -18,15 +16,6 @@ class LogsListView extends StatefulWidget {
 }
 
 class _LogsListViewState extends State<LogsListView> {
-  List<Logs> dataList = [];
-  bool isLoading = true;
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    createLogsCollection();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Center(
@@ -60,84 +49,85 @@ class _LogsListViewState extends State<LogsListView> {
               color: ColorPalette.primary,
               borderRadius: BorderRadius.circular(10),
             ),
-            child: isLoading
-                ? Center(
-                    child: Column(
-                    children: [
-                      Container(
-                        width: 180,
-                        height: 180,
-                        decoration: const BoxDecoration(
-                          image: DecorationImage(
-                            image: AssetImage('assets/images/loading.gif'),
+            child: FutureBuilder(
+                future: createLogsCollection(),
+                builder: (context, snapshot) {
+                  if (!snapshot.hasData) {
+                    return SizedBox(
+                      width: MediaQuery.of(context).size.width,
+                      height: 200,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: const <Widget>[
+                          SizedBox(
+                            width: 30,
+                            height: 30,
+                            child: CircularProgressIndicator(
+                              color: ColorPalette.secondary,
+                            ),
                           ),
-                        ),
+                          SizedBox(height: 20),
+                          Text("Loading...",
+                              style: TextStyle(color: ColorPalette.secondary)),
+                        ],
                       ),
-                      const Text(
-                        "Fetching...",
-                        style: TextStyle(
-                          color: ColorPalette.accentWhite,
-                          fontFamily: 'Inter',
-                        ),
+                    );
+                  }
+                  if (snapshot.hasError) {
+                    return Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: const [
+                          Icon(
+                            Icons.warning_rounded,
+                            size: 150,
+                            color: ColorPalette.secondary,
+                          ),
+                          Text(
+                            'Something went wrong!',
+                            style: TextStyle(
+                              fontFamily: 'Inter',
+                              color: ColorPalette.secondary,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          SizedBox(height: 5),
+                          Text(
+                            'Please try again later.',
+                            style: TextStyle(
+                              fontFamily: 'Inter',
+                              color: ColorPalette.secondary,
+                            ),
+                          ),
+                        ],
                       ),
-                    ],
-                  ))
-                : SizedBox(
+                    );
+                  }
+                  return SizedBox(
                     height: 200,
                     child: ListView.builder(
-                        padding: const EdgeInsets.all(0),
-                        shrinkWrap: true,
-                        itemCount: dataList.length,
-                        itemBuilder: (context, index) {
-                          return Card(
-                            child: Container(
-                              height: 80,
-                              padding: const EdgeInsets.all(10),
-                              child: Stack(
-                                alignment: Alignment.center,
-                                children: [
-                                  Positioned(
-                                    left: 0,
-                                    top: 0,
-                                    child: Text(
-                                      "${index + 1}",
-                                      style: const TextStyle(
-                                        fontFamily: 'Inter',
-                                        fontSize: 12,
-                                      ),
-                                    ),
-                                  ),
-                                  const SizedBox(height: 4),
-                                  Positioned(
-                                    top: 6,
-                                    child: Text(
-                                      textAlign: TextAlign.center,
-                                      dataList[index].timeIn.toString(),
-                                    ),
-                                  ),
-                                  Container(
-                                      height: 1,
-                                      color: ColorPalette.accentBlack),
-                                  Positioned(
-                                    bottom: 6,
-                                    child: Text(
-                                      textAlign: TextAlign.center,
-                                      dataList[index].timeOut.toString(),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          );
-                        }),
-                  ),
+                      padding: const EdgeInsets.all(0),
+                      shrinkWrap: true,
+                      itemCount: snapshot.data?.length,
+                      itemBuilder: (context, index) {
+                        return LogBox(
+                            timeIn: snapshot.data![index].timeIn,
+                            timeOut: snapshot.data![index].timeOut,
+                            index: index);
+                      },
+                    ),
+                  );
+                }),
           ),
         ],
       ),
     );
   }
 
-  Future createLogsCollection() async {
+  Future<List<Logs>> createLogsCollection() async {
+    List<Logs> dataList = [];
     var logs = FirebaseFirestore.instance
         .collection("users")
         .doc("scholars")
@@ -157,9 +147,10 @@ class _LogsListViewState extends State<LogsListView> {
             signature: data["signature"],
           );
           dataList.add(myLogs);
-          isLoading = false;
+          //isLoading = false;
         }
       });
     }
+    return dataList;
   }
 }
