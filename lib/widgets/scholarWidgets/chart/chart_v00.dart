@@ -135,22 +135,11 @@ class _ScholarHoursRadialChartState extends State<ScholarHoursRadialChart> {
                 elevation: 5,
               ),
               onPressed: () async {
-                if (ConnectionState.active == true) {
-                  final pdfFile = await PdfApi.generateTable(
-                      dataListObj: dataList,
-                      fullName: userName,
-                      totalHours: renderedHours.toString());
-                  PdfApi.openFile(pdfFile);
-                  return;
-                } else {
-                  DialogUnsuccessful(
-                      headertext: "No Internet!",
-                      subtext: "Please try again later!",
-                      textButton: "Close",
-                      callback: () {
-                        Navigator.of(context, rootNavigator: true).pop();
-                      }).buildUnsuccessfulScreen(context);
-                }
+                final pdfFile = await PdfApi.generateTable(
+                    dataListObj: dataList,
+                    fullName: userName,
+                    totalHours: renderedHours.toString());
+                PdfApi.openFile(pdfFile);
               },
               child: const Text(
                 'Print',
