@@ -285,7 +285,8 @@ class _ScholarHomeInputsState extends State<ScholarHomeInputs> {
                                             'Users/Scholars/$userID/totalHoursInDisplay')
                                         .set(totalDuration
                                             .toString()
-                                            .substring(0, 8)),
+                                            .substring(0, 8)
+                                            .replaceAll('.', '')),
                                     await dbReference
                                         .child('Users/Scholars/$userID/hours')
                                         .set(totalDuration.inHours.toString()),
