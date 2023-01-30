@@ -7,7 +7,6 @@ import 'package:hksa/constant/string.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:hksa/models/professor.dart';
 import 'package:hksa/widgets/dialogs/dialog_loading.dart';
-import 'package:hksa/widgets/dialogs/dialog_success.dart';
 import 'package:hksa/widgets/dialogs/dialog_unsuccessful.dart';
 
 final _inputControllerSignature = TextEditingController();
@@ -42,28 +41,32 @@ class _DialogSignState extends State<DialogSign> {
               ),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Container(
-                    width: 120,
-                    height: 120,
-                    decoration: const BoxDecoration(
-                      image: DecorationImage(
-                        image: AssetImage('assets/images/logo.png'),
+                  Center(
+                    child: Container(
+                      width: 120,
+                      height: 120,
+                      decoration: const BoxDecoration(
+                        image: DecorationImage(
+                          image: AssetImage('assets/images/logo.png'),
+                        ),
                       ),
                     ),
                   ),
                   const SizedBox(height: 8),
-                  const Text(
-                    "Authorize the scholar to time out?",
-                    style: TextStyle(
-                      color: ColorPalette.accentWhite,
-                      fontFamily: 'Inter',
-                      fontWeight: FontWeight.w700,
-                      fontSize: 14,
+                  const Center(
+                    child: Text(
+                      "Authorize the scholar to time out?",
+                      style: TextStyle(
+                        color: ColorPalette.accentWhite,
+                        fontFamily: 'Inter',
+                        fontWeight: FontWeight.w700,
+                        fontSize: 14,
+                      ),
                     ),
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: 10),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -165,7 +168,18 @@ class _DialogSignState extends State<DialogSign> {
                     ],
                   ),
                   const SizedBox(height: 8),
-                  ElevatedButton(
+                  const Text(
+                    HKSAStrings.signatureInfo,
+                    style: TextStyle(
+                      color: ColorPalette.primary,
+                      fontFamily: 'Inter',
+                      fontSize: 12,
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  Align(
+                    alignment: Alignment.center,
+                    child: ElevatedButton(
                       onPressed: (() => setState(
                             () {
                               if (!_formKey.currentState!.validate()) {
@@ -253,7 +267,9 @@ class _DialogSignState extends State<DialogSign> {
                           fontWeight: FontWeight.w400,
                           fontSize: 13,
                         ),
-                      ))
+                      ),
+                    ),
+                  )
                 ],
               ),
             ),

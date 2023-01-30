@@ -496,6 +496,7 @@ class _RegisterInputsState extends State<RegisterInputs> {
                   String totalHoursInDisplay = "0:00:00";
                   String totalHoursInDuration = "0:00:00.000000";
                   String totalHoursRequired = "";
+                  String isFinished = "false";
                   bool userExist = false;
 
                   Future.delayed(
@@ -548,7 +549,8 @@ class _RegisterInputsState extends State<RegisterInputs> {
                                 status: status,
                                 totalHoursInDisplay: totalHoursInDisplay,
                                 totalHoursInDuration: totalHoursInDuration,
-                                totalHoursRequired: totalHoursRequired);
+                                totalHoursRequired: totalHoursRequired,
+                                isFinished: isFinished);
 
                             await _testReference
                                 .child(studentNumber)

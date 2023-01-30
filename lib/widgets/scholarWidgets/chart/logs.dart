@@ -105,6 +105,29 @@ class _LogsListViewState extends State<LogsListView> {
                       ),
                     );
                   }
+                  if (snapshot.data!.isEmpty) {
+                    return SizedBox(
+                      height: 200,
+                      width: MediaQuery.of(context).size.width,
+                      child: Column(
+                        children: const [
+                          Icon(
+                            Icons.format_list_numbered_rounded,
+                            size: 150,
+                            color: ColorPalette.secondary,
+                          ),
+                          Text(
+                            "Seems like you don't have any records yet.",
+                            style: TextStyle(
+                              color: ColorPalette.secondary,
+                              fontFamily: 'Inter',
+                              fontSize: 12,
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  }
                   return SizedBox(
                     height: 200,
                     child: ListView.builder(
@@ -145,6 +168,7 @@ class _LogsListViewState extends State<LogsListView> {
             timeOut: data["timeout"],
             date: data["date"],
             signature: data["signature"],
+            multiplier: data["multiplier"],
           );
           dataList.add(myLogs);
           //isLoading = false;

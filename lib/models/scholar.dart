@@ -1,3 +1,9 @@
+import 'dart:convert';
+
+Scholar scholarFromJson(String str) => Scholar.fromJson(json.decode(str));
+
+String scholarToJson(Scholar data) => json.encode(data.toJson());
+
 class Scholar {
   Scholar({
     required this.studentNumber,
@@ -12,6 +18,7 @@ class Scholar {
     required this.totalHoursInDisplay,
     required this.totalHoursInDuration,
     required this.totalHoursRequired,
+    required this.isFinished,
   });
 
   String studentNumber;
@@ -26,6 +33,7 @@ class Scholar {
   String totalHoursInDisplay;
   String totalHoursInDuration;
   String totalHoursRequired;
+  String isFinished;
 
   factory Scholar.fromJson(Map<String, dynamic> json) => Scholar(
         studentNumber: json["studentNumber"],
@@ -40,6 +48,7 @@ class Scholar {
         totalHoursInDisplay: json["totalHoursInDisplay"],
         totalHoursInDuration: json["totalHoursInDuration"],
         totalHoursRequired: json["totalHoursRequired"],
+        isFinished: json["isFinished"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -55,5 +64,6 @@ class Scholar {
         "totalHoursInDisplay": totalHoursInDisplay,
         "totalHoursInDuration": totalHoursInDuration,
         "totalHoursRequired": totalHoursRequired,
+        "isFinished": isFinished,
       };
 }

@@ -252,12 +252,12 @@ class _ScholarHomeInputsState extends State<ScholarHomeInputs> {
 
                           // Putting it into our logs in our firestore
                           createLog(
-                            timeIn: formattedTimeInDateForDB,
-                            timeOut: formattedTimeOutDateForDB,
-                            workingHoursTodayInDuration: totalHoursInDuration,
-                            signature: signature,
-                            date: compareTimeToday,
-                          );
+                              timeIn: formattedTimeInDateForDB,
+                              timeOut: formattedTimeOutDateForDB,
+                              workingHoursTodayInDuration: totalHoursInDuration,
+                              signature: signature,
+                              date: compareTimeToday,
+                              multiplier: multiplier.toString());
 
                           // Getting the totalHoursInDuration
                           Duration dbDuration;
@@ -337,7 +337,8 @@ class _ScholarHomeInputsState extends State<ScholarHomeInputs> {
       required String timeOut,
       required String workingHoursTodayInDuration,
       required String signature,
-      required String date}) async {
+      required String date,
+      required String multiplier}) async {
     Map<String, Object> dummyMap = {};
     final dummyHashMap = FirebaseFirestore.instance
         .collection('users')
@@ -364,6 +365,7 @@ class _ScholarHomeInputsState extends State<ScholarHomeInputs> {
       'hoursInDuration': workingHoursTodayInDuration,
       'signature': signature,
       'date': date,
+      'multiplier': multiplier,
     };
 
     await docUser.set(json);

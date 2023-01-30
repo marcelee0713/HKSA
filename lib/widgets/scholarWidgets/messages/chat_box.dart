@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:hksa/constant/colors.dart';
 
-class ChatBox extends StatelessWidget {
+class ChatBox extends StatefulWidget {
   final String name;
   final String userId;
   const ChatBox({super.key, required this.name, required this.userId});
 
+  @override
+  State<ChatBox> createState() => _ChatBoxState();
+}
+
+class _ChatBoxState extends State<ChatBox> {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -31,7 +36,7 @@ class ChatBox extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    name,
+                    widget.name,
                     style: const TextStyle(
                       color: ColorPalette.accentBlack,
                       fontFamily: 'Inter',
@@ -40,7 +45,7 @@ class ChatBox extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    userId,
+                    widget.userId,
                     style: const TextStyle(
                       color: ColorPalette.accentBlack,
                       fontFamily: 'Inter',
