@@ -550,7 +550,8 @@ class _RegisterInputsState extends State<RegisterInputs> {
                                 totalHoursInDisplay: totalHoursInDisplay,
                                 totalHoursInDuration: totalHoursInDuration,
                                 totalHoursRequired: totalHoursRequired,
-                                isFinished: isFinished);
+                                isFinished: isFinished,
+                                profilePicture: HKSAStrings.pfpPlaceholder);
 
                             await _testReference
                                 .child(studentNumber)

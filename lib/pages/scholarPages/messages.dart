@@ -177,8 +177,10 @@ class _MessagesState extends State<Messages> {
                             .toLowerCase()
                             .contains(searchid.toLowerCase())) {
                       return ChatBox(
-                          name: snapshot.data![index].name,
-                          userId: snapshot.data![index].userId);
+                        name: snapshot.data![index].name,
+                        userId: snapshot.data![index].userId,
+                        pfpUrl: snapshot.data![index].pfp,
+                      );
                     }
                     return Container();
                   },
@@ -199,8 +201,10 @@ class _MessagesState extends State<Messages> {
           for (final data in snapshot.children) {
             Map<String, dynamic> myObj = jsonDecode(jsonEncode(data.value));
             Head myHeadObj = Head.fromJson(myObj);
-            Chat myChatObj =
-                Chat(name: myHeadObj.name, userId: myHeadObj.userId);
+            Chat myChatObj = Chat(
+                name: myHeadObj.name,
+                userId: myHeadObj.userId,
+                pfp: myHeadObj.profilePicture);
             myAppList.add(myChatObj);
           }
         },
@@ -211,7 +215,9 @@ class _MessagesState extends State<Messages> {
             Map<String, dynamic> myObj = jsonDecode(jsonEncode(data.value));
             Professor myProfessorObj = Professor.fromJson(myObj);
             Chat myChatObj = Chat(
-                name: myProfessorObj.name, userId: myProfessorObj.professorId);
+                name: myProfessorObj.name,
+                userId: myProfessorObj.professorId,
+                pfp: myProfessorObj.profilePicture);
             myAppList.add(myChatObj);
           }
         },

@@ -9,21 +9,25 @@ class Head {
     required this.name,
     required this.password,
     required this.userId,
+    required this.profilePicture,
   });
 
   String name;
   String password;
   String userId;
+  String profilePicture;
 
   factory Head.fromJson(Map<String, dynamic> json) => Head(
         name: json["name"],
         password: json["password"],
         userId: json["userID"],
+        profilePicture: json["profilePicture"],
       );
 
   Map<String, dynamic> toJson() => {
         "name": name,
         "password": password,
         "userID": userId,
+        "profilePicture": profilePicture
       };
 }

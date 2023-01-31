@@ -13,6 +13,7 @@ class Professor {
     required this.phonenumber,
     required this.professorId,
     required this.signaturecode,
+    required this.profilePicture,
   });
 
   String department;
@@ -22,6 +23,7 @@ class Professor {
   String phonenumber;
   String professorId;
   String signaturecode;
+  String profilePicture;
 
   factory Professor.fromJson(Map<String, dynamic> json) => Professor(
         department: json["department"],
@@ -31,6 +33,7 @@ class Professor {
         phonenumber: json["phonenumber"],
         professorId: json["professorID"],
         signaturecode: json["signaturecode"],
+        profilePicture: json["profilePicture"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -41,5 +44,6 @@ class Professor {
         "phonenumber": phonenumber,
         "professorID": professorId,
         "signaturecode": signaturecode,
+        "profilePicture": profilePicture
       };
 }

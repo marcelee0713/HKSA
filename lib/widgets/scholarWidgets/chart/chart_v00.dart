@@ -173,6 +173,8 @@ class _ScholarHoursRadialChartState extends State<ScholarHoursRadialChart> {
         });
     if (renderedHours >= requiredHours) {
       await dbReference.child('Users/Scholars/$userID/isFinished').set("true");
+    } else {
+      await dbReference.child('Users/Scholars/$userID/isFinished').set("false");
     }
   }
 

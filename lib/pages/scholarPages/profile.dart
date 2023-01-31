@@ -1,12 +1,16 @@
 import 'dart:convert';
 
+import 'package:another_flushbar/flushbar.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:hksa/api/storage_service.dart';
 import 'package:hksa/constant/colors.dart';
 import 'package:hksa/models/scholar.dart';
 import 'package:hksa/pages/login.dart';
 import 'package:hksa/widgets/dialogs/dialog_loading.dart';
+import 'package:hksa/widgets/dialogs/dialog_success.dart';
 
 class Profile extends StatefulWidget {
   const Profile({Key? key}) : super(key: key);
@@ -16,10 +20,23 @@ class Profile extends StatefulWidget {
 }
 
 class _ProfileState extends State<Profile> {
+  final Storage storage = Storage();
   final logInBox = Hive.box("myLoginBox");
   late var userID = logInBox.get("userID");
+  String userProfileListener = "";
   @override
   Widget build(BuildContext context) {
+    DatabaseReference dbReference = FirebaseDatabase.instance
+        .ref()
+        .child("Users/Scholars/$userID/profilePicture");
+
+    dbReference.onValue.listen((event) {
+      if (mounted) {
+        setState(() {
+          userProfileListener = event.snapshot.value.toString();
+        });
+      }
+    });
     return Container(
         padding: const EdgeInsets.all(20),
         color: ColorPalette.secondary,
@@ -83,9 +100,18 @@ class _ProfileState extends State<Profile> {
                 Center(
                   child: Column(
                     children: [
-                      const Icon(
-                        Icons.account_circle,
-                        size: 150,
+                      SizedBox(
+                        width: 150,
+                        height: 150,
+                        child: AspectRatio(
+                          aspectRatio: 1 / 1,
+                          child: ClipOval(
+                            child: FadeInImage.assetNetwork(
+                                fit: BoxFit.cover,
+                                placeholder: 'assets/images/loading.gif',
+                                image: snapshot.data!.first.profilePicture),
+                          ),
+                        ),
                       ),
                       const SizedBox(
                         height: 20,
@@ -276,43 +302,109 @@ class _ProfileState extends State<Profile> {
                   color: ColorPalette.accentBlack,
                 ),
                 const SizedBox(height: 10),
-                SizedBox(
-                  child: InkWell(
-                    onTap: (() {
-                      setState(
-                        () {
-                          // Might be more soon
-                          // This includes the time in
-                          DialogLoading(subtext: "Logging out..")
-                              .buildLoadingScreen(context);
+                Row(
+                  children: [
+                    SizedBox(
+                      child: InkWell(
+                        onTap: (() {
+                          setState(
+                            () {
+                              // Might be more soon
+                              // This includes the time in
+                              DialogLoading(subtext: "Logging out..")
+                                  .buildLoadingScreen(context);
 
-                          Future.delayed(const Duration(seconds: 2), (() {
-                            logInBox.put("isLoggedIn", false);
-                            logInBox.put("hasTimedIn", false);
-                            logInBox.put("userType", "");
-                            logInBox.put("userID", "");
-                            logInBox.put("userName", "");
-                            logInBox.put("getTimeInLS", "");
+                              Future.delayed(const Duration(seconds: 2), (() {
+                                logInBox.put("isLoggedIn", false);
+                                logInBox.put("hasTimedIn", false);
+                                logInBox.put("userType", "");
+                                logInBox.put("userID", "");
+                                logInBox.put("userName", "");
+                                logInBox.put("getTimeInLS", "");
+                                logInBox.put("dateTimedIn", "");
 
-                            Navigator.of(context).pushAndRemoveUntil(
-                                MaterialPageRoute(
-                                    builder: (context) => const Login()),
-                                (Route<dynamic> route) => false);
-                          }));
-                        },
-                      );
-                    }),
-                    child: const Text(
-                      "Log out",
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontFamily: 'Inter',
-                        fontSize: 14,
-                        fontWeight: FontWeight.w400,
-                        color: ColorPalette.primary,
+                                Navigator.of(context).pushAndRemoveUntil(
+                                    MaterialPageRoute(
+                                        builder: (context) => const Login()),
+                                    (Route<dynamic> route) => false);
+                              }));
+                            },
+                          );
+                        }),
+                        child: const Text(
+                          "Log out",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontFamily: 'Inter',
+                            fontSize: 14,
+                            fontWeight: FontWeight.w400,
+                            color: ColorPalette.primary,
+                          ),
+                        ),
                       ),
                     ),
-                  ),
+                    const SizedBox(width: 8),
+                    InkWell(
+                      onTap: () async {
+                        final results = await FilePicker.platform.pickFiles(
+                          allowMultiple: false,
+                          type: FileType.custom,
+                          allowedExtensions: ['png', 'jpg'],
+                        );
+
+                        if (results == null) {
+                          // ignore: use_build_context_synchronously
+                          Flushbar(
+                            backgroundColor: ColorPalette.primary,
+                            messageText: const Text(
+                              "Enter an image!",
+                              style: TextStyle(
+                                fontFamily: 'Inter',
+                                fontSize: 14,
+                                color: ColorPalette.accentWhite,
+                              ),
+                            ),
+                            duration: const Duration(seconds: 3),
+                          ).show(context);
+                          return;
+                        }
+                        // ignore: use_build_context_synchronously
+                        DialogLoading(subtext: "Changing...")
+                            .buildLoadingScreen(context);
+
+                        final path = results.files.single.path!;
+                        final fileName = results.files.single.name;
+
+                        debugPrint(path);
+                        debugPrint(fileName);
+
+                        await storage.changeScholarPfp(path, fileName, userID,
+                            snapshot.data!.first.profilePicture, () {
+                          Future.delayed(const Duration(seconds: 3), () {
+                            Navigator.of(context, rootNavigator: true).pop();
+                            DialogSuccess(
+                                headertext: "Profile Picture Changed!",
+                                subtext:
+                                    "Didn't showed? Restart or go to a different page and comeback!",
+                                textButton: "Close",
+                                callback: () {
+                                  Navigator.of(context, rootNavigator: true)
+                                      .pop();
+                                }).buildSuccessScreen(context);
+                          });
+                        });
+                      },
+                      child: const Text(
+                        "Change Profile Picture",
+                        style: TextStyle(
+                          fontFamily: 'Inter',
+                          fontSize: 14,
+                          fontWeight: FontWeight.w400,
+                          color: ColorPalette.primary,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ],
             );
