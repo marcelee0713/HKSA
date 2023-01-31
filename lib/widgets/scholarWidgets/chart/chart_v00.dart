@@ -142,7 +142,7 @@ class _ScholarHoursRadialChartState extends State<ScholarHoursRadialChart> {
                 PdfApi.openFile(pdfFile);
               },
               child: const Text(
-                'Print',
+                'PDF',
                 style: TextStyle(
                   fontSize: 21,
                   fontFamily: 'Frank Ruhl Libre',
@@ -159,7 +159,7 @@ class _ScholarHoursRadialChartState extends State<ScholarHoursRadialChart> {
   Future getHoursAndRequiredHours() async {
     Map<String, dynamic> myObj = {};
     Scholar myScholarObj;
-    dbReference.child('Users/Scholars/$userID').get().then((snapshot) => {
+    await dbReference.child('Users/Scholars/$userID').get().then((snapshot) => {
           myObj = jsonDecode(jsonEncode(snapshot.value)),
           myScholarObj = Scholar.fromJson(myObj),
           if (mounted)
@@ -171,6 +171,9 @@ class _ScholarHoursRadialChartState extends State<ScholarHoursRadialChart> {
               }),
             }
         });
+    if (renderedHours >= requiredHours) {
+      await dbReference.child('Users/Scholars/$userID/isFinished').set("true");
+    }
   }
 
   Future createLogsCollection() async {
@@ -191,6 +194,7 @@ class _ScholarHoursRadialChartState extends State<ScholarHoursRadialChart> {
             timeOut: data["timeout"],
             date: data["date"],
             signature: data["signature"],
+            multiplier: data["multiplier"],
           );
           dataList.add(myLogs);
         }

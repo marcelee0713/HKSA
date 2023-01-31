@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:flutter/services.dart';
+import 'package:pdf/widgets.dart' as pw;
 import 'package:hksa/models/logs.dart';
 import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
@@ -12,14 +12,20 @@ class PdfApi {
       {required List<Logs> dataListObj,
       required String fullName,
       required String totalHours}) async {
-    final headers = ['Date', 'Time In', 'Time Out', 'Signature'];
+    final headers = ['Date', 'Time In', 'Time Out', 'Multiplier', 'Signature'];
     final pdf = Document();
     final data = dataListObj
-        .map((logs) => [logs.date, logs.timeIn, logs.timeOut, logs.signature])
+        .map((logs) => [
+              logs.date,
+              logs.timeIn,
+              logs.timeOut,
+              logs.multiplier,
+              logs.signature
+            ])
         .toList();
 
     pdf.addPage(
-      MultiPage(
+      pw.MultiPage(
         header: (context) => Header(
           text: fullName,
           textStyle: TextStyle(
@@ -29,9 +35,13 @@ class PdfApi {
           ),
         ),
         build: (Context context) => <Widget>[
-          Table.fromTextArray(
+          pw.Table.fromTextArray(
             headers: headers,
             data: data,
+            cellStyle: const pw.TextStyle(
+              fontSize: 10,
+            ),
+            cellAlignment: (Alignment.center),
           ),
           SizedBox(height: 8),
           Paragraph(

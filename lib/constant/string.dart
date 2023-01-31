@@ -37,4 +37,7 @@ class HKSAStrings {
     "Columbres, Charlie",
     "Duenas, Monico"
   ];
+  static const dtrInfo =
+      "For your information, you can not time in or out if you are NOT between 7:30 AM to 8:00 PM. It also won't record your DTR logs even though you had timed in.";
+  static const signatureInfo = "Do not share your signature code to anyone.";
 }

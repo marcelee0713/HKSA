@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:hksa/constant/colors.dart';
 import 'package:hksa/models/scholar.dart';
+import 'package:hksa/pages/login.dart';
+import 'package:hksa/widgets/dialogs/dialog_loading.dart';
 
 class Profile extends StatefulWidget {
   const Profile({Key? key}) : super(key: key);
@@ -76,44 +78,46 @@ class _ProfileState extends State<Profile> {
             }
             return Column(
               mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Column(
-                  children: [
-                    const Icon(
-                      Icons.account_circle,
-                      size: 150,
-                    ),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    Text(
-                      snapshot.data!.first.name,
-                      style: const TextStyle(
-                        fontSize: 15,
-                        fontFamily: 'Inter',
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
+                Center(
+                  child: Column(
+                    children: [
+                      const Icon(
+                        Icons.account_circle,
+                        size: 150,
                       ),
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(
-                      height: 5,
-                    ),
-                    Text(
-                      snapshot.data!.first.phonenumber,
-                      style: const TextStyle(
-                        fontSize: 13,
-                        fontFamily: 'Inter',
-                        fontWeight: FontWeight.w300,
-                        color: Colors.black,
+                      const SizedBox(
+                        height: 20,
                       ),
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                  ],
+                      Text(
+                        snapshot.data!.first.name,
+                        style: const TextStyle(
+                          fontSize: 15,
+                          fontFamily: 'Inter',
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(
+                        height: 5,
+                      ),
+                      Text(
+                        snapshot.data!.first.phonenumber,
+                        style: const TextStyle(
+                          fontSize: 13,
+                          fontFamily: 'Inter',
+                          fontWeight: FontWeight.w300,
+                          color: Colors.black,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                    ],
+                  ),
                 ),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -265,6 +269,50 @@ class _ProfileState extends State<Profile> {
                       ],
                     ),
                   ],
+                ),
+                const SizedBox(height: 10),
+                Container(
+                  height: 2,
+                  color: ColorPalette.accentBlack,
+                ),
+                const SizedBox(height: 10),
+                SizedBox(
+                  child: InkWell(
+                    onTap: (() {
+                      setState(
+                        () {
+                          // Might be more soon
+                          // This includes the time in
+                          DialogLoading(subtext: "Logging out..")
+                              .buildLoadingScreen(context);
+
+                          Future.delayed(const Duration(seconds: 2), (() {
+                            logInBox.put("isLoggedIn", false);
+                            logInBox.put("hasTimedIn", false);
+                            logInBox.put("userType", "");
+                            logInBox.put("userID", "");
+                            logInBox.put("userName", "");
+                            logInBox.put("getTimeInLS", "");
+
+                            Navigator.of(context).pushAndRemoveUntil(
+                                MaterialPageRoute(
+                                    builder: (context) => const Login()),
+                                (Route<dynamic> route) => false);
+                          }));
+                        },
+                      );
+                    }),
+                    child: const Text(
+                      "Log out",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontFamily: 'Inter',
+                        fontSize: 14,
+                        fontWeight: FontWeight.w400,
+                        color: ColorPalette.primary,
+                      ),
+                    ),
+                  ),
                 ),
               ],
             );

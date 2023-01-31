@@ -21,8 +21,8 @@ class _ScholarHomeHeaderState extends State<ScholarHomeHeader> {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Container(
-          width: 125,
-          height: 125,
+          height: 150,
+          width: 150,
           decoration: const BoxDecoration(
             image: DecorationImage(
               image: AssetImage('assets/images/logo.png'),
