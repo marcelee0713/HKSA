@@ -43,14 +43,11 @@ class _ScholarHomeInputsState extends State<ScholarHomeInputs> {
     compare = DateTime.now();
     String compareTimeToday = DateFormat("yyyy-MM-dd").format(compare);
 
-    // So basically what this functions does is.
-    // That it won't make the user time in or out
-    // IF they are not between 7:30 am to 8:00 pm
-    // Who's still in school at 8:00pm anyways?
-
-    final nowTOD = TimeOfDay.now();
-    if (nowTOD.hour >= 20 || (nowTOD.hour <= 7 && nowTOD.minute <= 29)) {
-      hasTimedIn = true;
+    // Also what this does is that, when he timed in
+    // And he forgot to open the app and timed out at that day.
+    // The dtr will reset.
+    if (dateTimedInLS != compareTimeToday) {
+      hasTimedIn = false;
       hasTimedOut = true;
       timeIn = "";
       timeOut = "";
@@ -58,11 +55,16 @@ class _ScholarHomeInputsState extends State<ScholarHomeInputs> {
       logInBox.put("getTimeInLS", "");
     }
 
-    // Also what this does is that, when he timed in
-    // And he forgot to open the app and timed out at that day.
-    // The dtr will reset.
-    if (dateTimedInLS != compareTimeToday) {
-      hasTimedIn = false;
+    // So basically what this functions does is.
+    // That it won't make the user time in or out
+    // IF they are not between 7:30 am to 8:00 pm
+    // Who's still in school at 8:00pm anyways?
+
+    final nowTOD = TimeOfDay.now();
+    if (nowTOD.hour >= 20 ||
+        (nowTOD.hour <= 7 && nowTOD.minute <= 29) ||
+        nowTOD.hour == 0) {
+      hasTimedIn = true;
       hasTimedOut = true;
       timeIn = "";
       timeOut = "";
@@ -231,12 +233,6 @@ class _ScholarHomeInputsState extends State<ScholarHomeInputs> {
                         }
 
                         setState(() {
-                          logInBox.put("hasTimedIn", false);
-                          // logInBox.put("hasTimedOut", true);
-                          logInBox.put("getTimeInLS", "");
-                          hasTimedIn = false;
-                          hasTimedOut = true;
-
                           int multiplier =
                               int.parse(result.toString().substring(0, 1));
                           String signature = result.toString().substring(1);
@@ -291,7 +287,10 @@ class _ScholarHomeInputsState extends State<ScholarHomeInputs> {
                                         .child('Users/Scholars/$userID/hours')
                                         .set(totalDuration.inHours.toString()),
                                   });
-
+                          logInBox.put("hasTimedIn", false);
+                          logInBox.put("getTimeInLS", "");
+                          hasTimedIn = false;
+                          hasTimedOut = true;
                           Future.delayed(const Duration(seconds: 2), () {
                             Navigator.of(context, rootNavigator: true).pop();
                             DialogSuccess(

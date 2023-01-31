@@ -4,7 +4,12 @@ import 'package:hksa/constant/colors.dart';
 class ChatBox extends StatefulWidget {
   final String name;
   final String userId;
-  const ChatBox({super.key, required this.name, required this.userId});
+  final String pfpUrl;
+  const ChatBox(
+      {super.key,
+      required this.name,
+      required this.userId,
+      required this.pfpUrl});
 
   @override
   State<ChatBox> createState() => _ChatBoxState();
@@ -27,9 +32,18 @@ class _ChatBoxState extends State<ChatBox> {
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(
-                Icons.account_circle,
-                size: 40,
+              SizedBox(
+                width: 40,
+                height: 40,
+                child: AspectRatio(
+                  aspectRatio: 1 / 1,
+                  child: ClipOval(
+                    child: FadeInImage.assetNetwork(
+                        fit: BoxFit.cover,
+                        placeholder: 'assets/images/loading.gif',
+                        image: widget.pfpUrl),
+                  ),
+                ),
               ),
               const SizedBox(width: 8),
               Column(

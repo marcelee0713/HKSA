@@ -40,4 +40,6 @@ class HKSAStrings {
   static const dtrInfo =
       "For your information, you can not time in or out if you are NOT between 7:30 AM to 8:00 PM. It also won't record your DTR logs even though you had timed in.";
   static const signatureInfo = "Do not share your signature code to anyone.";
+  static const pfpPlaceholder =
+      "https://firebasestorage.googleapis.com/v0/b/hksa-3f5d4.appspot.com/o/placeholder%2Fuser-circle-svgrepo-com.png?alt=media&token=6d3e9450-20be-4ba6-aa2e-0fbece3ef967";
 }
