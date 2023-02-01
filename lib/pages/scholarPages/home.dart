@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:hive_flutter/hive_flutter.dart';
 import 'package:hksa/constant/colors.dart';
 import 'package:hksa/pages/scholarPages/chart.dart';
 import 'messages.dart';
@@ -7,7 +6,6 @@ import 'messages.dart';
 import 'dtr.dart';
 import 'profile.dart';
 import 'info.dart';
-import 'package:hksa/widgets/scholarWidgets/chart/chart_v00.dart';
 
 /*This class is the bottom navigation bar of the app
  * 1) Create a UI for navigation bar
@@ -23,7 +21,6 @@ class HomeScholar extends StatefulWidget {
 }
 
 class _HomeScholarState extends State<HomeScholar> {
-  final _myLoginBox = Hive.box('myLoginBox');
   // #2 is the page index of dtr.dart and is the first priority display
   int pageIndex = 2;
   final pages = [
@@ -42,12 +39,6 @@ class _HomeScholarState extends State<HomeScholar> {
         height: 60,
         decoration: const BoxDecoration(
           color: ColorPalette.primary,
-          /* if you want smooth borders
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(0),
-            topRight: Radius.circular(0),
-          ),
-          */
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,

@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:hksa/constant/colors.dart';
 import 'package:hksa/models/head.dart';
-import 'package:hksa/widgets/scholarWidgets/universal/view_head.dart';
-import 'package:hksa/widgets/scholarWidgets/universal/view_professor.dart';
+import 'package:hksa/widgets/universal/view_head.dart';
+import 'package:hksa/widgets/universal/view_professor.dart';
+import 'package:hksa/widgets/universal/view_scholar.dart';
 
 class ChatBox extends StatefulWidget {
   final String name;
@@ -37,6 +38,11 @@ class _ChatBoxState extends State<ChatBox> {
               context,
               MaterialPageRoute(
                   builder: (context) => HeadProfile(userID: widget.userId)));
+        } else if (widget.userType == "scholar") {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => ScholarProfile(userID: widget.userId)));
         }
       },
       child: Container(

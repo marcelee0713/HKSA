@@ -2,7 +2,9 @@ import 'dart:convert';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
+import 'package:hksa/models/professor.dart';
 import 'package:hksa/models/scholar.dart';
+import 'package:hksa/pages/professorPages/home.dart';
 import 'package:hksa/pages/register_scholar.dart';
 import 'package:hksa/pages/scholarPages/home.dart';
 import 'package:hksa/widgets/dialogs/dialog_loading.dart';
@@ -351,6 +353,71 @@ class _LogInInputsState extends State<LogInInputs> {
                                     doneCheckingUsers = true;
                                   })
                                 },
+                              if (userType == "professor")
+                                {
+                                  dbReference
+                                      .child('Users/Professors/')
+                                      .get()
+                                      .then((snapshot) {
+                                    for (final test in snapshot.children) {
+                                      if (test.key == userID) {
+                                        Map<String, dynamic> myObj =
+                                            jsonDecode(jsonEncode(test.value));
+
+                                        Professor myProfObj =
+                                            Professor.fromJson(myObj);
+                                        // Dito ka gumawa Monce
+
+                                        if (myProfObj.password ==
+                                            userPassword) {
+                                          debugPrint("IT MATCHES");
+
+                                          // Put it in our LocalStorage
+                                          // Para ma save yung login state niya.
+                                          // And also some other stuff that need
+                                          // to be stored.
+                                          _myLoginBox.put("isLoggedIn", true);
+                                          _myLoginBox.put("hasTimedIn", false);
+                                          _myLoginBox.put(
+                                              "userType", "professor");
+                                          _myLoginBox.put("userID", userID);
+                                          _myLoginBox.put(
+                                              "userName", myProfObj.name);
+                                          _myLoginBox.put("getTimeInLS", "");
+
+                                          // Will now go to the ProfPage
+                                          // And literally replace any pages.
+                                          Navigator.of(context)
+                                              .pushAndRemoveUntil(
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          const HomeProfessor(
+                                                            indexPassed: 1,
+                                                          )),
+                                                  (Route<dynamic> route) =>
+                                                      false);
+                                          userExist = true;
+                                          doneCheckingUsers = false;
+                                          break;
+                                        } else {
+                                          DialogUnsuccessful(
+                                            headertext: "Wrong Password.",
+                                            subtext:
+                                                "Seems like you entered the wrong password.",
+                                            textButton: "Close",
+                                            callback: (() => Navigator.of(
+                                                    context,
+                                                    rootNavigator: true)
+                                                .pop()),
+                                          ).buildUnsuccessfulScreen(context);
+                                          userExist = true;
+                                          break;
+                                        }
+                                      }
+                                    }
+                                    doneCheckingUsers = true;
+                                  })
+                                }
                             }),
                       ).whenComplete(() => {
                             Future.delayed(const Duration(milliseconds: 500),
