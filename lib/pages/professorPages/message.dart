@@ -2,13 +2,10 @@ import 'dart:convert';
 
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:hksa/constant/colors.dart';
-import 'package:hksa/main.dart';
 import 'package:hksa/models/chat.dart';
 import 'package:hksa/models/head.dart';
-import 'package:hksa/models/professor.dart';
-import 'package:hksa/widgets/dialogs/dialog_loading.dart';
+import 'package:hksa/models/scholar.dart';
 import 'package:hksa/widgets/scholarWidgets/messages/chat_box.dart';
 
 class Messages extends StatefulWidget {
@@ -25,7 +22,7 @@ class _MessagesState extends State<Messages> {
 
   // For Firebase
   DatabaseReference _profReference =
-      FirebaseDatabase.instance.ref().child("Users/Professors/");
+      FirebaseDatabase.instance.ref().child("Users/Scholars/");
   DatabaseReference _headReference =
       FirebaseDatabase.instance.ref().child("Users/Head/");
 
@@ -115,7 +112,7 @@ class _MessagesState extends State<Messages> {
           const SizedBox(height: 10),
           Expanded(
             child: FutureBuilder(
-              future: getProfessorAndHead(),
+              future: getScholarsAndHead(),
               builder: (context, AsyncSnapshot<List<Chat>> snapshot) {
                 if (!snapshot.hasData) {
                   return Center(
@@ -197,7 +194,7 @@ class _MessagesState extends State<Messages> {
     );
   }
 
-  Future<List<Chat>> getProfessorAndHead() async {
+  Future<List<Chat>> getScholarsAndHead() async {
     List<Chat> myAppList = [];
     try {
       await _headReference.get().then(
@@ -219,12 +216,12 @@ class _MessagesState extends State<Messages> {
         (snapshot) {
           for (final data in snapshot.children) {
             Map<String, dynamic> myObj = jsonDecode(jsonEncode(data.value));
-            Professor myProfessorObj = Professor.fromJson(myObj);
+            Scholar myScholarObj = Scholar.fromJson(myObj);
             Chat myChatObj = Chat(
-                name: myProfessorObj.name,
-                userId: myProfessorObj.professorId,
-                pfp: myProfessorObj.profilePicture,
-                userType: "professor");
+                name: myScholarObj.name,
+                userId: myScholarObj.studentNumber,
+                pfp: myScholarObj.profilePicture,
+                userType: "scholar");
             myAppList.add(myChatObj);
           }
         },

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:hksa/constant/colors.dart';
+import 'package:hksa/pages/professorPages/home.dart';
 import 'pages/login.dart';
 import 'pages/scholarPages/home.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -41,6 +42,11 @@ class MyApp extends StatelessWidget {
     if (userLoggedIn!) {
       if (userType == "scholar") {
         return const HomeScholar();
+      }
+      if (userType == "professor") {
+        return const HomeProfessor(
+          indexPassed: 1,
+        );
       }
     }
     return const Login();
