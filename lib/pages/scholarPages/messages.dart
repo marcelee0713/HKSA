@@ -4,6 +4,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:hksa/constant/colors.dart';
+import 'package:hksa/main.dart';
 import 'package:hksa/models/chat.dart';
 import 'package:hksa/models/head.dart';
 import 'package:hksa/models/professor.dart';
@@ -180,6 +181,7 @@ class _MessagesState extends State<Messages> {
                         name: snapshot.data![index].name,
                         userId: snapshot.data![index].userId,
                         pfpUrl: snapshot.data![index].pfp,
+                        userType: snapshot.data![index].userType,
                       );
                     }
                     return Container();
@@ -202,9 +204,11 @@ class _MessagesState extends State<Messages> {
             Map<String, dynamic> myObj = jsonDecode(jsonEncode(data.value));
             Head myHeadObj = Head.fromJson(myObj);
             Chat myChatObj = Chat(
-                name: myHeadObj.name,
-                userId: myHeadObj.userId,
-                pfp: myHeadObj.profilePicture);
+              name: myHeadObj.name,
+              userId: myHeadObj.userId,
+              pfp: myHeadObj.profilePicture,
+              userType: "head",
+            );
             myAppList.add(myChatObj);
           }
         },
@@ -217,7 +221,8 @@ class _MessagesState extends State<Messages> {
             Chat myChatObj = Chat(
                 name: myProfessorObj.name,
                 userId: myProfessorObj.professorId,
-                pfp: myProfessorObj.profilePicture);
+                pfp: myProfessorObj.profilePicture,
+                userType: "professor");
             myAppList.add(myChatObj);
           }
         },
