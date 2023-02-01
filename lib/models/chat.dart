@@ -9,21 +9,25 @@ class Chat {
     required this.name,
     required this.userId,
     required this.pfp,
+    required this.userType,
   });
 
   String name;
   String userId;
   String pfp;
+  String userType;
 
   factory Chat.fromJson(Map<String, dynamic> json) => Chat(
         name: json["name"],
         userId: json["userId"],
         pfp: json["pfp"],
+        userType: json["userType"],
       );
 
   Map<String, dynamic> toJson() => {
         "name": name,
         "userId": userId,
         "pfp": pfp,
+        "userType": userType,
       };
 }
