@@ -9,6 +9,7 @@ import 'package:hksa/api/storage_service.dart';
 import 'package:hksa/constant/colors.dart';
 import 'package:hksa/models/scholar.dart';
 import 'package:hksa/pages/login.dart';
+import 'package:hksa/widgets/dialogs/dialog_confirm.dart';
 import 'package:hksa/widgets/dialogs/dialog_loading.dart';
 import 'package:hksa/widgets/dialogs/dialog_success.dart';
 
@@ -30,13 +31,6 @@ class _ProfileState extends State<Profile> {
         .ref()
         .child("Users/Scholars/$userID/profilePicture");
 
-    dbReference.onValue.listen((event) {
-      if (mounted) {
-        setState(() {
-          userProfileListener = event.snapshot.value.toString();
-        });
-      }
-    });
     return Container(
       padding: const EdgeInsets.all(20),
       color: ColorPalette.secondary,
@@ -109,7 +103,7 @@ class _ProfileState extends State<Profile> {
                           child: FadeInImage.assetNetwork(
                               fit: BoxFit.cover,
                               placeholder: 'assets/images/loading.gif',
-                              image: snapshot.data!.first.profilePicture),
+                              image: userProfileListener),
                         ),
                       ),
                     ),
@@ -307,29 +301,31 @@ class _ProfileState extends State<Profile> {
                   SizedBox(
                     child: InkWell(
                       onTap: (() {
-                        setState(
-                          () {
-                            // Might be more soon
-                            // This includes the time in
-                            DialogLoading(subtext: "Logging out..")
-                                .buildLoadingScreen(context);
+                        DialogConfirm(
+                            headertext: "Are you sure you want to log out?",
+                            callback: () {
+                              // Might be more soon
+                              // This includes the time in
+                              Future.delayed(const Duration(), (() {
+                                DialogLoading(subtext: "Logging out...")
+                                    .buildLoadingScreen(context);
+                              })).whenComplete(() {
+                                Future.delayed(const Duration(seconds: 3), () {
+                                  logInBox.put("isLoggedIn", false);
+                                  logInBox.put("hasTimedIn", false);
+                                  logInBox.put("userType", "");
+                                  logInBox.put("userID", "");
+                                  logInBox.put("userName", "");
+                                  logInBox.put("getTimeInLS", "");
+                                  logInBox.put("dateTimedIn", "");
 
-                            Future.delayed(const Duration(seconds: 2), (() {
-                              logInBox.put("isLoggedIn", false);
-                              logInBox.put("hasTimedIn", false);
-                              logInBox.put("userType", "");
-                              logInBox.put("userID", "");
-                              logInBox.put("userName", "");
-                              logInBox.put("getTimeInLS", "");
-                              logInBox.put("dateTimedIn", "");
-
-                              Navigator.of(context).pushAndRemoveUntil(
-                                  MaterialPageRoute(
-                                      builder: (context) => const Login()),
-                                  (Route<dynamic> route) => false);
-                            }));
-                          },
-                        );
+                                  Navigator.of(context).pushAndRemoveUntil(
+                                      MaterialPageRoute(
+                                          builder: (context) => const Login()),
+                                      (Route<dynamic> route) => false);
+                                });
+                              });
+                            }).buildConfirmScreen(context);
                       }),
                       child: const Text(
                         "Log out",
@@ -381,6 +377,10 @@ class _ProfileState extends State<Profile> {
                       await storage.changeScholarPfp(path, fileName, userID,
                           snapshot.data!.first.profilePicture, () {
                         Future.delayed(const Duration(seconds: 3), () {
+                          setState(() {
+                            userProfileListener =
+                                snapshot.data!.first.profilePicture;
+                          });
                           Navigator.of(context, rootNavigator: true).pop();
                           DialogSuccess(
                               headertext: "Profile Picture Changed!",
@@ -421,7 +421,7 @@ class _ProfileState extends State<Profile> {
       await _userReference.get().then((snapshot) {
         Map<String, dynamic> myObj = jsonDecode(jsonEncode(snapshot.value));
         Scholar myScholar = Scholar.fromJson(myObj);
-
+        userProfileListener = myScholar.profilePicture;
         myUser.add(myScholar);
       });
       return myUser;
