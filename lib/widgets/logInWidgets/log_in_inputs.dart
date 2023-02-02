@@ -270,7 +270,6 @@ class _LogInInputsState extends State<LogInInputs> {
                       Future.delayed(
                         const Duration(seconds: 2),
                         (() => {
-                              Navigator.of(context, rootNavigator: true).pop(),
                               if (userType == "scholar")
                                 {
                                   dbReference
@@ -286,6 +285,9 @@ class _LogInInputsState extends State<LogInInputs> {
                                             Scholar.fromJson(myObj);
 
                                         if (myScholarObj.status == "inactive") {
+                                          Navigator.of(context,
+                                                  rootNavigator: true)
+                                              .pop();
                                           userActive = false;
                                           DialogUnsuccessful(
                                             headertext:
@@ -307,6 +309,9 @@ class _LogInInputsState extends State<LogInInputs> {
                                         if (myScholarObj.password ==
                                             userPassword) {
                                           debugPrint("IT MATCHES");
+                                          Navigator.of(context,
+                                                  rootNavigator: true)
+                                              .pop();
 
                                           // Put it in our LocalStorage
                                           // Para ma save yung login state niya.
@@ -335,6 +340,9 @@ class _LogInInputsState extends State<LogInInputs> {
                                           doneCheckingUsers = false;
                                           break;
                                         } else {
+                                          Navigator.of(context,
+                                                  rootNavigator: true)
+                                              .pop();
                                           DialogUnsuccessful(
                                             headertext: "Wrong Password.",
                                             subtext:
@@ -371,6 +379,9 @@ class _LogInInputsState extends State<LogInInputs> {
                                         if (myProfObj.password ==
                                             userPassword) {
                                           debugPrint("IT MATCHES");
+                                          Navigator.of(context,
+                                                  rootNavigator: true)
+                                              .pop();
 
                                           // Put it in our LocalStorage
                                           // Para ma save yung login state niya.
@@ -387,19 +398,21 @@ class _LogInInputsState extends State<LogInInputs> {
 
                                           // Will now go to the ProfPage
                                           // And literally replace any pages.
-                                          Navigator.of(context)
+                                          Navigator.of(
+                                                  context)
                                               .pushAndRemoveUntil(
                                                   MaterialPageRoute(
                                                       builder: (context) =>
-                                                          const HomeProfessor(
-                                                            indexPassed: 1,
-                                                          )),
+                                                          const HomeProfessor()),
                                                   (Route<dynamic> route) =>
                                                       false);
                                           userExist = true;
                                           doneCheckingUsers = false;
                                           break;
                                         } else {
+                                          Navigator.of(context,
+                                                  rootNavigator: true)
+                                              .pop();
                                           DialogUnsuccessful(
                                             headertext: "Wrong Password.",
                                             subtext:
@@ -422,18 +435,36 @@ class _LogInInputsState extends State<LogInInputs> {
                       ).whenComplete(() => {
                             Future.delayed(const Duration(milliseconds: 500),
                                 () async {
-                              if (!userExist &&
-                                  doneCheckingUsers &&
-                                  userActive) {
-                                DialogUnsuccessful(
-                                  headertext: "USER NOT FOUND",
-                                  subtext:
-                                      "Sorry, we can't find that user in our database or maybe you're not connected to the internet.",
-                                  textButton: "Close",
-                                  callback: (() =>
-                                      Navigator.of(context, rootNavigator: true)
-                                          .pop()),
-                                ).buildUnsuccessfulScreen(context);
+                              if (userType == "scholar") {
+                                if (!userExist &&
+                                    doneCheckingUsers &&
+                                    userActive) {
+                                  Navigator.of(context, rootNavigator: true)
+                                      .pop();
+                                  DialogUnsuccessful(
+                                    headertext: "USER NOT FOUND",
+                                    subtext:
+                                        "Sorry, we can't find that user in our database or maybe you're not connected to the internet.",
+                                    textButton: "Close",
+                                    callback: (() => Navigator.of(context,
+                                            rootNavigator: true)
+                                        .pop()),
+                                  ).buildUnsuccessfulScreen(context);
+                                }
+                              } else if (userType == "professor") {
+                                if (!userExist && doneCheckingUsers) {
+                                  Navigator.of(context, rootNavigator: true)
+                                      .pop();
+                                  DialogUnsuccessful(
+                                    headertext: "USER NOT FOUND",
+                                    subtext:
+                                        "Sorry, we can't find that user in our database or maybe you're not connected to the internet.",
+                                    textButton: "Close",
+                                    callback: (() => Navigator.of(context,
+                                            rootNavigator: true)
+                                        .pop()),
+                                  ).buildUnsuccessfulScreen(context);
+                                }
                               }
                             })
                           });

@@ -12,6 +12,7 @@ import 'package:hksa/pages/login.dart';
 import 'package:hksa/widgets/dialogs/dialog_confirm.dart';
 import 'package:hksa/widgets/dialogs/dialog_loading.dart';
 import 'package:hksa/widgets/dialogs/dialog_success.dart';
+import 'package:hksa/widgets/professorWidgets/profile/change_signature.dart';
 
 class ProfProfile extends StatefulWidget {
   const ProfProfile({super.key});
@@ -29,7 +30,7 @@ class _ProfProfileState extends State<ProfProfile> {
   Widget build(BuildContext context) {
     DatabaseReference dbReference = FirebaseDatabase.instance
         .ref()
-        .child("Users/Professors/$userID/profilePicture");
+        .child("Users/Professors/$userID/signaturecode");
     return Container(
       padding: const EdgeInsets.all(20),
       color: ColorPalette.secondary,
@@ -346,56 +347,29 @@ class _ProfProfileState extends State<ProfProfile> {
                   const SizedBox(height: 8),
                   InkWell(
                     onTap: () async {
-                      final results = await FilePicker.platform.pickFiles(
-                        allowMultiple: false,
-                        type: FileType.custom,
-                        allowedExtensions: ['png', 'jpg'],
-                      );
+                      final result = await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                ChangeProfessorSignature(userID: userID),
+                          ));
 
-                      if (results == null) {
-                        // ignore: use_build_context_synchronously
-                        Flushbar(
-                          backgroundColor: ColorPalette.primary,
-                          messageText: const Text(
-                            "Enter an image!",
-                            style: TextStyle(
-                              fontFamily: 'Inter',
-                              fontSize: 14,
-                              color: ColorPalette.accentWhite,
-                            ),
-                          ),
-                          duration: const Duration(seconds: 3),
-                        ).show(context);
+                      if (result == null) {
                         return;
                       }
-                      // ignore: use_build_context_synchronously
-                      DialogLoading(subtext: "Changing...")
-                          .buildLoadingScreen(context);
+                      await dbReference.set(result.toString());
 
-                      final path = results.files.single.path!;
-                      final fileName = results.files.single.name;
-
-                      debugPrint(path);
-                      debugPrint(fileName);
-
-                      await storage.changeProfPfp(path, fileName, userID,
-                          snapshot.data!.first.profilePicture, () {
-                        Future.delayed(const Duration(seconds: 3), () {
-                          setState(() {
-                            userProfileListener =
-                                snapshot.data!.first.profilePicture;
-                          });
-                          Navigator.of(context, rootNavigator: true).pop();
-                          DialogSuccess(
-                              headertext: "Profile Picture Changed!",
-                              subtext:
-                                  "Didn't showed? Restart or go to a different page and comeback!",
-                              textButton: "Close",
-                              callback: () {
-                                Navigator.of(context, rootNavigator: true)
-                                    .pop();
-                              }).buildSuccessScreen(context);
-                        });
+                      Future.delayed(const Duration(seconds: 2), () {
+                        Navigator.of(context, rootNavigator: true).pop();
+                      }).whenComplete(() {
+                        DialogSuccess(
+                            headertext: "Successfully changed!",
+                            subtext:
+                                "You successfully changed your signature! Remember not to show this to anyone.",
+                            textButton: "Close",
+                            callback: () {
+                              Navigator.of(context, rootNavigator: true).pop();
+                            }).buildSuccessScreen(context);
                       });
                     },
                     child: const Text(

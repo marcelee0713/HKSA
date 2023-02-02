@@ -5,8 +5,7 @@ import 'package:hksa/pages/professorPages/message.dart';
 import 'package:hksa/pages/professorPages/profile.dart';
 
 class HomeProfessor extends StatefulWidget {
-  final int indexPassed;
-  const HomeProfessor({super.key, required this.indexPassed});
+  const HomeProfessor({super.key});
 
   @override
   State<HomeProfessor> createState() => _HomeProfessorState();
