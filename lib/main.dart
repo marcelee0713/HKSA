@@ -44,9 +44,7 @@ class MyApp extends StatelessWidget {
         return const HomeScholar();
       }
       if (userType == "professor") {
-        return const HomeProfessor(
-          indexPassed: 1,
-        );
+        return const HomeProfessor();
       }
     }
     return const Login();
