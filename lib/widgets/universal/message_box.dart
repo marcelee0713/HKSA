@@ -29,6 +29,7 @@ class _MessageBoxState extends State<MessageBox> {
         constraints: const BoxConstraints(
           minHeight: 40,
           minWidth: 40,
+          maxWidth: 250,
         ),
         child: Container(
           margin: const EdgeInsets.only(bottom: 10),
@@ -41,7 +42,7 @@ class _MessageBoxState extends State<MessageBox> {
               Container(
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(50),
+                  borderRadius: BorderRadius.circular(10),
                   color: widget.sender == userID
                       ? ColorPalette.accentDarkWhite
                       : ColorPalette.secondary,

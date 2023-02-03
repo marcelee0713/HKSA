@@ -218,7 +218,8 @@ class _InboxState extends State<Inbox> {
                             height: 50,
                             child: TextFormField(
                               autofocus: true,
-                              keyboardType: TextInputType.text,
+                              maxLines: null,
+                              keyboardType: TextInputType.multiline,
                               controller: _inputControllerMessage,
                               decoration: InputDecoration(
                                 errorStyle: const TextStyle(height: 0),
@@ -239,6 +240,8 @@ class _InboxState extends State<Inbox> {
                                   fontStyle: FontStyle.italic,
                                 ),
                                 hintText: "Send message...",
+                                contentPadding: const EdgeInsets.only(
+                                    left: 8.0, bottom: 8.0, top: 8.0),
                               ),
                               style: const TextStyle(
                                 color: ColorPalette.primary,
