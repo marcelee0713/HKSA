@@ -4,6 +4,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:hksa/constant/colors.dart';
 import 'package:hksa/models/scholar.dart';
+import 'package:hksa/widgets/universal/view_inbox.dart';
 
 class ScholarProfile extends StatefulWidget {
   final String userID;
@@ -284,7 +285,15 @@ class _ScholarProfileState extends State<ScholarProfile> {
                 ),
                 ElevatedButton(
                   onPressed: () {
-                    // pushReplacement to chat
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => Inbox(
+                                  receiverFullName: snapshot.data!.first.name,
+                                  receiverID:
+                                      snapshot.data!.first.studentNumber,
+                                  receiverType: "scholar",
+                                )));
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: ColorPalette.accentDarkWhite,

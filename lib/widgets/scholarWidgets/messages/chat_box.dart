@@ -3,6 +3,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:hksa/constant/colors.dart';
 import 'package:hksa/models/head.dart';
 import 'package:hksa/widgets/universal/view_head.dart';
+import 'package:hksa/widgets/universal/view_inbox.dart';
 import 'package:hksa/widgets/universal/view_professor.dart';
 import 'package:hksa/widgets/universal/view_scholar.dart';
 
@@ -102,7 +103,16 @@ class _ChatBoxState extends State<ChatBox> {
             ),
             InkWell(
               onTap: () {
-                debugPrint("HELLO CHAT AKO");
+                // Basically it will take the full name and user ID of the user
+                // he wants to chat.
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => Inbox(
+                              receiverFullName: widget.name,
+                              receiverID: widget.userId,
+                              receiverType: widget.userType,
+                            )));
               },
               child: const Icon(
                 Icons.chat_bubble,
