@@ -51,7 +51,7 @@ class _MessageBoxState extends State<MessageBox> {
                   children: [
                     Text(
                       widget.message,
-                      textAlign: TextAlign.center,
+                      textAlign: TextAlign.start,
                     ),
                   ],
                 ),
