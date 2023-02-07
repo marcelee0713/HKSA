@@ -32,7 +32,9 @@ class _InboxState extends State<Inbox> {
   final logInBox = Hive.box("myLoginBox");
   late var userID = logInBox.get("userID");
   late var userType = logInBox.get("userType");
-  late var receiverUserType = "${widget.receiverType}s";
+  late var receiverUserType = widget.receiverType == "head"
+      ? widget.receiverType
+      : "${widget.receiverType}s";
 
   @override
   void initState() {
@@ -330,6 +332,8 @@ class _InboxState extends State<Inbox> {
   Future sendMessage({required String message}) async {
     // ALSO MAKE AN INBOX OF THIS USER TO THE RECEIVER
     // For this user storage
+
+    debugPrint(receiverUserType);
 
     DateTime now = DateTime.now();
     String formattedDate = DateFormat("hh:mm aaaaa yyyy-MM-dd").format(now);

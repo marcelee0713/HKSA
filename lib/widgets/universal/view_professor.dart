@@ -1,9 +1,17 @@
 import 'dart:convert';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 import 'package:hksa/constant/colors.dart';
+import 'package:hksa/constant/string.dart';
 import 'package:hksa/models/professor.dart';
+import 'package:hksa/pages/adminPages/contact.dart';
+import 'package:hksa/widgets/dialogs/dialog_confirm.dart';
+import 'package:hksa/widgets/dialogs/dialog_edit_professor.dart';
+import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:hksa/widgets/universal/view_inbox.dart';
 
 class ProfessorProfile extends StatefulWidget {
@@ -18,6 +26,8 @@ class ProfessorProfile extends StatefulWidget {
 }
 
 class _ProfessorProfileState extends State<ProfessorProfile> {
+  final logInBox = Hive.box("myLoginBox");
+  late var userType = logInBox.get("userType");
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -220,30 +230,108 @@ class _ProfessorProfileState extends State<ProfessorProfile> {
                     const SizedBox(
                       height: 10,
                     ),
-                    ElevatedButton(
-                      onPressed: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => Inbox(
-                                      receiverFullName:
-                                          snapshot.data!.first.name,
-                                      receiverID:
-                                          snapshot.data!.first.professorId,
-                                      receiverType: "professor",
-                                    )));
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: ColorPalette.accentDarkWhite,
-                      ),
-                      child: const Text(
-                        "Message",
-                        style: TextStyle(
-                            fontFamily: 'Inter',
-                            fontSize: 16,
-                            fontWeight: FontWeight.w400,
-                            color: ColorPalette.primary),
-                      ),
+                    Row(
+                      children: [
+                        ElevatedButton(
+                          onPressed: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => Inbox(
+                                          receiverFullName:
+                                              snapshot.data!.first.name,
+                                          receiverID:
+                                              snapshot.data!.first.professorId,
+                                          receiverType: "professor",
+                                        )));
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: ColorPalette.accentDarkWhite,
+                          ),
+                          child: const Text(
+                            "Message",
+                            style: TextStyle(
+                                fontFamily: 'Inter',
+                                fontSize: 16,
+                                fontWeight: FontWeight.w400,
+                                color: ColorPalette.primary),
+                          ),
+                        ),
+                        const SizedBox(width: 2),
+                        userType == "head"
+                            ? ElevatedButton(
+                                onPressed: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => EditProfessor(
+                                              userID: snapshot
+                                                  .data!.first.professorId)));
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: ColorPalette.accentDarkWhite,
+                                ),
+                                child: const Text(
+                                  "Edit",
+                                  style: TextStyle(
+                                      fontFamily: 'Inter',
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w400,
+                                      color: ColorPalette.primary),
+                                ),
+                              )
+                            : const SizedBox(),
+                        const SizedBox(width: 2),
+                        userType == "head"
+                            ? ElevatedButton(
+                                onPressed: () {
+                                  DialogConfirm(
+                                      headertext:
+                                          "Are you sure you want to delete this user?",
+                                      callback: () async {
+                                        final DatabaseReference userReference =
+                                            FirebaseDatabase.instance.ref().child(
+                                                'Users/Professors/${widget.userID}');
+
+                                        await userReference.remove();
+                                        if (FirebaseStorage.instance.refFromURL(
+                                                snapshot.data!.first
+                                                    .profilePicture) !=
+                                            FirebaseStorage.instance.refFromURL(
+                                                HKSAStrings.pfpPlaceholder)) {
+                                          await FirebaseStorage.instance
+                                              .refFromURL(snapshot
+                                                  .data!.first.profilePicture)
+                                              .delete();
+                                        }
+
+                                        // ignore: use_build_context_synchronously
+                                        Navigator.of(context,
+                                                rootNavigator: true)
+                                            .pop();
+
+                                        // ignore: use_build_context_synchronously
+                                        Navigator.pushReplacement(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    const AdminContacts()));
+                                      }).buildConfirmScreen(context);
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: ColorPalette.errorColor,
+                                ),
+                                child: const Text(
+                                  "Delete",
+                                  style: TextStyle(
+                                      fontFamily: 'Inter',
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w400,
+                                      color: ColorPalette.accentWhite),
+                                ),
+                              )
+                            : const SizedBox(),
+                      ],
                     ),
                   ],
                 ),

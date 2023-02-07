@@ -30,6 +30,7 @@ class DialogConfirm {
                     children: [
                       Text(
                         headertext,
+                        textAlign: TextAlign.center,
                         style: const TextStyle(
                           color: ColorPalette.accentWhite,
                           fontFamily: 'Inter',
@@ -88,41 +89,3 @@ class DialogConfirm {
         });
   }
 }
-/*
-          return Center(
-            child: Container(
-              padding: const EdgeInsets.all(10),
-              decoration: const BoxDecoration(
-                color: ColorPalette.secondary,
-                borderRadius: BorderRadius.all(Radius.circular(10)),
-              ),
-              height: 200,
-              width: 300,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Text(
-                    headertext,
-                    style: const TextStyle(
-                      color: ColorPalette.accentWhite,
-                      fontFamily: 'Inter',
-                      fontWeight: FontWeight.w700,
-                      fontSize: 14,
-                    ),
-                  ),
-                  Row(
-                    children: [
-                      Checkbox(
-                          value: isChecked,
-                          activeColor: ColorPalette.accentBlack,
-                          onChanged: (newBool) {
-                            isChecked = newBool;
-                          })
-                    ],
-                  )
-                ],
-              ),
-            ),
-          );
-          */
