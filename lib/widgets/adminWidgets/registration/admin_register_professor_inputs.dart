@@ -1,28 +1,30 @@
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:hksa/constant/colors.dart';
-import 'package:firebase_database/firebase_database.dart';
 import 'package:hksa/constant/string.dart';
-import 'package:hksa/models/scholar.dart';
-import 'package:hksa/pages/login.dart';
+import 'package:hksa/models/professor.dart';
+import 'package:hksa/pages/adminPages/registration.dart';
+import 'package:hksa/widgets/adminWidgets/nav_drawer.dart';
 import 'package:hksa/widgets/dialogs/dialog_loading.dart';
 import 'package:hksa/widgets/dialogs/dialog_success.dart';
 import 'package:hksa/widgets/dialogs/dialog_unsuccessful.dart';
 
-class RegisterInputs extends StatefulWidget {
-  const RegisterInputs({super.key});
+class AdminRegisterProfessorInputs extends StatefulWidget {
+  const AdminRegisterProfessorInputs({super.key});
 
   @override
-  State<RegisterInputs> createState() => _RegisterInputsState();
+  State<AdminRegisterProfessorInputs> createState() =>
+      _AdminRegisterProfessorInputsState();
 }
 
-class _RegisterInputsState extends State<RegisterInputs> {
-  // For DropDown Default Values
-  String? coursesValue;
-  String? hkTypeValue;
+class _AdminRegisterProfessorInputsState
+    extends State<AdminRegisterProfessorInputs> {
+  String? departmentValue;
 
   bool _passwordVisible = false;
   bool _cfrmPasswordVisible = false;
-  final _inputControllerStudentNumberID = TextEditingController();
+
+  final _inputControllerProfessorID = TextEditingController();
   final _inputControllerLastName = TextEditingController();
   final _inputControllerFirstName = TextEditingController();
   final _inputControllerMiddleName = TextEditingController();
@@ -30,6 +32,7 @@ class _RegisterInputsState extends State<RegisterInputs> {
   final _inputControllerPhoneNumber = TextEditingController();
   final _inputControllerPassword = TextEditingController();
   final _inputControllerCfrmPassword = TextEditingController();
+  final _inputControllerSignatureCode = TextEditingController();
 
   final _formKey = GlobalKey<FormState>();
 
@@ -42,19 +45,19 @@ class _RegisterInputsState extends State<RegisterInputs> {
 
   @override
   Widget build(BuildContext context) {
-    DatabaseReference _testReference =
-        FirebaseDatabase.instance.ref().child("Users/Scholars/");
+    final DatabaseReference _dbReference =
+        FirebaseDatabase.instance.ref().child("Users/Professors/");
     return Form(
       key: _formKey,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           TextFormField(
-            controller: _inputControllerStudentNumberID,
+            controller: _inputControllerProfessorID,
             maxLength: 20,
             validator: (value) {
-              final bool studentIdValid = RegExp(r"^[0-9-]+$").hasMatch(value!);
-              if (studentIdValid && value.length >= 10) {
+              final bool profIdValid = RegExp(r"^[0-9-]+$").hasMatch(value!);
+              if (profIdValid && value.length >= 10) {
                 return null;
               } else if (value.length <= 9 && value.isNotEmpty) {
                 return "Input is too short.";
@@ -81,7 +84,7 @@ class _RegisterInputsState extends State<RegisterInputs> {
                 fontWeight: FontWeight.w300,
                 fontStyle: FontStyle.italic,
               ),
-              hintText: "Student Number (XX-XNXX-XXXXX)",
+              hintText: "Professor Number (XX-XNXX-XXXXX)",
             ),
             style: const TextStyle(
               color: ColorPalette.primary,
@@ -203,7 +206,7 @@ class _RegisterInputsState extends State<RegisterInputs> {
             child: DropdownButtonHideUnderline(
               child: DropdownButton(
                 hint: const Text(
-                  "Courses",
+                  "Enter Department",
                   style: TextStyle(
                     fontFamily: 'Inter',
                     fontSize: 14,
@@ -211,48 +214,18 @@ class _RegisterInputsState extends State<RegisterInputs> {
                     fontWeight: FontWeight.w300,
                   ),
                 ),
-                value: coursesValue,
+                value: departmentValue,
                 isExpanded: true,
                 iconSize: 32,
                 icon: const Icon(
                   Icons.arrow_drop_down,
                   color: ColorPalette.primary,
                 ),
-                items: HKSAStrings.courses.map(buildMenuItemCourses).toList(),
-                onChanged: ((coursesValue) => setState(() {
-                      this.coursesValue = coursesValue ?? "";
-                    })),
-              ),
-            ),
-          ),
-          const SizedBox(height: 18),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
-              color: ColorPalette.accentDarkWhite,
-            ),
-            child: DropdownButtonHideUnderline(
-              child: DropdownButton(
-                hint: const Text(
-                  "HK Type",
-                  style: TextStyle(
-                    fontFamily: 'Inter',
-                    fontSize: 14,
-                    fontStyle: FontStyle.italic,
-                    fontWeight: FontWeight.w300,
-                  ),
-                ),
-                value: hkTypeValue,
-                isExpanded: true,
-                iconSize: 32,
-                icon: const Icon(
-                  Icons.arrow_drop_down,
-                  color: ColorPalette.primary,
-                ),
-                items: HKSAStrings.hkTypes.map(buildMenuItemHKTypes).toList(),
-                onChanged: ((hkTypeValue) => setState(() {
-                      this.hkTypeValue = hkTypeValue ?? "";
+                items: HKSAStrings.departments
+                    .map(buildMenuItemDepartments)
+                    .toList(),
+                onChanged: ((departmentValue) => setState(() {
+                      this.departmentValue = departmentValue ?? "";
                     })),
               ),
             ),
@@ -455,6 +428,43 @@ class _RegisterInputsState extends State<RegisterInputs> {
             ),
           ),
           const SizedBox(height: 18),
+          TextFormField(
+            controller: _inputControllerSignatureCode,
+            maxLength: 20,
+            validator: (value) {
+              if (value!.isNotEmpty) {
+                return null;
+              } else {
+                return "Enter an input.";
+              }
+            },
+            keyboardType: TextInputType.text,
+            decoration: InputDecoration(
+              counterText: "",
+              enabledBorder: OutlineInputBorder(
+                borderSide: const BorderSide(color: Colors.transparent),
+                borderRadius: BorderRadius.circular(10.0),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderSide: const BorderSide(color: Colors.transparent),
+                borderRadius: BorderRadius.circular(10.0),
+              ),
+              filled: true,
+              fillColor: ColorPalette.accentDarkWhite,
+              hintStyle: const TextStyle(
+                fontWeight: FontWeight.w300,
+                fontStyle: FontStyle.italic,
+              ),
+              hintText: "Signature Code",
+            ),
+            style: const TextStyle(
+              color: ColorPalette.primary,
+              fontFamily: 'Inter',
+              fontSize: 14,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          const SizedBox(height: 18),
           Container(
             width: 125,
             height: 60,
@@ -469,104 +479,85 @@ class _RegisterInputsState extends State<RegisterInputs> {
               onPressed: (() {
                 setState(() {
                   if (!_formKey.currentState!.validate() ||
-                      coursesValue == null ||
-                      hkTypeValue == null) {
+                      departmentValue == null) {
                     return;
                   }
-                  // This is where it finds the user in the firebase database
-                  // And if it did find it will log in depends on the user type
-                  // if not. It will pop up a modal that it will show
-                  // NO USER FOUND
 
-                  // Show loading screen for 2 seconds
                   DialogLoading(subtext: "Creating...")
                       .buildLoadingScreen(context);
 
-                  String studentNumber =
-                      _inputControllerStudentNumberID.text.trim();
+                  String professorID = _inputControllerProfessorID.text.trim();
                   String fullName =
                       "${_inputControllerLastName.text.trim()} ${_inputControllerFirstName.text.trim()} ${_inputControllerMiddleName.text.trim()}";
-                  String? course = coursesValue;
-                  String? hkType = hkTypeValue;
+                  String? department = departmentValue;
                   String email = _inputControllerEmail.text.trim();
                   String phoneNumber = _inputControllerPhoneNumber.text.trim();
                   String password = _inputControllerCfrmPassword.text.trim();
-                  String hours = "0";
-                  String status = "active";
-                  String totalHoursInDisplay = "0:00:00";
-                  String totalHoursInDuration = "0:00:00.000000";
-                  String totalHoursRequired = "";
-                  String isFinished = "false";
+                  String signature = _inputControllerSignatureCode.text.trim();
                   bool userExist = false;
 
-                  Future.delayed(
-                      const Duration(seconds: 2),
-                      (() => {
-                            _testReference.get().then((snapshot) {
-                              for (final test in snapshot.children) {
-                                if (test.key == studentNumber) {
-                                  userExist = true;
-                                  break;
-                                }
-                              }
-                            })
-                          })).whenComplete(() => {
-                        Future.delayed(const Duration(milliseconds: 2500),
-                            () async {
-                          Navigator.of(context, rootNavigator: true).pop();
-                          if (userExist) {
-                            // Show a new a dialog that this user already exist
-                            DialogUnsuccessful(
-                              headertext: "Account already exist!",
-                              subtext:
-                                  "If you think this is wrong. Please contact or go to the CSDL Department immediately!",
-                              textButton: "Close",
-                              callback: (() =>
-                                  Navigator.of(context, rootNavigator: true)
-                                      .pop()),
-                            ).buildUnsuccessfulScreen(context);
-                          } else {
-                            // If it doesn't exist then let's create a new account
-                            // Show a new dialog that this user is now successfully created.
-                            if (hkType == "25%") {
-                              totalHoursRequired = "60";
-                            } else if (hkType == "50%" || hkType == "75%") {
-                              totalHoursRequired = "90";
-                            } else if (hkType == "100%") {
-                              totalHoursRequired = "90";
-                            } else if (hkType == "SA") {
-                              totalHoursRequired = "360";
+                  Future.delayed(const Duration(seconds: 2), () async {
+                    await _dbReference.get().then((snapshot) {
+                      for (final test in snapshot.children) {
+                        if (test.key == professorID) {
+                          userExist = true;
+                          break;
+                        }
+                      }
+                    }).whenComplete(() => {
+                          Future.delayed(const Duration(milliseconds: 2500),
+                              () async {
+                            if (userExist) {
+                              // Show a new a dialog that this user already exist
+                              Navigator.of(context, rootNavigator: true).pop();
+                              DialogUnsuccessful(
+                                headertext: "Account already exist!",
+                                subtext:
+                                    "If you think this is wrong. Please contact or go to the CSDL Department immediately!",
+                                textButton: "Close",
+                                callback: (() =>
+                                    Navigator.of(context, rootNavigator: true)
+                                        .pop()),
+                              ).buildUnsuccessfulScreen(context);
+                            } else {
+                              Professor scholarObj = Professor(
+                                  department: department.toString(),
+                                  email: email,
+                                  name: fullName,
+                                  password: password,
+                                  phonenumber: phoneNumber,
+                                  professorId: professorID,
+                                  signaturecode: signature,
+                                  profilePicture: HKSAStrings.pfpPlaceholder);
+
+                              await _dbReference
+                                  .child(professorID)
+                                  .set(scholarObj.toJson());
+
+                              // ignore: use_build_context_synchronously
+                              Navigator.of(context, rootNavigator: true).pop();
+
+                              // ignore: use_build_context_synchronously
+                              DialogSuccess(
+                                headertext: "Successfully Registered!",
+                                subtext: "You have registered a professor!",
+                                textButton: "Go back",
+                                callback: () {
+                                  setState(() {
+                                    selectedIndex = 3;
+                                  });
+                                  // Will replace literally every page, that includes dialogs and others.
+                                  Navigator.of(context).pushAndRemoveUntil(
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              const AdminRegistration()),
+                                      (Route<dynamic> route) => false);
+                                },
+                              ).buildSuccessScreen(context);
                             }
-                            Scholar scholarObj = Scholar(
-                                studentNumber: studentNumber,
-                                name: fullName,
-                                course: course.toString(),
-                                email: email,
-                                phonenumber: phoneNumber,
-                                password: password,
-                                hkType: hkType.toString(),
-                                hours: hours,
-                                status: status,
-                                totalHoursInDisplay: totalHoursInDisplay,
-                                totalHoursInDuration: totalHoursInDuration,
-                                totalHoursRequired: totalHoursRequired,
-                                isFinished: isFinished,
-                                profilePicture: HKSAStrings.pfpPlaceholder);
-
-                            await _testReference
-                                .child(studentNumber)
-                                .set(scholarObj.toJson());
-
-                            // ignore: use_build_context_synchronously
-                            DialogSuccess(
-                                    headertext: "Successfully Registered!",
-                                    subtext: "You are now registered!",
-                                    textButton: "Log in",
-                                    callback: goBackToLogin)
-                                .buildSuccessScreen(context);
-                          }
-                        })
-                      });
+                          })
+                        });
+                  });
                 });
               }),
               child: const Text(
@@ -585,27 +576,7 @@ class _RegisterInputsState extends State<RegisterInputs> {
     );
   }
 
-  void goBackToLogin() {
-    // Will replace literally every page, that includes dialogs and others.
-    Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(builder: (context) => const Login()),
-        (Route<dynamic> route) => false);
-  }
-
-  DropdownMenuItem<String> buildMenuItemCourses(String item) =>
-      DropdownMenuItem(
-        value: item,
-        child: Text(
-          item,
-          style: const TextStyle(
-            fontFamily: 'Inter',
-            fontWeight: FontWeight.w300,
-            fontSize: 12,
-            color: ColorPalette.primary,
-          ),
-        ),
-      );
-  DropdownMenuItem<String> buildMenuItemHKTypes(String item) =>
+  DropdownMenuItem<String> buildMenuItemDepartments(String item) =>
       DropdownMenuItem(
         value: item,
         child: Text(

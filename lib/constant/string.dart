@@ -2,6 +2,7 @@ class HKSAStrings {
   static const String appTitle = "Handog Kaibigan Scholar Assistant";
   static const items = ['Scholar', 'Professor', 'Head'];
   static const hkTypes = ['25%', '50%', '75%', '100%', 'SA'];
+  static const departments = ['CITE', 'CEA', 'CSS', 'CMA', 'CHS'];
   static const courses = [
     'Bachelor of Science in Information Technology',
     'Bachelor of Science in Architecture',
@@ -42,4 +43,15 @@ class HKSAStrings {
   static const signatureInfo = "Do not share your signature code to anyone.";
   static const pfpPlaceholder =
       "https://firebasestorage.googleapis.com/v0/b/hksa-3f5d4.appspot.com/o/placeholder%2Fuser-circle-svgrepo-com.png?alt=media&token=6d3e9450-20be-4ba6-aa2e-0fbece3ef967";
+  static const contactsCategories = [
+    'All',
+    'Scholars',
+    'Professors',
+    'Active',
+    'Inactive',
+    'Finished',
+    'Unfinished'
+  ];
+  static const statuses = ['active', 'inactive'];
+  static const hoursStatus = ['true', 'false'];
 }

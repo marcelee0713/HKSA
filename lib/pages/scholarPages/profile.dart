@@ -346,6 +346,7 @@ class _ProfileState extends State<Profile> {
                         allowMultiple: false,
                         type: FileType.custom,
                         allowedExtensions: ['png', 'jpg'],
+                        allowCompression: true,
                       );
 
                       if (results == null) {

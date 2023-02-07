@@ -3,19 +3,22 @@ import 'package:hksa/constant/colors.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:hksa/constant/string.dart';
 import 'package:hksa/models/scholar.dart';
-import 'package:hksa/pages/login.dart';
+import 'package:hksa/pages/adminPages/registration.dart';
+import 'package:hksa/widgets/adminWidgets/nav_drawer.dart';
 import 'package:hksa/widgets/dialogs/dialog_loading.dart';
 import 'package:hksa/widgets/dialogs/dialog_success.dart';
 import 'package:hksa/widgets/dialogs/dialog_unsuccessful.dart';
 
-class RegisterInputs extends StatefulWidget {
-  const RegisterInputs({super.key});
+class AdminRegisterScholarInputs extends StatefulWidget {
+  const AdminRegisterScholarInputs({super.key});
 
   @override
-  State<RegisterInputs> createState() => _RegisterInputsState();
+  State<AdminRegisterScholarInputs> createState() =>
+      _AdminRegisterScholarInputsState();
 }
 
-class _RegisterInputsState extends State<RegisterInputs> {
+class _AdminRegisterScholarInputsState
+    extends State<AdminRegisterScholarInputs> {
   // For DropDown Default Values
   String? coursesValue;
   String? hkTypeValue;
@@ -560,9 +563,9 @@ class _RegisterInputsState extends State<RegisterInputs> {
                             // ignore: use_build_context_synchronously
                             DialogSuccess(
                                     headertext: "Successfully Registered!",
-                                    subtext: "You are now registered!",
-                                    textButton: "Log in",
-                                    callback: goBackToLogin)
+                                    subtext: "You have registered a scholar!",
+                                    textButton: "Go back",
+                                    callback: goBackToRegistration)
                                 .buildSuccessScreen(context);
                           }
                         })
@@ -585,10 +588,13 @@ class _RegisterInputsState extends State<RegisterInputs> {
     );
   }
 
-  void goBackToLogin() {
+  void goBackToRegistration() {
+    setState(() {
+      selectedIndex = 3;
+    });
     // Will replace literally every page, that includes dialogs and others.
     Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(builder: (context) => const Login()),
+        MaterialPageRoute(builder: (context) => const AdminRegistration()),
         (Route<dynamic> route) => false);
   }
 
