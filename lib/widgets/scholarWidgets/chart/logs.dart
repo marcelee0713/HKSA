@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:hksa/constant/colors.dart';
@@ -151,30 +154,23 @@ class _LogsListViewState extends State<LogsListView> {
 
   Future<List<Logs>> createLogsCollection() async {
     List<Logs> dataList = [];
-    var logs = FirebaseFirestore.instance
-        .collection("users")
-        .doc("scholars")
-        .collection(userID)
-        .doc("dtrlogs")
-        .collection("logs");
-    var querySnapshot = await logs.get();
-    if (mounted) {
-      setState(() {
-        for (var queryDocumentSnapshot in querySnapshot.docs) {
-          Map<String, dynamic> data = {};
-          data = queryDocumentSnapshot.data();
-          Logs myLogs = Logs(
-            timeIn: data["timein"],
-            timeOut: data["timeout"],
-            date: data["date"],
-            signature: data["signature"],
-            multiplier: data["multiplier"],
-          );
-          dataList.add(myLogs);
-          //isLoading = false;
-        }
-      });
-    }
+    DatabaseReference dbReference =
+        FirebaseDatabase.instance.ref().child('dtrlogs/$userID');
+
+    await dbReference.get().then((snapshot) {
+      for (final data in snapshot.children) {
+        Map<String, dynamic> myObj = jsonDecode(jsonEncode(data.value));
+
+        Logs myLogs = Logs(
+            timeIn: myObj["timein"],
+            timeOut: myObj["timeout"],
+            signature: myObj["signature"],
+            date: myObj["date"],
+            multiplier: myObj["multiplier"]);
+        dataList.add(myLogs);
+      }
+    });
+
     return dataList;
   }
 }

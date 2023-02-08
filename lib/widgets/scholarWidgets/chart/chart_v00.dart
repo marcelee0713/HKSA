@@ -27,133 +27,141 @@ class _ScholarHoursRadialChartState extends State<ScholarHoursRadialChart> {
   final logInBox = Hive.box("myLoginBox");
   late var userName = logInBox.get("userName");
   late var userID = logInBox.get("userID");
-  List<Logs> dataList = [];
   String totalHours = "";
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     getHoursAndRequiredHours();
-    createLogsCollection();
   }
 
   DatabaseReference dbReference = FirebaseDatabase.instance.ref();
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: ColorPalette.secondary,
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          SizedBox(
-            child: Center(
-              child: SfRadialGauge(axes: <RadialAxis>[
-                RadialAxis(
-                  axisLineStyle: const AxisLineStyle(
-                    thickness: 0.1,
-                    thicknessUnit: GaugeSizeUnit.factor,
-                    color: Color(0xffa38b00),
-                  ),
-                  minimum: 0,
-                  maximum: requiredHours,
-                  interval: 10,
-                  radiusFactor: 0.85,
-                  startAngle: 114,
-                  endAngle: 67,
-                  annotations: <GaugeAnnotation>[
-                    GaugeAnnotation(
-                      positionFactor: 1,
-                      angle: 90,
-                      widget: requiredHours == 10
-                          ? Center(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: const <Widget>[
-                                  SizedBox(
-                                    width: 30,
-                                    height: 30,
-                                    child: CircularProgressIndicator(
-                                      color: Color(0xffffd700),
+    return FutureBuilder(
+        future: createLogsCollection(),
+        builder: (context, snapshot) {
+          return Container(
+            color: ColorPalette.secondary,
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                SizedBox(
+                  child: Center(
+                    child: SfRadialGauge(axes: <RadialAxis>[
+                      RadialAxis(
+                        axisLineStyle: const AxisLineStyle(
+                          thickness: 0.1,
+                          thicknessUnit: GaugeSizeUnit.factor,
+                          color: Color(0xffa38b00),
+                        ),
+                        minimum: 0,
+                        maximum: requiredHours,
+                        interval: 10,
+                        radiusFactor: 0.85,
+                        startAngle: 114,
+                        endAngle: 67,
+                        annotations: <GaugeAnnotation>[
+                          GaugeAnnotation(
+                            positionFactor: 1,
+                            angle: 90,
+                            widget: requiredHours == 10
+                                ? Center(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: const <Widget>[
+                                        SizedBox(
+                                          width: 30,
+                                          height: 30,
+                                          child: CircularProgressIndicator(
+                                            color: Color(0xffffd700),
+                                          ),
+                                        ),
+                                        SizedBox(height: 20),
+                                        Text(
+                                          "Loading...",
+                                          style: TextStyle(
+                                              color: Color(0xffffd700)),
+                                        ),
+                                      ],
                                     ),
+                                  )
+                                : Column(
+                                    children: <Widget>[
+                                      Text(
+                                        renderedHours == 0
+                                            ? "0"
+                                            : renderedHours.toString(),
+                                        style: const TextStyle(
+                                          decoration: TextDecoration.underline,
+                                          fontSize: 32,
+                                          fontFamily: 'Inter',
+                                          fontWeight: FontWeight.w700,
+                                        ),
+                                      ),
+                                      Text(
+                                        requiredHours == 10
+                                            ? "0"
+                                            : requiredHours.toString(),
+                                        style: const TextStyle(
+                                          fontSize: 32,
+                                          fontFamily: 'Inter',
+                                          fontWeight: FontWeight.w700,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 65),
+                                    ],
                                   ),
-                                  SizedBox(height: 20),
-                                  Text(
-                                    "Loading...",
-                                    style: TextStyle(color: Color(0xffffd700)),
-                                  ),
-                                ],
-                              ),
-                            )
-                          : Column(
-                              children: <Widget>[
-                                Text(
-                                  renderedHours == 0
-                                      ? "0"
-                                      : renderedHours.toString(),
-                                  style: const TextStyle(
-                                    decoration: TextDecoration.underline,
-                                    fontSize: 32,
-                                    fontFamily: 'Inter',
-                                    fontWeight: FontWeight.w700,
-                                  ),
-                                ),
-                                Text(
-                                  requiredHours == 10
-                                      ? "0"
-                                      : requiredHours.toString(),
-                                  style: const TextStyle(
-                                    fontSize: 32,
-                                    fontFamily: 'Inter',
-                                    fontWeight: FontWeight.w700,
-                                  ),
-                                ),
-                                const SizedBox(height: 65),
-                              ],
-                            ),
-                    )
-                  ],
-                  pointers: <GaugePointer>[
-                    RangePointer(
-                      enableAnimation: true,
-                      value: renderedHours,
-                      width: 0.1,
-                      sizeUnit: GaugeSizeUnit.factor,
-                      gradient: const SweepGradient(
-                          colors: <Color>[Color(0xffffd700), Color(0xffffe23d)],
-                          stops: <double>[0.3, 0.9]),
-                    )
-                  ],
+                          )
+                        ],
+                        pointers: <GaugePointer>[
+                          RangePointer(
+                            enableAnimation: true,
+                            value: renderedHours,
+                            width: 0.1,
+                            sizeUnit: GaugeSizeUnit.factor,
+                            gradient: const SweepGradient(colors: <Color>[
+                              Color(0xffffd700),
+                              Color(0xffffe23d)
+                            ], stops: <double>[
+                              0.3,
+                              0.9
+                            ]),
+                          )
+                        ],
+                      ),
+                    ]),
+                  ),
                 ),
-              ]),
-            ),
-          ),
-          Positioned(
-            bottom: 4,
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.fromLTRB(100, 10, 100, 10),
-                elevation: 5,
-              ),
-              onPressed: () async {
-                final pdfFile = await PdfApi.generateTable(
-                    dataListObj: dataList,
-                    fullName: userName,
-                    totalHours: renderedHours.toString());
-                PdfApi.openFile(pdfFile);
-              },
-              child: const Text(
-                'PDF',
-                style: TextStyle(
-                  fontSize: 21,
-                  fontFamily: 'Frank Ruhl Libre',
-                  letterSpacing: 3,
+                Positioned(
+                  bottom: 4,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.fromLTRB(100, 10, 100, 10),
+                      elevation: 5,
+                    ),
+                    onPressed: () async {
+                      final pdfFile = await PdfApi.generateTable(
+                          dataListObj: snapshot.data!,
+                          fullName: userName,
+                          totalHours: renderedHours.toString());
+                      PdfApi.openFile(pdfFile);
+                    },
+                    child: const Text(
+                      'PDF',
+                      style: TextStyle(
+                        fontSize: 21,
+                        fontFamily: 'Frank Ruhl Libre',
+                        letterSpacing: 3,
+                      ),
+                    ),
+                  ),
                 ),
-              ),
+              ],
             ),
-          ),
-        ],
-      ),
-    );
+          );
+        });
   }
 
   Future getHoursAndRequiredHours() async {
@@ -178,29 +186,24 @@ class _ScholarHoursRadialChartState extends State<ScholarHoursRadialChart> {
     }
   }
 
-  Future createLogsCollection() async {
-    var logs = FirebaseFirestore.instance
-        .collection("users")
-        .doc("scholars")
-        .collection(userID)
-        .doc("dtrlogs")
-        .collection("logs");
-    var querySnapshot = await logs.get();
-    if (mounted) {
-      setState(() {
-        for (var queryDocumentSnapshot in querySnapshot.docs) {
-          Map<String, dynamic> data = {};
-          data = queryDocumentSnapshot.data();
-          Logs myLogs = Logs(
-            timeIn: data["timein"],
-            timeOut: data["timeout"],
-            date: data["date"],
-            signature: data["signature"],
-            multiplier: data["multiplier"],
-          );
-          dataList.add(myLogs);
-        }
-      });
-    }
+  Future<List<Logs>> createLogsCollection() async {
+    List<Logs> dataList = [];
+    DatabaseReference dbReference =
+        FirebaseDatabase.instance.ref().child('dtrlogs/$userID');
+
+    await dbReference.get().then((snapshot) {
+      for (final data in snapshot.children) {
+        Map<String, dynamic> myObj = jsonDecode(jsonEncode(data.value));
+        Logs myLogs = Logs(
+            timeIn: myObj["timein"],
+            timeOut: myObj["timeout"],
+            signature: myObj["signature"],
+            date: myObj["date"],
+            multiplier: myObj["multiplier"]);
+        dataList.add(myLogs);
+      }
+    });
+
+    return dataList;
   }
 }

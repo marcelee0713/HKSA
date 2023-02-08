@@ -502,9 +502,11 @@ class _LogInInputsState extends State<LogInInputs> {
                                 }
                             }),
                       ).whenComplete(() => {
-                            doneCheckingUsers = true,
-                            Future.delayed(const Duration(milliseconds: 500),
+                            Future.delayed(const Duration(milliseconds: 2500),
                                 () async {
+                              userExist
+                                  ? doneCheckingUsers = false
+                                  : doneCheckingUsers = true;
                               if (userType == "scholar") {
                                 if (!userExist &&
                                     doneCheckingUsers &&
