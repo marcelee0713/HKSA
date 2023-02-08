@@ -360,7 +360,6 @@ class _LogInInputsState extends State<LogInInputs> {
                                         }
                                       }
                                     }
-                                    doneCheckingUsers = true;
                                   })
                                 },
                               if (userType == "professor")
@@ -503,6 +502,7 @@ class _LogInInputsState extends State<LogInInputs> {
                                 }
                             }),
                       ).whenComplete(() => {
+                            doneCheckingUsers = true,
                             Future.delayed(const Duration(milliseconds: 500),
                                 () async {
                               if (userType == "scholar") {
