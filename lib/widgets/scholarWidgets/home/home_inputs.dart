@@ -338,25 +338,9 @@ class _ScholarHomeInputsState extends State<ScholarHomeInputs> {
       required String signature,
       required String date,
       required String multiplier}) async {
-    Map<String, Object> dummyMap = {};
-    final dummyHashMap = FirebaseFirestore.instance
-        .collection('users')
-        .doc("scholars")
-        .collection(userID)
-        .doc("dtrlogs");
-
-    dummyHashMap.set(dummyMap);
-
-    final docUser = FirebaseFirestore.instance
-        .collection('users')
-        .doc("scholars")
-        .collection(userID)
-        .doc("dtrlogs")
-        .collection("logs")
-        .doc(Timestamp.now().seconds.toString());
-
-    debugPrint(signature);
-    debugPrint(date);
+    DatabaseReference dbReference =
+        FirebaseDatabase.instance.ref().child('dtrlogs/$userID');
+    String? key = dbReference.push().key;
 
     final json = {
       'timein': timeIn,
@@ -367,7 +351,7 @@ class _ScholarHomeInputsState extends State<ScholarHomeInputs> {
       'multiplier': multiplier,
     };
 
-    await docUser.set(json);
+    await dbReference.child(key!).set(json);
   }
 }
 
