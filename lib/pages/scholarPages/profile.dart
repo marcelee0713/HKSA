@@ -12,6 +12,7 @@ import 'package:hksa/pages/login.dart';
 import 'package:hksa/widgets/dialogs/dialog_confirm.dart';
 import 'package:hksa/widgets/dialogs/dialog_loading.dart';
 import 'package:hksa/widgets/dialogs/dialog_success.dart';
+import 'package:hksa/widgets/universal/change_password.dart';
 
 class Profile extends StatefulWidget {
   const Profile({Key? key}) : super(key: key);
@@ -29,7 +30,7 @@ class _ProfileState extends State<Profile> {
   Widget build(BuildContext context) {
     DatabaseReference dbReference = FirebaseDatabase.instance
         .ref()
-        .child("Users/Scholars/$userID/profilePicture");
+        .child("Users/Scholars/$userID/password");
 
     return Container(
       padding: const EdgeInsets.all(20),
@@ -296,7 +297,7 @@ class _ProfileState extends State<Profile> {
                 color: ColorPalette.accentBlack,
               ),
               const SizedBox(height: 10),
-              Row(
+              Column(
                 children: [
                   SizedBox(
                     child: InkWell(
@@ -339,73 +340,110 @@ class _ProfileState extends State<Profile> {
                       ),
                     ),
                   ),
-                  const SizedBox(width: 8),
-                  InkWell(
-                    onTap: () async {
-                      final results = await FilePicker.platform.pickFiles(
-                        allowMultiple: false,
-                        type: FileType.custom,
-                        allowedExtensions: ['png', 'jpg'],
-                        allowCompression: true,
-                      );
-
-                      if (results == null) {
-                        // ignore: use_build_context_synchronously
-                        Flushbar(
-                          backgroundColor: ColorPalette.primary,
-                          messageText: const Text(
-                            "Enter an image!",
-                            style: TextStyle(
-                              fontFamily: 'Inter',
-                              fontSize: 14,
-                              color: ColorPalette.accentWhite,
-                            ),
-                          ),
-                          duration: const Duration(seconds: 3),
-                        ).show(context);
-                        return;
-                      }
-                      // ignore: use_build_context_synchronously
-                      DialogLoading(subtext: "Changing...")
-                          .buildLoadingScreen(context);
-
-                      final path = results.files.single.path!;
-                      final fileName = results.files.single.name;
-
-                      debugPrint(path);
-                      debugPrint(fileName);
-
-                      await storage.changeScholarPfp(path, fileName, userID,
-                          snapshot.data!.first.profilePicture, () {
-                        Future.delayed(const Duration(seconds: 3), () {
-                          setState(() {
-                            userProfileListener =
-                                snapshot.data!.first.profilePicture;
-                          });
-                          Navigator.of(context, rootNavigator: true).pop();
-                          DialogSuccess(
-                              headertext: "Profile Picture Changed!",
-                              subtext:
-                                  "Didn't showed? Restart or go to a different page and comeback!",
-                              textButton: "Close",
-                              callback: () {
-                                Navigator.of(context, rootNavigator: true)
-                                    .pop();
-                              }).buildSuccessScreen(context);
-                        });
-                      });
-                    },
-                    child: const Text(
-                      "Change Profile Picture",
-                      style: TextStyle(
-                        fontFamily: 'Inter',
-                        fontSize: 14,
-                        fontWeight: FontWeight.w400,
-                        color: ColorPalette.primary,
-                      ),
-                    ),
-                  ),
                 ],
+              ),
+              const SizedBox(height: 8),
+              InkWell(
+                onTap: () async {
+                  final results = await FilePicker.platform.pickFiles(
+                    allowMultiple: false,
+                    type: FileType.custom,
+                    allowedExtensions: ['png', 'jpg'],
+                    allowCompression: true,
+                  );
+
+                  if (results == null) {
+                    // ignore: use_build_context_synchronously
+                    Flushbar(
+                      backgroundColor: ColorPalette.primary,
+                      messageText: const Text(
+                        "Enter an image!",
+                        style: TextStyle(
+                          fontFamily: 'Inter',
+                          fontSize: 14,
+                          color: ColorPalette.accentWhite,
+                        ),
+                      ),
+                      duration: const Duration(seconds: 3),
+                    ).show(context);
+                    return;
+                  }
+                  // ignore: use_build_context_synchronously
+                  DialogLoading(subtext: "Changing...")
+                      .buildLoadingScreen(context);
+
+                  final path = results.files.single.path!;
+                  final fileName = results.files.single.name;
+
+                  debugPrint(path);
+                  debugPrint(fileName);
+
+                  await storage.changeScholarPfp(path, fileName, userID,
+                      snapshot.data!.first.profilePicture, () {
+                    Future.delayed(const Duration(seconds: 3), () {
+                      setState(() {
+                        userProfileListener =
+                            snapshot.data!.first.profilePicture;
+                      });
+                      Navigator.of(context, rootNavigator: true).pop();
+                      DialogSuccess(
+                          headertext: "Profile Picture Changed!",
+                          subtext:
+                              "Didn't showed? Restart or go to a different page and comeback!",
+                          textButton: "Close",
+                          callback: () {
+                            Navigator.of(context, rootNavigator: true).pop();
+                          }).buildSuccessScreen(context);
+                    });
+                  });
+                },
+                child: const Text(
+                  "Change Profile Picture",
+                  style: TextStyle(
+                    fontFamily: 'Inter',
+                    fontSize: 14,
+                    fontWeight: FontWeight.w400,
+                    color: ColorPalette.primary,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 8),
+              InkWell(
+                onTap: () async {
+                  final result = await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          ChangePassword(userID: userID, userType: "Scholars"),
+                    ),
+                  );
+                  if (result == null) {
+                    return;
+                  }
+                  await dbReference.set(result.toString());
+
+                  Future.delayed(const Duration(seconds: 2), () {
+                    Navigator.of(context, rootNavigator: true).pop();
+                  }).whenComplete(() {
+                    DialogSuccess(
+                        headertext: "Successfully changed!",
+                        subtext:
+                            "You successfully changed your password! Remember not to show this to anyone.",
+                        textButton: "Close",
+                        callback: () {
+                          Navigator.of(context, rootNavigator: true).pop();
+                        }).buildSuccessScreen(context);
+                  });
+                },
+                child: const Text(
+                  "Change Password",
+                  style: TextStyle(
+                    fontFamily: 'Inter',
+                    fontSize: 14,
+                    fontWeight: FontWeight.w400,
+                    color: ColorPalette.primary,
+                  ),
+                ),
               ),
             ],
           );
