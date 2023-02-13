@@ -4,6 +4,7 @@ import 'package:hksa/constant/colors.dart';
 import 'package:hksa/pages/adminPages/chart.dart';
 import 'package:hksa/pages/adminPages/contact.dart';
 import 'package:hksa/pages/adminPages/home.dart';
+import 'package:hksa/pages/adminPages/profile.dart';
 import 'package:hksa/pages/adminPages/registration.dart';
 import 'package:hksa/pages/login.dart';
 import 'package:hksa/widgets/dialogs/dialog_confirm.dart';
@@ -134,6 +135,21 @@ class _NavDrawState extends State<NavDraw> {
             const SizedBox(height: 16),
             const Divider(color: ColorPalette.secondary),
             _createDrawerItem(
+                icon: Icons.person,
+                text: "Profile",
+                onTap: () {
+                  setState(() {
+                    selectedIndex = 4;
+
+                    Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const AdminProfile()));
+                  });
+                },
+                isSelected: selectedIndex == 4),
+            const SizedBox(height: 16),
+            _createDrawerItem(
               icon: Icons.logout_rounded,
               text: "Log out",
               onTap: () {
@@ -163,7 +179,7 @@ class _NavDrawState extends State<NavDraw> {
                       });
                     }).buildConfirmScreen(context);
               },
-              isSelected: selectedIndex == 4,
+              isSelected: selectedIndex == 5,
             ),
           ],
         ),

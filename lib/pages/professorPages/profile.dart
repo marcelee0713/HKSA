@@ -13,6 +13,7 @@ import 'package:hksa/widgets/dialogs/dialog_confirm.dart';
 import 'package:hksa/widgets/dialogs/dialog_loading.dart';
 import 'package:hksa/widgets/dialogs/dialog_success.dart';
 import 'package:hksa/widgets/professorWidgets/profile/change_signature.dart';
+import 'package:hksa/widgets/universal/change_password.dart';
 
 class ProfProfile extends StatefulWidget {
   const ProfProfile({super.key});
@@ -31,6 +32,9 @@ class _ProfProfileState extends State<ProfProfile> {
     DatabaseReference dbReference = FirebaseDatabase.instance
         .ref()
         .child("Users/Professors/$userID/signaturecode");
+    DatabaseReference dbReferenceForPassword = FirebaseDatabase.instance
+        .ref()
+        .child("Users/Professors/$userID/password");
     return Container(
       padding: const EdgeInsets.all(20),
       color: ColorPalette.secondary,
@@ -376,6 +380,44 @@ class _ProfProfileState extends State<ProfProfile> {
                     child: const Text(
                       // TO-DO, Look at the figma, do the change signature code
                       "Change Signature Code",
+                      style: TextStyle(
+                        fontFamily: 'Inter',
+                        fontSize: 14,
+                        fontWeight: FontWeight.w400,
+                        color: ColorPalette.primary,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  InkWell(
+                    onTap: () async {
+                      final result = await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ChangePassword(
+                              userID: userID, userType: "Professors"),
+                        ),
+                      );
+                      if (result == null) {
+                        return;
+                      }
+                      await dbReferenceForPassword.set(result.toString());
+
+                      Future.delayed(const Duration(seconds: 2), () {
+                        Navigator.of(context, rootNavigator: true).pop();
+                      }).whenComplete(() {
+                        DialogSuccess(
+                            headertext: "Successfully changed!",
+                            subtext:
+                                "You successfully changed your password! Remember not to show this to anyone.",
+                            textButton: "Close",
+                            callback: () {
+                              Navigator.of(context, rootNavigator: true).pop();
+                            }).buildSuccessScreen(context);
+                      });
+                    },
+                    child: const Text(
+                      "Change Password",
                       style: TextStyle(
                         fontFamily: 'Inter',
                         fontSize: 14,

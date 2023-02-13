@@ -1,42 +1,41 @@
-import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:hksa/constant/colors.dart';
 import 'package:hksa/widgets/dialogs/dialog_loading.dart';
-import 'package:hksa/widgets/scholarWidgets/chart/logs.dart';
 
-final _inputControllerOldSignature = TextEditingController();
-final _inputControllerNewSignature = TextEditingController();
-final _inputControllerCfrmSignature = TextEditingController();
+final _inputControllerOldPassword = TextEditingController();
+final _inputControllerNewPassword = TextEditingController();
+final _inputControllerCfrmPassword = TextEditingController();
 final _formKey = GlobalKey<FormState>();
 
-class ChangeProfessorSignature extends StatefulWidget {
-  const ChangeProfessorSignature({super.key, required this.userID});
+class ChangePassword extends StatefulWidget {
+  const ChangePassword(
+      {super.key, required this.userID, required this.userType});
   final String userID;
+  final String userType;
 
   @override
-  State<ChangeProfessorSignature> createState() =>
-      _ChangeProfessorSignatureState();
+  State<ChangePassword> createState() => _ChangePasswordState();
 }
 
-class _ChangeProfessorSignatureState extends State<ChangeProfessorSignature> {
-  String profSignature = "";
+class _ChangePasswordState extends State<ChangePassword> {
+  String userPassword = "";
   bool isFetched = false;
-  bool _oldSignatureVisible = false;
-  bool _newSignatureVisible = false;
-  bool _cfrmSignatureVisible = false;
+  bool _oldPasswordVisible = false;
+  bool _newPasswordVisible = false;
+  bool _cfrmPasswordVisible = false;
 
   @override
   void initState() {
     super.initState();
-    getSignature();
+    getPassword();
   }
-
-  DatabaseReference dbReference = FirebaseDatabase.instance
-      .ref()
-      .child("Users/Professors/$userID/signaturecode");
 
   @override
   Widget build(BuildContext context) {
+    DatabaseReference dbReference = FirebaseDatabase.instance
+        .ref()
+        .child("Users/${widget.userType}/${widget.userID}/password");
     String result = "";
     return Scaffold(
       backgroundColor: ColorPalette.secondary,
@@ -82,7 +81,7 @@ class _ChangeProfessorSignatureState extends State<ChangeProfessorSignature> {
                               ),
                               const SizedBox(height: 5),
                               const Text(
-                                "Change your signature",
+                                "Change your password",
                                 style: TextStyle(
                                   color: ColorPalette.accentWhite,
                                   fontFamily: 'Frank Ruhl Libre',
@@ -96,17 +95,17 @@ class _ChangeProfessorSignatureState extends State<ChangeProfessorSignature> {
                           Column(
                             children: [
                               TextFormField(
-                                controller: _inputControllerOldSignature,
-                                obscureText: !_oldSignatureVisible,
+                                controller: _inputControllerOldPassword,
+                                obscureText: !_oldPasswordVisible,
                                 enableSuggestions: false,
                                 autocorrect: false,
                                 keyboardType: TextInputType.visiblePassword,
                                 validator: (value) {
-                                  if (value == profSignature &&
+                                  if (value == userPassword &&
                                       value!.isNotEmpty) {
                                     return null;
                                   } else {
-                                    return "Old signature does not match.";
+                                    return "Old password does not match.";
                                   }
                                 },
                                 decoration: InputDecoration(
@@ -130,17 +129,17 @@ class _ChangeProfessorSignatureState extends State<ChangeProfessorSignature> {
                                   suffixIcon: IconButton(
                                     onPressed: () {
                                       setState(() {
-                                        _oldSignatureVisible =
-                                            !_oldSignatureVisible;
+                                        _oldPasswordVisible =
+                                            !_oldPasswordVisible;
                                       });
                                     },
                                     icon: Icon(
-                                      _oldSignatureVisible
+                                      _oldPasswordVisible
                                           ? Icons.visibility
                                           : Icons.visibility_off,
                                     ),
                                   ),
-                                  hintText: "Old signature...",
+                                  hintText: "Old password...",
                                 ),
                                 style: const TextStyle(
                                   color: ColorPalette.primary,
@@ -151,17 +150,20 @@ class _ChangeProfessorSignatureState extends State<ChangeProfessorSignature> {
                               ),
                               const SizedBox(height: 8),
                               TextFormField(
-                                controller: _inputControllerNewSignature,
-                                obscureText: !_newSignatureVisible,
+                                controller: _inputControllerNewPassword,
+                                obscureText: !_newPasswordVisible,
                                 enableSuggestions: false,
                                 autocorrect: false,
                                 keyboardType: TextInputType.visiblePassword,
                                 validator: (value) {
-                                  if (value!.isNotEmpty) {
+                                  final bool passwordValid = RegExp(
+                                          r"^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-.+=_]).{8,}$")
+                                      .hasMatch(value!);
+                                  if (passwordValid) {
                                     result = value;
                                     return null;
                                   } else {
-                                    return "Please enter an input.";
+                                    return "Input invalid.";
                                   }
                                 },
                                 decoration: InputDecoration(
@@ -185,17 +187,17 @@ class _ChangeProfessorSignatureState extends State<ChangeProfessorSignature> {
                                   suffixIcon: IconButton(
                                     onPressed: () {
                                       setState(() {
-                                        _newSignatureVisible =
-                                            !_newSignatureVisible;
+                                        _newPasswordVisible =
+                                            !_newPasswordVisible;
                                       });
                                     },
                                     icon: Icon(
-                                      _newSignatureVisible
+                                      _newPasswordVisible
                                           ? Icons.visibility
                                           : Icons.visibility_off,
                                     ),
                                   ),
-                                  hintText: "New signature...",
+                                  hintText: "New password...",
                                 ),
                                 style: const TextStyle(
                                   color: ColorPalette.primary,
@@ -206,8 +208,8 @@ class _ChangeProfessorSignatureState extends State<ChangeProfessorSignature> {
                               ),
                               const SizedBox(height: 8),
                               TextFormField(
-                                controller: _inputControllerCfrmSignature,
-                                obscureText: !_cfrmSignatureVisible,
+                                controller: _inputControllerCfrmPassword,
+                                obscureText: !_cfrmPasswordVisible,
                                 enableSuggestions: false,
                                 autocorrect: false,
                                 keyboardType: TextInputType.visiblePassword,
@@ -239,17 +241,17 @@ class _ChangeProfessorSignatureState extends State<ChangeProfessorSignature> {
                                   suffixIcon: IconButton(
                                     onPressed: () {
                                       setState(() {
-                                        _cfrmSignatureVisible =
-                                            !_cfrmSignatureVisible;
+                                        _cfrmPasswordVisible =
+                                            !_cfrmPasswordVisible;
                                       });
                                     },
                                     icon: Icon(
-                                      _cfrmSignatureVisible
+                                      _cfrmPasswordVisible
                                           ? Icons.visibility
                                           : Icons.visibility_off,
                                     ),
                                   ),
-                                  hintText: "Confirm new signature...",
+                                  hintText: "Confirm new password...",
                                 ),
                                 style: const TextStyle(
                                   color: ColorPalette.primary,
@@ -273,11 +275,11 @@ class _ChangeProfessorSignatureState extends State<ChangeProfessorSignature> {
                                   if (!_formKey.currentState!.validate()) {
                                     return;
                                   }
-                                  _inputControllerOldSignature.text = "";
-                                  _inputControllerNewSignature.text = "";
-                                  _inputControllerCfrmSignature.text = "";
+                                  _inputControllerOldPassword.text = "";
+                                  _inputControllerNewPassword.text = "";
+                                  _inputControllerCfrmPassword.text = "";
                                   Navigator.pop(context, result);
-                                  DialogLoading(subtext: "Checking")
+                                  DialogLoading(subtext: "Changing...")
                                       .buildLoadingScreen(context);
                                 },
                                 child: const Text(
@@ -302,11 +304,14 @@ class _ChangeProfessorSignatureState extends State<ChangeProfessorSignature> {
     );
   }
 
-  Future getSignature() async {
+  Future getPassword() async {
+    DatabaseReference dbReference = FirebaseDatabase.instance
+        .ref()
+        .child("Users/${widget.userType}/${widget.userID}/password");
     final snapshot = await dbReference.get();
     if (snapshot.exists) {
       setState(() {
-        profSignature = snapshot.value.toString();
+        userPassword = snapshot.value.toString();
         isFetched = true;
       });
     } else {
