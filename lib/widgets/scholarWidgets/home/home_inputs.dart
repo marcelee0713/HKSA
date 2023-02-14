@@ -162,6 +162,7 @@ class _ScholarHomeInputsState extends State<ScholarHomeInputs> {
                           DialogConfirm(
                             headertext: "Are you sure you want to time in?",
                             callback: () {
+                              Navigator.of(context, rootNavigator: true).pop();
                               setState(() {
                                 String dateOnly = "";
                                 logInBox.put("hasTimedIn", true);

@@ -353,11 +353,19 @@ class _ScholarProfileState extends State<ScholarProfile> {
                                   headertext:
                                       "Are you sure you want to delete this user?",
                                   callback: () async {
+                                    Navigator.of(context, rootNavigator: true)
+                                        .pop();
                                     final DatabaseReference userReference =
                                         FirebaseDatabase.instance.ref().child(
                                             'Users/Scholars/${widget.userID}');
 
+                                    final DatabaseReference userReferenceLogs =
+                                        FirebaseDatabase.instance
+                                            .ref()
+                                            .child('dtrlogs/${widget.userID}');
+
                                     await userReference.remove();
+                                    await userReferenceLogs.remove();
                                     if (FirebaseStorage.instance.refFromURL(
                                             snapshot
                                                 .data!.first.profilePicture) !=

@@ -6,6 +6,7 @@ import 'package:hksa/pages/adminPages/contact.dart';
 import 'package:hksa/pages/adminPages/home.dart';
 import 'package:hksa/pages/adminPages/profile.dart';
 import 'package:hksa/pages/adminPages/registration.dart';
+import 'package:hksa/pages/adminPages/reset.dart';
 import 'package:hksa/pages/login.dart';
 import 'package:hksa/widgets/dialogs/dialog_confirm.dart';
 import 'package:hksa/widgets/dialogs/dialog_loading.dart';
@@ -133,13 +134,26 @@ class _NavDrawState extends State<NavDraw> {
               isSelected: selectedIndex == 3,
             ),
             const SizedBox(height: 16),
+            _createDrawerItem(
+                icon: Icons.refresh,
+                text: "Reset",
+                onTap: () {
+                  setState(() {
+                    selectedIndex = 4;
+
+                    Navigator.pushReplacement(context,
+                        MaterialPageRoute(builder: (context) => const Reset()));
+                  });
+                },
+                isSelected: selectedIndex == 4),
+            const SizedBox(height: 16),
             const Divider(color: ColorPalette.secondary),
             _createDrawerItem(
                 icon: Icons.person,
                 text: "Profile",
                 onTap: () {
                   setState(() {
-                    selectedIndex = 4;
+                    selectedIndex = 5;
 
                     Navigator.pushReplacement(
                         context,
@@ -147,7 +161,7 @@ class _NavDrawState extends State<NavDraw> {
                             builder: (context) => const AdminProfile()));
                   });
                 },
-                isSelected: selectedIndex == 4),
+                isSelected: selectedIndex == 5),
             const SizedBox(height: 16),
             _createDrawerItem(
               icon: Icons.logout_rounded,
@@ -156,6 +170,7 @@ class _NavDrawState extends State<NavDraw> {
                 DialogConfirm(
                     headertext: "Are you sure you want to log out?",
                     callback: () {
+                      Navigator.of(context, rootNavigator: true).pop();
                       // Might be more soon
                       // This includes the time in
                       Future.delayed(const Duration(), (() {
@@ -179,7 +194,7 @@ class _NavDrawState extends State<NavDraw> {
                       });
                     }).buildConfirmScreen(context);
               },
-              isSelected: selectedIndex == 5,
+              isSelected: selectedIndex == 6,
             ),
           ],
         ),

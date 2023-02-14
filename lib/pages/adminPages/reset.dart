@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:hksa/constant/colors.dart';
-import 'package:hksa/widgets/adminWidgets/home/home_content.dart';
-import 'package:hksa/widgets/adminWidgets/home/home_header.dart';
 import 'package:hksa/widgets/adminWidgets/nav_drawer.dart';
+import 'package:hksa/widgets/adminWidgets/reset/reset_buttons.dart';
+import 'package:hksa/widgets/adminWidgets/reset/reset_header.dart';
 
-class HomeAdmin extends StatefulWidget {
-  const HomeAdmin({super.key});
+class Reset extends StatefulWidget {
+  const Reset({super.key});
 
   @override
-  State<HomeAdmin> createState() => _HomeAdminState();
+  State<Reset> createState() => _ResetState();
 }
 
-class _HomeAdminState extends State<HomeAdmin> {
+class _ResetState extends State<Reset> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -36,15 +36,17 @@ class _HomeAdminState extends State<HomeAdmin> {
             );
           }),
           Container(
-            padding: const EdgeInsets.all(20),
             height: MediaQuery.of(context).size.height,
+            padding: const EdgeInsets.all(20),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: const [
-                AdminHomeHeader(),
-                SizedBox(height: 20),
-                AdminHomeContent(),
+                Center(
+                  child: ResetHeader(),
+                ),
+                SizedBox(height: 8),
+                ResetButtons()
               ],
             ),
           ),

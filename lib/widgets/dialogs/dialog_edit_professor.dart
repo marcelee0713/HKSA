@@ -7,6 +7,7 @@ import 'package:hksa/constant/string.dart';
 import 'package:hksa/models/professor.dart';
 import 'package:hksa/pages/adminPages/contact.dart';
 import 'package:hksa/widgets/adminWidgets/nav_drawer.dart';
+import 'package:hksa/widgets/dialogs/dialog_confirm.dart';
 import 'package:hksa/widgets/dialogs/dialog_loading.dart';
 import 'package:hksa/widgets/dialogs/dialog_success.dart';
 
@@ -142,66 +143,56 @@ class _EditProfessorState extends State<EditProfessor> {
                         const SizedBox(height: 20),
                         Column(
                           children: [
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                TextFormField(
-                                  controller: _inputControllerProfessorID,
-                                  maxLength: 20,
-                                  validator: (value) {
-                                    final bool profIdValid =
-                                        RegExp(r"^[0-9-]+$").hasMatch(value!);
-                                    if (profIdValid && value.length >= 10) {
-                                      return null;
-                                    } else if (value.length <= 9 &&
-                                        value.isNotEmpty) {
-                                      return "Input is too short.";
-                                    } else if (value.isEmpty) {
-                                      return "Enter Input.";
-                                    } else {
-                                      return "Enter valid school ID.";
-                                    }
-                                  },
-                                  keyboardType: TextInputType.number,
-                                  decoration: InputDecoration(
-                                    counterText: "",
-                                    enabledBorder: OutlineInputBorder(
-                                      borderSide: const BorderSide(
-                                          color: Colors.transparent),
-                                      borderRadius: BorderRadius.circular(10.0),
-                                    ),
-                                    focusedBorder: OutlineInputBorder(
-                                      borderSide: const BorderSide(
-                                          color: Colors.transparent),
-                                      borderRadius: BorderRadius.circular(10.0),
-                                    ),
-                                    filled: true,
-                                    fillColor: ColorPalette.accentDarkWhite,
-                                    hintStyle: const TextStyle(
-                                      fontWeight: FontWeight.w300,
-                                      fontStyle: FontStyle.italic,
-                                    ),
-                                    hintText:
-                                        "Professor Number (XX-XNXX-XXXXX)",
-                                  ),
-                                  style: const TextStyle(
-                                    color: ColorPalette.primary,
-                                    fontFamily: 'Inter',
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w700,
-                                  ),
+                            TextFormField(
+                              enabled: false,
+                              controller: _inputControllerProfessorID,
+                              maxLength: 20,
+                              validator: (value) {
+                                final bool profIdValid =
+                                    RegExp(r"^[0-9-]+$").hasMatch(value!);
+                                if (profIdValid && value.length >= 10) {
+                                  return null;
+                                } else if (value.length <= 9 &&
+                                    value.isNotEmpty) {
+                                  return "Input is too short.";
+                                } else if (value.isEmpty) {
+                                  return "Enter Input.";
+                                } else {
+                                  return "Enter valid school ID.";
+                                }
+                              },
+                              keyboardType: TextInputType.number,
+                              decoration: InputDecoration(
+                                counterText: "",
+                                disabledBorder: OutlineInputBorder(
+                                  borderSide: const BorderSide(
+                                      color: Colors.transparent),
+                                  borderRadius: BorderRadius.circular(10.0),
                                 ),
-                                const SizedBox(height: 2),
-                                SelectableText(
-                                  "Professor ID was ${snapshot.data!.first.professorId}",
-                                  style: const TextStyle(
-                                    fontFamily: 'Inter',
-                                    fontSize: 11,
-                                    fontStyle: FontStyle.italic,
-                                    fontWeight: FontWeight.w300,
-                                  ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderSide: const BorderSide(
+                                      color: Colors.transparent),
+                                  borderRadius: BorderRadius.circular(10.0),
                                 ),
-                              ],
+                                focusedBorder: OutlineInputBorder(
+                                  borderSide: const BorderSide(
+                                      color: Colors.transparent),
+                                  borderRadius: BorderRadius.circular(10.0),
+                                ),
+                                filled: true,
+                                fillColor: ColorPalette.accentDarkWhite,
+                                hintStyle: const TextStyle(
+                                  fontWeight: FontWeight.w300,
+                                  fontStyle: FontStyle.italic,
+                                ),
+                                hintText: "Professor Number (XX-XNXX-XXXXX)",
+                              ),
+                              style: const TextStyle(
+                                color: ColorPalette.primary,
+                                fontFamily: 'Inter',
+                                fontSize: 14,
+                                fontWeight: FontWeight.w700,
+                              ),
                             ),
                             const SizedBox(height: 18),
                             Column(
@@ -218,6 +209,15 @@ class _EditProfessorState extends State<EditProfessor> {
                                   },
                                   keyboardType: TextInputType.name,
                                   decoration: InputDecoration(
+                                      suffixIcon: IconButton(
+                                        onPressed: () {
+                                          setState(() {
+                                            _inputControllerName.text =
+                                                snapshot.data!.first.name;
+                                          });
+                                        },
+                                        icon: const Icon(Icons.paste_rounded),
+                                      ),
                                       enabledBorder: OutlineInputBorder(
                                         borderSide: const BorderSide(
                                             color: Colors.transparent),
@@ -327,6 +327,15 @@ class _EditProfessorState extends State<EditProfessor> {
                                   },
                                   keyboardType: TextInputType.emailAddress,
                                   decoration: InputDecoration(
+                                    suffixIcon: IconButton(
+                                      onPressed: () {
+                                        setState(() {
+                                          _inputControllerEmail.text =
+                                              snapshot.data!.first.email;
+                                        });
+                                      },
+                                      icon: const Icon(Icons.paste_rounded),
+                                    ),
                                     enabledBorder: OutlineInputBorder(
                                       borderSide: const BorderSide(
                                           color: Colors.transparent),
@@ -389,6 +398,15 @@ class _EditProfessorState extends State<EditProfessor> {
                                   },
                                   keyboardType: TextInputType.phone,
                                   decoration: InputDecoration(
+                                    suffixIcon: IconButton(
+                                      onPressed: () {
+                                        setState(() {
+                                          _inputControllerPhoneNumber.text =
+                                              snapshot.data!.first.phonenumber;
+                                        });
+                                      },
+                                      icon: const Icon(Icons.paste_rounded),
+                                    ),
                                     counterText: "",
                                     enabledBorder: OutlineInputBorder(
                                       borderSide: const BorderSide(
@@ -588,6 +606,17 @@ class _EditProfessorState extends State<EditProfessor> {
                                       },
                                       keyboardType: TextInputType.text,
                                       decoration: InputDecoration(
+                                        suffixIcon: IconButton(
+                                          onPressed: () {
+                                            setState(() {
+                                              _inputControllerSignatureCode
+                                                      .text =
+                                                  snapshot.data!.first
+                                                      .signaturecode;
+                                            });
+                                          },
+                                          icon: const Icon(Icons.paste_rounded),
+                                        ),
                                         counterText: "",
                                         enabledBorder: OutlineInputBorder(
                                           borderSide: const BorderSide(
@@ -631,82 +660,93 @@ class _EditProfessorState extends State<EditProfessor> {
                               ],
                             ),
                             const SizedBox(height: 18),
-                            InkWell(
-                              onLongPress: (() {
-                                setState(() {
-                                  if (!_formKey.currentState!.validate() ||
-                                      departmentValue == null) {
-                                    return;
-                                  }
+                            SizedBox(
+                              width: MediaQuery.of(context).size.width,
+                              height: 50,
+                              child: ElevatedButton(
+                                onPressed: (() {
+                                  setState(() {
+                                    if (!_formKey.currentState!.validate() ||
+                                        departmentValue == null) {
+                                      return;
+                                    }
 
-                                  DialogLoading(subtext: "Changing")
-                                      .buildLoadingScreen(context);
+                                    DialogConfirm(
+                                        headertext: "Update this professor?",
+                                        callback: () {
+                                          Navigator.of(context,
+                                                  rootNavigator: true)
+                                              .pop();
+                                          DialogLoading(subtext: "Changing")
+                                              .buildLoadingScreen(context);
 
-                                  String professorID =
-                                      _inputControllerProfessorID.text.trim();
-                                  String fullName =
-                                      _inputControllerName.text.trim();
-                                  String? department = departmentValue;
-                                  String email =
-                                      _inputControllerEmail.text.trim();
-                                  String phoneNumber =
-                                      _inputControllerPhoneNumber.text.trim();
-                                  String password =
-                                      _inputControllerCfrmPassword.text.trim();
-                                  String signature =
-                                      _inputControllerSignatureCode.text.trim();
+                                          String professorID =
+                                              _inputControllerProfessorID.text
+                                                  .trim();
+                                          String fullName =
+                                              _inputControllerName.text.trim();
+                                          String? department = departmentValue;
+                                          String email =
+                                              _inputControllerEmail.text.trim();
+                                          String phoneNumber =
+                                              _inputControllerPhoneNumber.text
+                                                  .trim();
+                                          String password =
+                                              _inputControllerCfrmPassword.text
+                                                  .trim();
+                                          String signature =
+                                              _inputControllerSignatureCode.text
+                                                  .trim();
 
-                                  Future.delayed(const Duration(seconds: 2),
-                                      () async {
-                                    Professor scholarObj = Professor(
-                                        department: department.toString(),
-                                        email: email,
-                                        name: fullName,
-                                        password: password,
-                                        phonenumber: phoneNumber,
-                                        professorId: professorID,
-                                        signaturecode: signature,
-                                        profilePicture: snapshot
-                                            .data!.first.profilePicture);
+                                          Future.delayed(
+                                              const Duration(seconds: 2),
+                                              () async {
+                                            Professor scholarObj = Professor(
+                                                department:
+                                                    department.toString(),
+                                                email: email,
+                                                name: fullName,
+                                                password: password,
+                                                phonenumber: phoneNumber,
+                                                professorId: professorID,
+                                                signaturecode: signature,
+                                                profilePicture: snapshot.data!
+                                                    .first.profilePicture);
 
-                                    await _dbReference
-                                        .child(professorID)
-                                        .set(scholarObj.toJson());
+                                            await _dbReference
+                                                .child(professorID)
+                                                .set(scholarObj.toJson());
 
-                                    // ignore: use_build_context_synchronously
-                                    Navigator.of(context, rootNavigator: true)
-                                        .pop();
+                                            // ignore: use_build_context_synchronously
+                                            Navigator.of(context,
+                                                    rootNavigator: true)
+                                                .pop();
 
-                                    // ignore: use_build_context_synchronously
-                                    DialogSuccess(
-                                      headertext: "Successfully Modified!",
-                                      subtext:
-                                          "Would you like to view the contacts?",
-                                      textButton: "Contacts",
-                                      callback: () {
-                                        setState(() {
-                                          selectedIndex = 1;
-                                        });
-                                        Navigator.of(
-                                                context)
-                                            .pushAndRemoveUntil(
-                                                MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        const AdminContacts()),
-                                                (Route<dynamic> route) =>
-                                                    false);
-                                      },
-                                    ).buildSuccessScreen(context);
+                                            // ignore: use_build_context_synchronously
+                                            DialogSuccess(
+                                              headertext:
+                                                  "Successfully Modified!",
+                                              subtext:
+                                                  "Would you like to view the contacts?",
+                                              textButton: "Contacts",
+                                              callback: () {
+                                                setState(() {
+                                                  selectedIndex = 1;
+                                                });
+                                                Navigator.of(context)
+                                                    .pushAndRemoveUntil(
+                                                        MaterialPageRoute(
+                                                            builder: (context) =>
+                                                                const AdminContacts()),
+                                                        (Route<dynamic>
+                                                                route) =>
+                                                            false);
+                                              },
+                                            ).buildSuccessScreen(context);
+                                          });
+                                        }).buildConfirmScreen(context);
                                   });
-                                });
-                              }),
-                              child: Container(
-                                width: 120,
-                                height: 50,
-                                decoration: BoxDecoration(
-                                  color: ColorPalette.primary,
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
+                                }),
                                 child: const Center(
                                   child: Text(
                                     "Update",
@@ -718,16 +758,6 @@ class _EditProfessorState extends State<EditProfessor> {
                                     ),
                                   ),
                                 ),
-                              ),
-                            ),
-                            const SizedBox(height: 2),
-                            const Text(
-                              "Long press to confirm.",
-                              style: TextStyle(
-                                fontFamily: 'Inter',
-                                fontSize: 12,
-                                fontStyle: FontStyle.italic,
-                                fontWeight: FontWeight.w300,
                               ),
                             ),
                           ],
@@ -753,6 +783,7 @@ class _EditProfessorState extends State<EditProfessor> {
       await _userReference.get().then((snapshot) {
         Map<String, dynamic> myObj = jsonDecode(jsonEncode(snapshot.value));
         Professor myProf = Professor.fromJson(myObj);
+        _inputControllerProfessorID.text = myProf.professorId;
         myUser.add(myProf);
       });
       return myUser;

@@ -16,20 +16,37 @@ class AdminChart extends StatefulWidget {
 }
 
 class _AdminChartState extends State<AdminChart> {
+  int totalScholars = 0;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       drawer: const NavDraw(),
-      body: Center(
-        child: ListView(
-          shrinkWrap: true,
-          children: [
-            Container(
+      body: ListView(
+        shrinkWrap: true,
+        children: [
+          Stack(
+            children: [
+              Builder(builder: (context) {
+                return SafeArea(
+                  child: Align(
+                    alignment: Alignment.topLeft,
+                    child: IconButton(
+                      onPressed: () {
+                        Scaffold.of(context).openDrawer();
+                      },
+                      icon: const Icon(
+                        Icons.menu_rounded,
+                        size: 40,
+                        color: ColorPalette.primary,
+                      ),
+                    ),
+                  ),
+                );
+              }),
+              Container(
                 padding: const EdgeInsets.all(20),
-                color: ColorPalette.secondary,
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     FutureBuilder(
                       future: getActiveInActive(),
@@ -87,8 +104,8 @@ class _AdminChartState extends State<AdminChart> {
                         return Column(
                           children: [
                             Column(
-                              children: const [
-                                Text(
+                              children: [
+                                const Text(
                                   "Pie Chart",
                                   style: TextStyle(
                                     color: ColorPalette.accentWhite,
@@ -97,12 +114,22 @@ class _AdminChartState extends State<AdminChart> {
                                     fontSize: 18,
                                   ),
                                 ),
-                                Text(
+                                const Text(
                                   "Status of active and inactive scholars.",
                                   style: TextStyle(
                                     color: ColorPalette.accentWhite,
                                     fontFamily: 'Inter',
                                     fontWeight: FontWeight.w300,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                                const SizedBox(height: 8),
+                                Text(
+                                  "A total of ${totalScholars.toString()} Scholars.",
+                                  style: const TextStyle(
+                                    color: ColorPalette.accentWhite,
+                                    fontFamily: 'Inter',
+                                    fontWeight: FontWeight.w700,
                                     fontSize: 14,
                                   ),
                                 ),
@@ -240,15 +267,18 @@ class _AdminChartState extends State<AdminChart> {
                       },
                     ),
                   ],
-                )),
-          ],
-        ),
+                ),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
 
   Future<List<StatusData>> getActiveInActive() async {
     // Return two objects
+    int scholarsLength = 0;
     List<StatusData> activeAndInactive = [];
     final DatabaseReference _scholarReference =
         FirebaseDatabase.instance.ref().child("Users/Scholars/");
@@ -264,6 +294,7 @@ class _AdminChartState extends State<AdminChart> {
             ? activeStatusCount++
             : inActiveStatusCount++;
         scholarTotal++;
+        scholarsLength++;
       }
 
       double percentageOfActive = (activeStatusCount / scholarTotal) * 100;
@@ -279,6 +310,10 @@ class _AdminChartState extends State<AdminChart> {
 
       activeAndInactive.add(activeObj);
       activeAndInactive.add(InActiveObj);
+    });
+
+    setState(() {
+      totalScholars = scholarsLength;
     });
 
     debugPrint(activeAndInactive.toString());

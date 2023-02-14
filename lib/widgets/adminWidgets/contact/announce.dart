@@ -3,6 +3,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:hksa/constant/colors.dart';
+import 'package:hksa/widgets/dialogs/dialog_confirm.dart';
 import 'package:hksa/widgets/dialogs/dialog_loading.dart';
 import 'package:hksa/widgets/dialogs/dialog_success.dart';
 import 'package:intl/intl.dart';
@@ -39,9 +40,10 @@ class _AnnounceState extends State<Announce> {
             color: ColorPalette.secondary,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: const [
                     Text(
                       "Announcement",
@@ -54,11 +56,11 @@ class _AnnounceState extends State<Announce> {
                     ),
                     Text(
                       "This will send to all Scholars and Professors",
-                      textAlign: TextAlign.center,
+                      textAlign: TextAlign.start,
                       style: TextStyle(
                         color: ColorPalette.accentBlack,
                         fontFamily: 'Inter',
-                        fontSize: 16,
+                        fontSize: 14,
                         fontWeight: FontWeight.w400,
                       ),
                     ),
@@ -111,85 +113,85 @@ class _AnnounceState extends State<Announce> {
                   ),
                 ),
                 const SizedBox(height: 8),
-                InkWell(
-                  child: Container(
-                    width: 120,
-                    height: 50,
-                    decoration: BoxDecoration(
-                      color: ColorPalette.primary,
-                      borderRadius: BorderRadius.circular(10),
+                SizedBox(
+                  width: MediaQuery.of(context).size.width,
+                  child: ElevatedButton(
+                    style: ButtonStyle(
+                      backgroundColor:
+                          MaterialStateProperty.all(ColorPalette.primary),
+                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                          RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      )),
                     ),
-                    child: const Center(
-                      child: Text(
-                        "Submit",
-                        style: TextStyle(
-                          color: ColorPalette.accentWhite,
-                          fontFamily: 'Inter',
-                          fontSize: 14,
-                          fontWeight: FontWeight.w700,
-                        ),
+                    child: const Text(
+                      "SUBMIT",
+                      style: TextStyle(
+                        color: ColorPalette.accentWhite,
+                        fontFamily: 'Inter',
+                        fontSize: 14,
+                        fontWeight: FontWeight.w700,
                       ),
                     ),
-                  ),
-                  onLongPress: () {
-                    // We make inbox for all the Scholars and Professors
-                    // And also admin should have inboxes of all of the user
-                    // That he sents
-                    if (!_formKey.currentState!.validate()) {
-                      return;
-                    }
+                    onPressed: () {
+                      // We make inbox for all the Scholars and Professors
+                      // And also admin should have inboxes of all of the user
+                      // That he sents
+                      if (!_formKey.currentState!.validate()) {
+                        return;
+                      }
 
-                    DialogLoading(subtext: "Sending...")
-                        .buildLoadingScreen(context);
-
-                    Future.delayed(const Duration(seconds: 2), () {
-                      _scholarReference.get().then((snapshot) {
-                        for (final scholarsId in snapshot.children) {
-                          String scholarID = scholarsId.key.toString();
-                          String recieverUserType = "scholars";
-                          checkInbox(recieverUserType, scholarID);
-                          sendMessage(
-                              message: _inputController.text.trim(),
-                              receiverID: scholarID,
-                              receiverUserType: recieverUserType);
-                        }
-                      }).whenComplete(() {
-                        _profReference.get().then((snapshot) {
-                          for (final professorsId in snapshot.children) {
-                            String professorID = professorsId.key.toString();
-                            String recieverUserType = "professors";
-                            checkInbox(recieverUserType, professorID);
-                            sendMessage(
-                                message: _inputController.text.trim(),
-                                receiverID: professorID,
-                                receiverUserType: recieverUserType);
-                          }
-                        });
-                      });
-                    }).whenComplete(() {
-                      Navigator.of(context, rootNavigator: true).pop();
-                      DialogSuccess(
-                          headertext: "Successfully posted!",
-                          subtext:
-                              "You have succesfully sent to all users, care to share another?",
-                          textButton: "Clear",
+                      DialogConfirm(
+                          headertext:
+                              "Are you sure you want to post this announcement?",
                           callback: () {
                             Navigator.of(context, rootNavigator: true).pop();
-                            _inputController.text = "";
-                          }).buildSuccessScreen(context);
-                    });
-                  },
-                ),
-                const SizedBox(height: 2),
-                const Text(
-                  "Long press to confirm",
-                  style: TextStyle(
-                    color: ColorPalette.accentBlack,
-                    fontFamily: 'Inter',
-                    fontSize: 12,
-                    fontWeight: FontWeight.w300,
+                            DialogLoading(subtext: "Sending...")
+                                .buildLoadingScreen(context);
+
+                            Future.delayed(const Duration(seconds: 2), () {
+                              _scholarReference.get().then((snapshot) {
+                                for (final scholarsId in snapshot.children) {
+                                  String scholarID = scholarsId.key.toString();
+                                  String recieverUserType = "scholars";
+                                  checkInbox(recieverUserType, scholarID);
+                                  sendMessage(
+                                      message: _inputController.text.trim(),
+                                      receiverID: scholarID,
+                                      receiverUserType: recieverUserType);
+                                }
+                              }).whenComplete(() {
+                                _profReference.get().then((snapshot) {
+                                  for (final professorsId
+                                      in snapshot.children) {
+                                    String professorID =
+                                        professorsId.key.toString();
+                                    String recieverUserType = "professors";
+                                    checkInbox(recieverUserType, professorID);
+                                    sendMessage(
+                                        message: _inputController.text.trim(),
+                                        receiverID: professorID,
+                                        receiverUserType: recieverUserType);
+                                  }
+                                });
+                              });
+                            }).whenComplete(() {
+                              Navigator.of(context, rootNavigator: true).pop();
+                              DialogSuccess(
+                                  headertext: "Successfully posted!",
+                                  subtext:
+                                      "You have succesfully sent to all users, care to share another?",
+                                  textButton: "Clear",
+                                  callback: () {
+                                    Navigator.of(context, rootNavigator: true)
+                                        .pop();
+                                    _inputController.text = "";
+                                  }).buildSuccessScreen(context);
+                            });
+                          }).buildConfirmScreen(context);
+                    },
                   ),
-                )
+                ),
               ],
             ),
           ),

@@ -66,8 +66,6 @@ class DialogConfirm {
                               ? (() => setState(
                                     () {
                                       callback();
-                                      Navigator.of(context, rootNavigator: true)
-                                          .pop();
                                     },
                                   ))
                               : null,
