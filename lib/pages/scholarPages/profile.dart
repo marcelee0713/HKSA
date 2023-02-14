@@ -305,6 +305,7 @@ class _ProfileState extends State<Profile> {
                         DialogConfirm(
                             headertext: "Are you sure you want to log out?",
                             callback: () {
+                              Navigator.of(context, rootNavigator: true).pop();
                               // Might be more soon
                               // This includes the time in
                               Future.delayed(const Duration(), (() {
@@ -353,19 +354,6 @@ class _ProfileState extends State<Profile> {
                   );
 
                   if (results == null) {
-                    // ignore: use_build_context_synchronously
-                    Flushbar(
-                      backgroundColor: ColorPalette.primary,
-                      messageText: const Text(
-                        "Enter an image!",
-                        style: TextStyle(
-                          fontFamily: 'Inter',
-                          fontSize: 14,
-                          color: ColorPalette.accentWhite,
-                        ),
-                      ),
-                      duration: const Duration(seconds: 3),
-                    ).show(context);
                     return;
                   }
                   // ignore: use_build_context_synchronously

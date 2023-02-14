@@ -289,6 +289,9 @@ class _ProfessorProfileState extends State<ProfessorProfile> {
                                       headertext:
                                           "Are you sure you want to delete this user?",
                                       callback: () async {
+                                        Navigator.of(context,
+                                                rootNavigator: true)
+                                            .pop();
                                         final DatabaseReference userReference =
                                             FirebaseDatabase.instance.ref().child(
                                                 'Users/Professors/${widget.userID}');

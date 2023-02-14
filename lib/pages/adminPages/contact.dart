@@ -44,9 +44,24 @@ class _AdminContactsState extends State<AdminContacts> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
+                Builder(builder: (context) {
+                  return Align(
+                    alignment: Alignment.topLeft,
+                    child: IconButton(
+                      padding: const EdgeInsets.all(0),
+                      onPressed: () {
+                        Scaffold.of(context).openDrawer();
+                      },
+                      icon: const Icon(
+                        Icons.menu_rounded,
+                        size: 40,
+                        color: ColorPalette.primary,
+                      ),
+                    ),
+                  );
+                }),
+                const SizedBox(width: 10),
                 Expanded(
                   child: SizedBox(
                     height: 50,
@@ -92,14 +107,15 @@ class _AdminContactsState extends State<AdminContacts> {
                   ),
                 ),
                 const SizedBox(width: 10),
-                InkWell(
-                  onTap: () {
+                IconButton(
+                  onPressed: () {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
                             builder: (context) => const Announce()));
                   },
-                  child: const Icon(
+                  padding: const EdgeInsets.all(0),
+                  icon: const Icon(
                     Icons.campaign,
                     color: ColorPalette.primary,
                     size: 40.0,
