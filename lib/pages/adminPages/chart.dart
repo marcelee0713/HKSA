@@ -16,8 +16,6 @@ class AdminChart extends StatefulWidget {
 }
 
 class _AdminChartState extends State<AdminChart> {
-  int totalScholars = 0;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -125,7 +123,7 @@ class _AdminChartState extends State<AdminChart> {
                                 ),
                                 const SizedBox(height: 8),
                                 Text(
-                                  "A total of ${totalScholars.toString()} Scholars.",
+                                  "A total of ${snapshot.data!.first.totalScholar} Scholars.",
                                   style: const TextStyle(
                                     color: ColorPalette.accentWhite,
                                     fontFamily: 'Inter',
@@ -304,16 +302,16 @@ class _AdminChartState extends State<AdminChart> {
       String percentOfInActiveStr = "${percentageOfInActive.round()}%";
 
       StatusData activeObj = StatusData("Active", percentageOfActive,
-          ColorPalette.primary, percentOfActiveStr);
-      StatusData InActiveObj = StatusData("Inactive", percentageOfInActive,
-          ColorPalette.errorColor, percentOfInActiveStr);
+          ColorPalette.primary, percentOfActiveStr, scholarsLength.toString());
+      StatusData inActiveObj = StatusData(
+          "Inactive",
+          percentageOfInActive,
+          ColorPalette.errorColor,
+          percentOfInActiveStr,
+          scholarsLength.toString());
 
       activeAndInactive.add(activeObj);
-      activeAndInactive.add(InActiveObj);
-    });
-
-    setState(() {
-      totalScholars = scholarsLength;
+      activeAndInactive.add(inActiveObj);
     });
 
     debugPrint(activeAndInactive.toString());
@@ -324,6 +322,7 @@ class _AdminChartState extends State<AdminChart> {
   Future<List<StatusData>> getFinishedUnfinished() async {
     // Return two objects
     List<StatusData> finishedAndUnFinished = [];
+    int scholarsLength = 0;
     final DatabaseReference _scholarReference =
         FirebaseDatabase.instance.ref().child("Users/Scholars/");
 
@@ -344,13 +343,18 @@ class _AdminChartState extends State<AdminChart> {
       String percentOfFinishedStr = "${percentageOfFinished.round()}%";
       String percentOfUnFinishedStr = "${percentageOfUnFinished.round()}%";
 
-      StatusData finishedObj = StatusData("Finished", percentageOfFinished,
-          ColorPalette.primary, percentOfFinishedStr);
+      StatusData finishedObj = StatusData(
+          "Finished",
+          percentageOfFinished,
+          ColorPalette.primary,
+          percentOfFinishedStr,
+          scholarsLength.toString());
       StatusData unFinishedObj = StatusData(
           "Unfinished",
           percentageOfUnFinished,
           ColorPalette.errorColor,
-          percentOfUnFinishedStr);
+          percentOfUnFinishedStr,
+          scholarsLength.toString());
 
       finishedAndUnFinished.add(finishedObj);
       finishedAndUnFinished.add(unFinishedObj);
