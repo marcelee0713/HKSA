@@ -74,15 +74,17 @@ class _InboxState extends State<Inbox> {
                 fontWeight: FontWeight.w700,
               ),
             ),
-            Text(
-              widget.receiverID,
-              textAlign: TextAlign.start,
-              style: const TextStyle(
-                fontFamily: 'Inter',
-                color: ColorPalette.accentBlack,
-                fontSize: 13,
-              ),
-            ),
+            widget.receiverType == "head"
+                ? const SizedBox()
+                : Text(
+                    widget.receiverID,
+                    textAlign: TextAlign.start,
+                    style: const TextStyle(
+                      fontFamily: 'Inter',
+                      color: ColorPalette.accentBlack,
+                      fontSize: 13,
+                    ),
+                  ),
           ],
         ),
       ),

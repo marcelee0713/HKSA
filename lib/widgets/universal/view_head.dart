@@ -98,6 +98,7 @@ class _HeadProfileState extends State<HeadProfile> {
                           ),
                         ),
                       ),
+                      const SizedBox(height: 8),
                       Text(
                         snapshot.data!.first.name,
                         style: const TextStyle(
