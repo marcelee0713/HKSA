@@ -77,13 +77,19 @@ class _ChatBoxState extends State<ChatBox> {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      widget.name,
-                      style: const TextStyle(
-                        color: ColorPalette.accentBlack,
-                        fontFamily: 'Inter',
-                        fontSize: 13,
-                        fontWeight: FontWeight.w600,
+                    SizedBox(
+                      width: 200,
+                      child: Text(
+                        widget.name,
+                        softWrap: false,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          color: ColorPalette.accentBlack,
+                          fontFamily: 'Inter',
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     ),
                     widget.userType == "head"

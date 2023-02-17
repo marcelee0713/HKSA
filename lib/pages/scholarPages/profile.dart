@@ -320,350 +320,359 @@ class _ProfileState extends State<Profile> {
               ),
             );
           }
-          return Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.start,
+          return ListView(
+            shrinkWrap: true,
             children: [
-              Center(
-                child: Column(
-                  children: [
-                    SizedBox(
-                      width: 150,
-                      height: 150,
-                      child: AspectRatio(
-                        aspectRatio: 1 / 1,
-                        child: ClipOval(
-                          child: FadeInImage.assetNetwork(
-                              fit: BoxFit.cover,
-                              placeholder: 'assets/images/loading.gif',
-                              image: userProfileListener),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    Text(
-                      snapshot.data!.first.name,
-                      style: const TextStyle(
-                        fontSize: 15,
-                        fontFamily: 'Inter',
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(
-                      height: 5,
-                    ),
-                    Text(
-                      snapshot.data!.first.phonenumber,
-                      style: const TextStyle(
-                        fontSize: 13,
-                        fontFamily: 'Inter',
-                        fontWeight: FontWeight.w300,
-                        color: Colors.black,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                  ],
-                ),
-              ),
               Column(
+                mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        "Student Number:",
-                        style: TextStyle(
-                          fontSize: 15,
-                          fontFamily: 'Inter',
-                          fontWeight: FontWeight.w600,
-                          color: Colors.black,
+                  Center(
+                    child: Column(
+                      children: [
+                        SizedBox(
+                          width: 150,
+                          height: 150,
+                          child: AspectRatio(
+                            aspectRatio: 1 / 1,
+                            child: ClipOval(
+                              child: FadeInImage.assetNetwork(
+                                  fit: BoxFit.cover,
+                                  placeholder: 'assets/images/loading.gif',
+                                  image: userProfileListener),
+                            ),
+                          ),
                         ),
-                      ),
-                      const SizedBox(
-                        height: 5,
-                      ),
-                      Text(
-                        snapshot.data!.first.studentNumber,
-                        style: const TextStyle(
-                          fontSize: 13,
-                          fontFamily: 'Inter',
-                          fontWeight: FontWeight.w300,
-                          color: Colors.black,
+                        const SizedBox(
+                          height: 20,
                         ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        'Email:',
-                        style: TextStyle(
-                          fontSize: 15,
-                          fontFamily: 'Inter',
-                          fontWeight: FontWeight.w600,
-                          color: Colors.black,
+                        Text(
+                          snapshot.data!.first.name,
+                          style: const TextStyle(
+                            fontSize: 15,
+                            fontFamily: 'Inter',
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                          ),
+                          textAlign: TextAlign.center,
                         ),
-                      ),
-                      const SizedBox(
-                        height: 5,
-                      ),
-                      Text(
-                        snapshot.data!.first.email,
-                        style: const TextStyle(
-                          fontSize: 13,
-                          fontFamily: 'Inter',
-                          fontWeight: FontWeight.w300,
-                          color: Colors.black,
+                        const SizedBox(
+                          height: 5,
                         ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(
-                    height: 20,
+                        Text(
+                          snapshot.data!.first.phonenumber,
+                          style: const TextStyle(
+                            fontSize: 13,
+                            fontFamily: 'Inter',
+                            fontWeight: FontWeight.w300,
+                            color: Colors.black,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                      ],
+                    ),
                   ),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
-                        'Course/Section:',
-                        style: TextStyle(
-                          fontSize: 15,
-                          fontFamily: 'Inter',
-                          fontWeight: FontWeight.w600,
-                          color: Colors.black,
-                        ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            "Student Number:",
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontFamily: 'Inter',
+                              fontWeight: FontWeight.w600,
+                              color: Colors.black,
+                            ),
+                          ),
+                          const SizedBox(
+                            height: 5,
+                          ),
+                          Text(
+                            snapshot.data!.first.studentNumber,
+                            style: const TextStyle(
+                              fontSize: 13,
+                              fontFamily: 'Inter',
+                              fontWeight: FontWeight.w300,
+                              color: Colors.black,
+                            ),
+                          ),
+                        ],
                       ),
                       const SizedBox(
-                        height: 5,
+                        height: 20,
                       ),
-                      Text(
-                        snapshot.data!.first.course,
-                        style: const TextStyle(
-                          fontSize: 13,
-                          fontFamily: 'Inter',
-                          fontWeight: FontWeight.w300,
-                          color: Colors.black,
-                        ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'Email:',
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontFamily: 'Inter',
+                              fontWeight: FontWeight.w600,
+                              color: Colors.black,
+                            ),
+                          ),
+                          const SizedBox(
+                            height: 5,
+                          ),
+                          Text(
+                            snapshot.data!.first.email,
+                            style: const TextStyle(
+                              fontSize: 13,
+                              fontFamily: 'Inter',
+                              fontWeight: FontWeight.w300,
+                              color: Colors.black,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'Course/Section:',
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontFamily: 'Inter',
+                              fontWeight: FontWeight.w600,
+                              color: Colors.black,
+                            ),
+                          ),
+                          const SizedBox(
+                            height: 5,
+                          ),
+                          Text(
+                            snapshot.data!.first.course,
+                            style: const TextStyle(
+                              fontSize: 13,
+                              fontFamily: 'Inter',
+                              fontWeight: FontWeight.w300,
+                              color: Colors.black,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'HK Type:',
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontFamily: 'Inter',
+                              fontWeight: FontWeight.w600,
+                              color: Colors.black,
+                            ),
+                          ),
+                          const SizedBox(
+                            height: 5,
+                          ),
+                          Text(
+                            snapshot.data!.first.hkType,
+                            style: const TextStyle(
+                              fontSize: 13,
+                              fontFamily: 'Inter',
+                              fontWeight: FontWeight.w300,
+                              color: Colors.black,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'HK Status:',
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontFamily: 'Inter',
+                              fontWeight: FontWeight.w600,
+                              color: Colors.black,
+                            ),
+                          ),
+                          const SizedBox(
+                            height: 5,
+                          ),
+                          Text(
+                            snapshot.data!.first.status.replaceAll(
+                                snapshot.data!.first.status.substring(0, 1),
+                                snapshot.data!.first.status
+                                    .substring(0, 1)
+                                    .toUpperCase()),
+                            style: const TextStyle(
+                              fontSize: 13,
+                              fontFamily: 'Inter',
+                              fontWeight: FontWeight.w300,
+                              color: Colors.black,
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
-                  const SizedBox(
-                    height: 20,
+                  const SizedBox(height: 10),
+                  Container(
+                    height: 2,
+                    color: ColorPalette.accentBlack,
                   ),
+                  const SizedBox(height: 10),
                   Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
-                        'HK Type:',
-                        style: TextStyle(
-                          fontSize: 15,
-                          fontFamily: 'Inter',
-                          fontWeight: FontWeight.w600,
-                          color: Colors.black,
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 5,
-                      ),
-                      Text(
-                        snapshot.data!.first.hkType,
-                        style: const TextStyle(
-                          fontSize: 13,
-                          fontFamily: 'Inter',
-                          fontWeight: FontWeight.w300,
-                          color: Colors.black,
+                      SizedBox(
+                        child: InkWell(
+                          onTap: (() {
+                            DialogConfirm(
+                                headertext: "Are you sure you want to log out?",
+                                callback: () {
+                                  Navigator.of(context, rootNavigator: true)
+                                      .pop();
+                                  // Might be more soon
+                                  // This includes the time in
+                                  Future.delayed(const Duration(), (() {
+                                    DialogLoading(subtext: "Logging out...")
+                                        .buildLoadingScreen(context);
+                                  })).whenComplete(() {
+                                    Future.delayed(const Duration(seconds: 3),
+                                        () {
+                                      logInBox.put("isLoggedIn", false);
+                                      logInBox.put("hasTimedIn", false);
+                                      logInBox.put("userType", "");
+                                      logInBox.put("userID", "");
+                                      logInBox.put("userName", "");
+                                      logInBox.put("getTimeInLS", "");
+                                      logInBox.put("dateTimedIn", "");
+
+                                      Navigator.of(context).pushAndRemoveUntil(
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  const Login()),
+                                          (Route<dynamic> route) => false);
+                                    });
+                                  });
+                                }).buildConfirmScreen(context);
+                          }),
+                          child: const Text(
+                            "Log out",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontFamily: 'Inter',
+                              fontSize: 14,
+                              fontWeight: FontWeight.w400,
+                              color: ColorPalette.primary,
+                            ),
+                          ),
                         ),
                       ),
                     ],
                   ),
-                  const SizedBox(
-                    height: 20,
+                  const SizedBox(height: 8),
+                  InkWell(
+                    onTap: () async {
+                      final results = await FilePicker.platform.pickFiles(
+                        allowMultiple: false,
+                        type: FileType.custom,
+                        allowedExtensions: ['png', 'jpg'],
+                        allowCompression: true,
+                      );
+
+                      if (results == null) {
+                        return;
+                      }
+                      // ignore: use_build_context_synchronously
+                      DialogLoading(subtext: "Changing...")
+                          .buildLoadingScreen(context);
+
+                      final path = results.files.single.path!;
+                      final fileName = results.files.single.name;
+
+                      debugPrint(path);
+                      debugPrint(fileName);
+
+                      await storage.changeScholarPfp(path, fileName, userID,
+                          snapshot.data!.first.profilePicture, () {
+                        Future.delayed(const Duration(seconds: 3), () {
+                          setState(() {
+                            userProfileListener =
+                                snapshot.data!.first.profilePicture;
+                          });
+                          Navigator.of(context, rootNavigator: true).pop();
+                          DialogSuccess(
+                              headertext: "Profile Picture Changed!",
+                              subtext:
+                                  "Didn't showed? Restart or go to a different page and comeback!",
+                              textButton: "Close",
+                              callback: () {
+                                Navigator.of(context, rootNavigator: true)
+                                    .pop();
+                              }).buildSuccessScreen(context);
+                        });
+                      });
+                    },
+                    child: const Text(
+                      "Change Profile Picture",
+                      style: TextStyle(
+                        fontFamily: 'Inter',
+                        fontSize: 14,
+                        fontWeight: FontWeight.w400,
+                        color: ColorPalette.primary,
+                      ),
+                    ),
                   ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        'HK Status:',
-                        style: TextStyle(
-                          fontSize: 15,
-                          fontFamily: 'Inter',
-                          fontWeight: FontWeight.w600,
-                          color: Colors.black,
+                  const SizedBox(height: 8),
+                  InkWell(
+                    onTap: () async {
+                      final result = await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ChangePassword(
+                              userID: userID, userType: "Scholars"),
                         ),
-                      ),
-                      const SizedBox(
-                        height: 5,
-                      ),
-                      Text(
-                        snapshot.data!.first.status.replaceAll(
-                            snapshot.data!.first.status.substring(0, 1),
-                            snapshot.data!.first.status
-                                .substring(0, 1)
-                                .toUpperCase()),
-                        style: const TextStyle(
-                          fontSize: 13,
-                          fontFamily: 'Inter',
-                          fontWeight: FontWeight.w300,
-                          color: Colors.black,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-              const SizedBox(height: 10),
-              Container(
-                height: 2,
-                color: ColorPalette.accentBlack,
-              ),
-              const SizedBox(height: 10),
-              Column(
-                children: [
-                  SizedBox(
-                    child: InkWell(
-                      onTap: (() {
-                        DialogConfirm(
-                            headertext: "Are you sure you want to log out?",
+                      );
+                      if (result == null) {
+                        return;
+                      }
+                      await dbReference.set(result.toString());
+
+                      Future.delayed(const Duration(seconds: 2), () {
+                        Navigator.of(context, rootNavigator: true).pop();
+                      }).whenComplete(() {
+                        DialogSuccess(
+                            headertext: "Successfully changed!",
+                            subtext:
+                                "You successfully changed your password! Remember not to show this to anyone.",
+                            textButton: "Close",
                             callback: () {
                               Navigator.of(context, rootNavigator: true).pop();
-                              // Might be more soon
-                              // This includes the time in
-                              Future.delayed(const Duration(), (() {
-                                DialogLoading(subtext: "Logging out...")
-                                    .buildLoadingScreen(context);
-                              })).whenComplete(() {
-                                Future.delayed(const Duration(seconds: 3), () {
-                                  logInBox.put("isLoggedIn", false);
-                                  logInBox.put("hasTimedIn", false);
-                                  logInBox.put("userType", "");
-                                  logInBox.put("userID", "");
-                                  logInBox.put("userName", "");
-                                  logInBox.put("getTimeInLS", "");
-                                  logInBox.put("dateTimedIn", "");
-
-                                  Navigator.of(context).pushAndRemoveUntil(
-                                      MaterialPageRoute(
-                                          builder: (context) => const Login()),
-                                      (Route<dynamic> route) => false);
-                                });
-                              });
-                            }).buildConfirmScreen(context);
-                      }),
-                      child: const Text(
-                        "Log out",
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontFamily: 'Inter',
-                          fontSize: 14,
-                          fontWeight: FontWeight.w400,
-                          color: ColorPalette.primary,
-                        ),
+                            }).buildSuccessScreen(context);
+                      });
+                    },
+                    child: const Text(
+                      "Change Password",
+                      style: TextStyle(
+                        fontFamily: 'Inter',
+                        fontSize: 14,
+                        fontWeight: FontWeight.w400,
+                        color: ColorPalette.primary,
                       ),
                     ),
                   ),
                 ],
-              ),
-              const SizedBox(height: 8),
-              InkWell(
-                onTap: () async {
-                  final results = await FilePicker.platform.pickFiles(
-                    allowMultiple: false,
-                    type: FileType.custom,
-                    allowedExtensions: ['png', 'jpg'],
-                    allowCompression: true,
-                  );
-
-                  if (results == null) {
-                    return;
-                  }
-                  // ignore: use_build_context_synchronously
-                  DialogLoading(subtext: "Changing...")
-                      .buildLoadingScreen(context);
-
-                  final path = results.files.single.path!;
-                  final fileName = results.files.single.name;
-
-                  debugPrint(path);
-                  debugPrint(fileName);
-
-                  await storage.changeScholarPfp(path, fileName, userID,
-                      snapshot.data!.first.profilePicture, () {
-                    Future.delayed(const Duration(seconds: 3), () {
-                      setState(() {
-                        userProfileListener =
-                            snapshot.data!.first.profilePicture;
-                      });
-                      Navigator.of(context, rootNavigator: true).pop();
-                      DialogSuccess(
-                          headertext: "Profile Picture Changed!",
-                          subtext:
-                              "Didn't showed? Restart or go to a different page and comeback!",
-                          textButton: "Close",
-                          callback: () {
-                            Navigator.of(context, rootNavigator: true).pop();
-                          }).buildSuccessScreen(context);
-                    });
-                  });
-                },
-                child: const Text(
-                  "Change Profile Picture",
-                  style: TextStyle(
-                    fontFamily: 'Inter',
-                    fontSize: 14,
-                    fontWeight: FontWeight.w400,
-                    color: ColorPalette.primary,
-                  ),
-                ),
-              ),
-              const SizedBox(height: 8),
-              InkWell(
-                onTap: () async {
-                  final result = await Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) =>
-                          ChangePassword(userID: userID, userType: "Scholars"),
-                    ),
-                  );
-                  if (result == null) {
-                    return;
-                  }
-                  await dbReference.set(result.toString());
-
-                  Future.delayed(const Duration(seconds: 2), () {
-                    Navigator.of(context, rootNavigator: true).pop();
-                  }).whenComplete(() {
-                    DialogSuccess(
-                        headertext: "Successfully changed!",
-                        subtext:
-                            "You successfully changed your password! Remember not to show this to anyone.",
-                        textButton: "Close",
-                        callback: () {
-                          Navigator.of(context, rootNavigator: true).pop();
-                        }).buildSuccessScreen(context);
-                  });
-                },
-                child: const Text(
-                  "Change Password",
-                  style: TextStyle(
-                    fontFamily: 'Inter',
-                    fontSize: 14,
-                    fontWeight: FontWeight.w400,
-                    color: ColorPalette.primary,
-                  ),
-                ),
               ),
             ],
           );

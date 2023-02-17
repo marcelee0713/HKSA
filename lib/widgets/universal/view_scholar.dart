@@ -5,8 +5,10 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
+import 'package:hksa/api/pdf_api.dart';
 import 'package:hksa/constant/colors.dart';
 import 'package:hksa/constant/string.dart';
+import 'package:hksa/models/logs.dart';
 import 'package:hksa/models/scholar.dart';
 import 'package:hksa/pages/adminPages/contact.dart';
 import 'package:hksa/widgets/dialogs/dialog_confirm.dart';
@@ -27,6 +29,14 @@ class ScholarProfile extends StatefulWidget {
 }
 
 class _ScholarProfileState extends State<ScholarProfile> {
+  List<Logs> dataList = [];
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    createLogsCollection();
+  }
+
   final logInBox = Hive.box("myLoginBox");
   late var userType = logInBox.get("userType");
   @override
@@ -294,116 +304,223 @@ class _ScholarProfileState extends State<ScholarProfile> {
                 const SizedBox(
                   height: 10,
                 ),
-                Row(
-                  children: [
-                    ElevatedButton(
-                      onPressed: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => Inbox(
-                                      receiverFullName:
-                                          snapshot.data!.first.name,
-                                      receiverID:
-                                          snapshot.data!.first.studentNumber,
-                                      receiverType: "scholar",
-                                    )));
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: ColorPalette.accentDarkWhite,
-                      ),
-                      child: const Text(
-                        "Message",
-                        style: TextStyle(
-                            fontFamily: 'Inter',
-                            fontSize: 16,
-                            fontWeight: FontWeight.w400,
-                            color: ColorPalette.primary),
-                      ),
-                    ),
-                    const SizedBox(width: 2),
-                    userType == "head"
-                        ? ElevatedButton(
-                            onPressed: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => EditScholar(
-                                          userID: snapshot
-                                              .data!.first.studentNumber)));
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: ColorPalette.accentDarkWhite,
-                            ),
-                            child: const Text(
-                              "Edit",
-                              style: TextStyle(
-                                  fontFamily: 'Inter',
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w400,
-                                  color: ColorPalette.primary),
-                            ),
-                          )
-                        : const SizedBox(),
-                    const SizedBox(width: 2),
-                    userType == "head"
-                        ? ElevatedButton(
-                            onPressed: () {
-                              DialogConfirm(
-                                  headertext:
-                                      "Are you sure you want to delete this user?",
-                                  callback: () async {
-                                    Navigator.of(context, rootNavigator: true)
-                                        .pop();
-                                    final DatabaseReference userReference =
-                                        FirebaseDatabase.instance.ref().child(
-                                            'Users/Scholars/${widget.userID}');
-
-                                    final DatabaseReference userReferenceLogs =
-                                        FirebaseDatabase.instance
-                                            .ref()
-                                            .child('dtrlogs/${widget.userID}');
-
-                                    await userReference.remove();
-                                    await userReferenceLogs.remove();
-                                    if (FirebaseStorage.instance.refFromURL(
-                                            snapshot
-                                                .data!.first.profilePicture) !=
-                                        FirebaseStorage.instance.refFromURL(
-                                            HKSAStrings.pfpPlaceholder)) {
-                                      await FirebaseStorage.instance
-                                          .refFromURL(snapshot
-                                              .data!.first.profilePicture)
-                                          .delete();
-                                    }
-
-                                    // ignore: use_build_context_synchronously
-                                    Navigator.of(context, rootNavigator: true)
-                                        .pop();
-
-                                    // ignore: use_build_context_synchronously
-                                    Navigator.pushReplacement(
+                userType == "head"
+                    ? Column(
+                        children: [
+                          Row(
+                            children: [
+                              Expanded(
+                                child: ElevatedButton(
+                                  onPressed: () {
+                                    Navigator.push(
                                         context,
                                         MaterialPageRoute(
-                                            builder: (context) =>
-                                                const AdminContacts()));
-                                  }).buildConfirmScreen(context);
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: ColorPalette.errorColor,
-                            ),
-                            child: const Text(
-                              "Delete",
-                              style: TextStyle(
-                                  fontFamily: 'Inter',
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w400,
-                                  color: ColorPalette.accentWhite),
-                            ),
-                          )
-                        : const SizedBox(),
-                  ],
-                ),
+                                            builder: (context) => Inbox(
+                                                  receiverFullName:
+                                                      snapshot.data!.first.name,
+                                                  receiverID: snapshot.data!
+                                                      .first.studentNumber,
+                                                  receiverType: "scholar",
+                                                )));
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor:
+                                        ColorPalette.accentDarkWhite,
+                                  ),
+                                  child: const Text(
+                                    "Message",
+                                    style: TextStyle(
+                                        fontFamily: 'Inter',
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w400,
+                                        color: ColorPalette.primary),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 10),
+                              Expanded(
+                                  child: ElevatedButton(
+                                onPressed: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => EditScholar(
+                                              userID: snapshot
+                                                  .data!.first.studentNumber)));
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: ColorPalette.accentDarkWhite,
+                                ),
+                                child: const Text(
+                                  "Edit",
+                                  style: TextStyle(
+                                      fontFamily: 'Inter',
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w400,
+                                      color: ColorPalette.primary),
+                                ),
+                              )),
+                            ],
+                          ),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: FutureBuilder(
+                                  future: createLogsCollection(),
+                                  builder: (context, list) {
+                                    if (!list.hasData) {
+                                      return ElevatedButton(
+                                        onPressed: () {},
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor:
+                                              ColorPalette.accentDarkWhite,
+                                        ),
+                                        child: const Text(
+                                          "Fetching...",
+                                          style: TextStyle(
+                                              fontFamily: 'Inter',
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.w400,
+                                              color: ColorPalette.primary),
+                                        ),
+                                      );
+                                    }
+
+                                    return ElevatedButton(
+                                      onPressed: () async {
+                                        final pdfFile =
+                                            await PdfApi.generateTable(
+                                                dataListObj: list.data!,
+                                                fullName:
+                                                    snapshot.data!.first.name,
+                                                totalHours:
+                                                    snapshot.data!.first.hours);
+                                        PdfApi.openFile(pdfFile);
+                                      },
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor:
+                                            ColorPalette.accentDarkWhite,
+                                      ),
+                                      child: const Text(
+                                        "PDF",
+                                        style: TextStyle(
+                                          fontFamily: 'Inter',
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w400,
+                                          color: ColorPalette.primary,
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                ),
+                                /*
+                                ElevatedButton(
+                                  onPressed: () async {
+                                    final pdfFile = await PdfApi.generateTable(
+                                        dataListObj: dataList,
+                                        fullName: snapshot.data!.first.name,
+                                        totalHours: snapshot.data!.first.hours);
+                                    PdfApi.openFile(pdfFile);
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor:
+                                        ColorPalette.accentDarkWhite,
+                                  ),
+                                  child: const Text(
+                                    "PDF",
+                                    style: TextStyle(
+                                        fontFamily: 'Inter',
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w400,
+                                        color: ColorPalette.primary),
+                                  ),
+                                ),
+                                */
+                              ),
+                              const SizedBox(width: 10),
+                              Expanded(
+                                child: ElevatedButton(
+                                  onPressed: () {
+                                    DialogConfirm(
+                                        headertext:
+                                            "Are you sure you want to delete this user?",
+                                        callback: () async {
+                                          Navigator.of(context,
+                                                  rootNavigator: true)
+                                              .pop();
+                                          final DatabaseReference
+                                              userReference =
+                                              FirebaseDatabase.instance.ref().child(
+                                                  'Users/Professors/${widget.userID}');
+
+                                          await userReference.remove();
+                                          if (FirebaseStorage.instance
+                                                  .refFromURL(snapshot.data!
+                                                      .first.profilePicture) !=
+                                              FirebaseStorage.instance
+                                                  .refFromURL(HKSAStrings
+                                                      .pfpPlaceholder)) {
+                                            await FirebaseStorage.instance
+                                                .refFromURL(snapshot
+                                                    .data!.first.profilePicture)
+                                                .delete();
+                                          }
+
+                                          // ignore: use_build_context_synchronously
+                                          Navigator.of(context,
+                                                  rootNavigator: true)
+                                              .pop();
+
+                                          // ignore: use_build_context_synchronously
+                                          Navigator.pushReplacement(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      const AdminContacts()));
+                                        }).buildConfirmScreen(context);
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: ColorPalette.errorColor,
+                                  ),
+                                  child: const Text(
+                                    "Delete",
+                                    style: TextStyle(
+                                        fontFamily: 'Inter',
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w400,
+                                        color: ColorPalette.accentWhite),
+                                  ),
+                                ),
+                              )
+                            ],
+                          ),
+                        ],
+                      )
+                    : ElevatedButton(
+                        onPressed: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => Inbox(
+                                        receiverFullName:
+                                            snapshot.data!.first.name,
+                                        receiverID:
+                                            snapshot.data!.first.studentNumber,
+                                        receiverType: "scholar",
+                                      )));
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: ColorPalette.accentDarkWhite,
+                        ),
+                        child: const Text(
+                          "Message",
+                          style: TextStyle(
+                              fontFamily: 'Inter',
+                              fontSize: 16,
+                              fontWeight: FontWeight.w400,
+                              color: ColorPalette.primary),
+                        ),
+                      ),
               ],
             );
           },
@@ -427,5 +544,25 @@ class _ScholarProfileState extends State<ScholarProfile> {
     } catch (error) {
       rethrow;
     }
+  }
+
+  Future<List<Logs>> createLogsCollection() async {
+    DatabaseReference dbReference =
+        FirebaseDatabase.instance.ref().child('dtrlogs/${widget.userID}');
+
+    await dbReference.get().then((snapshot) {
+      for (final data in snapshot.children) {
+        Map<String, dynamic> myObj = jsonDecode(jsonEncode(data.value));
+        Logs myLogs = Logs(
+            timeIn: myObj["timein"],
+            timeOut: myObj["timeout"],
+            signature: myObj["signature"],
+            date: myObj["date"],
+            multiplier: myObj["multiplier"]);
+        dataList.add(myLogs);
+      }
+    });
+
+    return dataList;
   }
 }

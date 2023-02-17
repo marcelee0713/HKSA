@@ -230,112 +230,159 @@ class _ProfessorProfileState extends State<ProfessorProfile> {
                     const SizedBox(
                       height: 10,
                     ),
-                    Row(
-                      children: [
-                        ElevatedButton(
-                          onPressed: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => Inbox(
-                                          receiverFullName:
-                                              snapshot.data!.first.name,
-                                          receiverID:
-                                              snapshot.data!.first.professorId,
-                                          receiverType: "professor",
-                                        )));
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: ColorPalette.accentDarkWhite,
-                          ),
-                          child: const Text(
-                            "Message",
-                            style: TextStyle(
-                                fontFamily: 'Inter',
-                                fontSize: 16,
-                                fontWeight: FontWeight.w400,
-                                color: ColorPalette.primary),
-                          ),
-                        ),
-                        const SizedBox(width: 2),
-                        userType == "head"
-                            ? ElevatedButton(
-                                onPressed: () {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => EditProfessor(
-                                              userID: snapshot
-                                                  .data!.first.professorId)));
-                                },
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: ColorPalette.accentDarkWhite,
-                                ),
-                                child: const Text(
-                                  "Edit",
-                                  style: TextStyle(
-                                      fontFamily: 'Inter',
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w400,
-                                      color: ColorPalette.primary),
-                                ),
-                              )
-                            : const SizedBox(),
-                        const SizedBox(width: 2),
-                        userType == "head"
-                            ? ElevatedButton(
-                                onPressed: () {
-                                  DialogConfirm(
-                                      headertext:
-                                          "Are you sure you want to delete this user?",
-                                      callback: () async {
-                                        Navigator.of(context,
-                                                rootNavigator: true)
-                                            .pop();
-                                        final DatabaseReference userReference =
-                                            FirebaseDatabase.instance.ref().child(
-                                                'Users/Professors/${widget.userID}');
-
-                                        await userReference.remove();
-                                        if (FirebaseStorage.instance.refFromURL(
-                                                snapshot.data!.first
-                                                    .profilePicture) !=
-                                            FirebaseStorage.instance.refFromURL(
-                                                HKSAStrings.pfpPlaceholder)) {
-                                          await FirebaseStorage.instance
-                                              .refFromURL(snapshot
-                                                  .data!.first.profilePicture)
-                                              .delete();
-                                        }
-
-                                        // ignore: use_build_context_synchronously
-                                        Navigator.of(context,
-                                                rootNavigator: true)
-                                            .pop();
-
-                                        // ignore: use_build_context_synchronously
-                                        Navigator.pushReplacement(
+                    userType == "head"
+                        ? Column(
+                            children: [
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: ElevatedButton(
+                                      onPressed: () {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) => Inbox(
+                                                      receiverFullName: snapshot
+                                                          .data!.first.name,
+                                                      receiverID: snapshot.data!
+                                                          .first.professorId,
+                                                      receiverType: "professor",
+                                                    )));
+                                      },
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor:
+                                            ColorPalette.accentDarkWhite,
+                                      ),
+                                      child: const Text(
+                                        "Message",
+                                        style: TextStyle(
+                                            fontFamily: 'Inter',
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w400,
+                                            color: ColorPalette.primary),
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 5),
+                                  Expanded(
+                                    child: ElevatedButton(
+                                      onPressed: () {
+                                        Navigator.push(
                                             context,
                                             MaterialPageRoute(
                                                 builder: (context) =>
-                                                    const AdminContacts()));
-                                      }).buildConfirmScreen(context);
-                                },
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: ColorPalette.errorColor,
-                                ),
-                                child: const Text(
-                                  "Delete",
-                                  style: TextStyle(
-                                      fontFamily: 'Inter',
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w400,
-                                      color: ColorPalette.accentWhite),
-                                ),
-                              )
-                            : const SizedBox(),
-                      ],
-                    ),
+                                                    EditProfessor(
+                                                        userID: snapshot
+                                                            .data!
+                                                            .first
+                                                            .professorId)));
+                                      },
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor:
+                                            ColorPalette.accentDarkWhite,
+                                      ),
+                                      child: const Text(
+                                        "Edit",
+                                        style: TextStyle(
+                                            fontFamily: 'Inter',
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w400,
+                                            color: ColorPalette.primary),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: ElevatedButton(
+                                      onPressed: () {
+                                        DialogConfirm(
+                                            headertext:
+                                                "Are you sure you want to delete this user?",
+                                            callback: () async {
+                                              Navigator.of(context,
+                                                      rootNavigator: true)
+                                                  .pop();
+                                              final DatabaseReference
+                                                  userReference =
+                                                  FirebaseDatabase.instance
+                                                      .ref()
+                                                      .child(
+                                                          'Users/Professors/${widget.userID}');
+
+                                              await userReference.remove();
+                                              if (FirebaseStorage.instance
+                                                      .refFromURL(snapshot
+                                                          .data!
+                                                          .first
+                                                          .profilePicture) !=
+                                                  FirebaseStorage.instance
+                                                      .refFromURL(HKSAStrings
+                                                          .pfpPlaceholder)) {
+                                                await FirebaseStorage.instance
+                                                    .refFromURL(snapshot.data!
+                                                        .first.profilePicture)
+                                                    .delete();
+                                              }
+
+                                              // ignore: use_build_context_synchronously
+                                              Navigator.of(context,
+                                                      rootNavigator: true)
+                                                  .pop();
+
+                                              // ignore: use_build_context_synchronously
+                                              Navigator.pushReplacement(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          const AdminContacts()));
+                                            }).buildConfirmScreen(context);
+                                      },
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor:
+                                            ColorPalette.errorColor,
+                                      ),
+                                      child: const Text(
+                                        "Delete",
+                                        style: TextStyle(
+                                            fontFamily: 'Inter',
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w400,
+                                            color: ColorPalette.accentWhite),
+                                      ),
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ],
+                          )
+                        : ElevatedButton(
+                            onPressed: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => Inbox(
+                                            receiverFullName:
+                                                snapshot.data!.first.name,
+                                            receiverID: snapshot
+                                                .data!.first.professorId,
+                                            receiverType: "professor",
+                                          )));
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: ColorPalette.accentDarkWhite,
+                            ),
+                            child: const Text(
+                              "Message",
+                              style: TextStyle(
+                                  fontFamily: 'Inter',
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w400,
+                                  color: ColorPalette.primary),
+                            ),
+                          ),
                   ],
                 ),
               ],
