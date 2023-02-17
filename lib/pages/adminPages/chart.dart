@@ -42,229 +42,225 @@ class _AdminChartState extends State<AdminChart> {
                   ),
                 );
               }),
-              Container(
-                padding: const EdgeInsets.all(20),
-                child: Column(
-                  children: [
-                    FutureBuilder(
-                      future: getActiveInActive(),
-                      builder: (context, snapshot) {
-                        if (!snapshot.hasData) {
-                          return Center(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: const <Widget>[
-                                SizedBox(
-                                  width: 30,
-                                  height: 30,
-                                  child: CircularProgressIndicator(
-                                    color: ColorPalette.primary,
-                                  ),
-                                ),
-                                SizedBox(height: 20),
-                                Text("Loading..."),
-                              ],
-                            ),
-                          );
-                        }
-                        if (snapshot.hasError) {
-                          return Center(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: const [
-                                Icon(
-                                  Icons.warning_rounded,
-                                  size: 200,
-                                  color: ColorPalette.errorColor,
-                                ),
-                                Text(
-                                  'Something went wrong!',
-                                  style: TextStyle(
-                                    fontFamily: 'Inter',
-                                    color: ColorPalette.accentBlack,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                SizedBox(height: 5),
-                                Text(
-                                  'Please try again later.',
-                                  style: TextStyle(
-                                    fontFamily: 'Inter',
-                                    color: ColorPalette.accentBlack,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          );
-                        }
-                        return Column(
-                          children: [
-                            Column(
-                              children: [
-                                const Text(
-                                  "Pie Chart",
-                                  style: TextStyle(
-                                    color: ColorPalette.accentWhite,
-                                    fontFamily: 'Inter',
-                                    fontWeight: FontWeight.w700,
-                                    fontSize: 18,
-                                  ),
-                                ),
-                                const Text(
-                                  "Status of active and inactive scholars.",
-                                  style: TextStyle(
-                                    color: ColorPalette.accentWhite,
-                                    fontFamily: 'Inter',
-                                    fontWeight: FontWeight.w300,
-                                    fontSize: 14,
-                                  ),
-                                ),
-                                const SizedBox(height: 8),
-                                Text(
-                                  "A total of ${snapshot.data!.first.totalScholar} Scholars.",
-                                  style: const TextStyle(
-                                    color: ColorPalette.accentWhite,
-                                    fontFamily: 'Inter',
-                                    fontWeight: FontWeight.w700,
-                                    fontSize: 14,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            SfCircularChart(
-                              legend: Legend(
-                                  isVisible: true,
-                                  position: LegendPosition.bottom),
-                              series: <CircularSeries>[
-                                PieSeries<StatusData, String>(
-                                  dataSource: snapshot.data,
-                                  pointColorMapper: (StatusData data, _) =>
-                                      data.color,
-                                  xValueMapper: (StatusData data, _) =>
-                                      data.status,
-                                  yValueMapper: (StatusData data, _) =>
-                                      data.percentage,
-                                  dataLabelSettings: const DataLabelSettings(
-                                    isVisible: true,
-                                    showZeroValue: false,
-                                    textStyle: TextStyle(
-                                      color: ColorPalette.accentWhite,
-                                      fontFamily: 'Inter',
-                                      fontSize: 17,
-                                      fontWeight: FontWeight.w700,
+              Expanded(
+                child: Container(
+                  padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      FutureBuilder(
+                        future: getActiveInActive(),
+                        builder: (context, snapshot) {
+                          if (!snapshot.hasData) {
+                            return SizedBox(
+                              height: MediaQuery.of(context).size.height,
+                              child: Center(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: const <Widget>[
+                                    SizedBox(
+                                      width: 30,
+                                      height: 30,
+                                      child: CircularProgressIndicator(
+                                        color: ColorPalette.primary,
+                                      ),
                                     ),
-                                  ),
-                                  dataLabelMapper: (StatusData data, _) =>
-                                      data.percentStr,
+                                    SizedBox(height: 20),
+                                    Text("Loading..."),
+                                  ],
                                 ),
-                              ],
-                            ),
-                          ],
-                        );
-                      },
-                    ),
-                    const SizedBox(height: 8),
-                    Container(height: 1, color: ColorPalette.accentWhite),
-                    const SizedBox(height: 16),
-                    FutureBuilder(
-                      future: getFinishedUnfinished(),
-                      builder: (context, snapshot) {
-                        if (!snapshot.hasData) {
-                          return Center(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: const <Widget>[
-                                SizedBox(
-                                  width: 30,
-                                  height: 30,
-                                  child: CircularProgressIndicator(
-                                    color: ColorPalette.primary,
-                                  ),
-                                ),
-                                SizedBox(height: 20),
-                                Text("Loading..."),
-                              ],
-                            ),
-                          );
-                        }
-                        if (snapshot.hasError) {
-                          return Center(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: const [
-                                Icon(
-                                  Icons.warning_rounded,
-                                  size: 200,
-                                  color: ColorPalette.errorColor,
-                                ),
-                                Text(
-                                  'Something went wrong!',
-                                  style: TextStyle(
-                                    fontFamily: 'Inter',
-                                    color: ColorPalette.accentBlack,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                SizedBox(height: 5),
-                                Text(
-                                  'Please try again later.',
-                                  style: TextStyle(
-                                    fontFamily: 'Inter',
-                                    color: ColorPalette.accentBlack,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          );
-                        }
-                        return Column(
-                          children: [
-                            const Text(
-                              "Finished and unfinished scholars",
-                              style: TextStyle(
-                                color: ColorPalette.accentWhite,
-                                fontFamily: 'Inter',
-                                fontWeight: FontWeight.w300,
-                                fontSize: 14,
                               ),
-                            ),
-                            SfCircularChart(
-                              legend: Legend(
-                                  isVisible: true,
-                                  position: LegendPosition.bottom),
-                              series: <CircularSeries>[
-                                PieSeries<StatusData, String>(
-                                  dataSource: snapshot.data,
-                                  pointColorMapper: (StatusData data, _) =>
-                                      data.color,
-                                  xValueMapper: (StatusData data, _) =>
-                                      data.status,
-                                  yValueMapper: (StatusData data, _) =>
-                                      data.percentage,
-                                  dataLabelSettings: const DataLabelSettings(
-                                    isVisible: true,
-                                    showZeroValue: false,
-                                    textStyle: TextStyle(
-                                      color: ColorPalette.accentWhite,
+                            );
+                          }
+                          if (snapshot.hasError) {
+                            return Center(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: const [
+                                  Icon(
+                                    Icons.warning_rounded,
+                                    size: 200,
+                                    color: ColorPalette.errorColor,
+                                  ),
+                                  Text(
+                                    'Something went wrong!',
+                                    style: TextStyle(
                                       fontFamily: 'Inter',
-                                      fontSize: 17,
-                                      fontWeight: FontWeight.w700,
+                                      color: ColorPalette.accentBlack,
+                                      fontWeight: FontWeight.bold,
                                     ),
                                   ),
-                                  dataLabelMapper: (StatusData data, _) =>
-                                      data.percentStr,
+                                  SizedBox(height: 5),
+                                  Text(
+                                    'Please try again later.',
+                                    style: TextStyle(
+                                      fontFamily: 'Inter',
+                                      color: ColorPalette.accentBlack,
+                                    ),
+                                  ),
+                                  SizedBox(height: 16),
+                                ],
+                              ),
+                            );
+                          }
+                          return Column(
+                            children: [
+                              const Text(
+                                "Pie Chart",
+                                style: TextStyle(
+                                  color: ColorPalette.accentWhite,
+                                  fontFamily: 'Inter',
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 18,
                                 ),
-                              ],
-                            ),
-                          ],
-                        );
-                      },
-                    ),
-                  ],
+                              ),
+                              const Text(
+                                "Status of active and inactive scholars.",
+                                style: TextStyle(
+                                  color: ColorPalette.accentWhite,
+                                  fontFamily: 'Inter',
+                                  fontWeight: FontWeight.w300,
+                                  fontSize: 14,
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              Text(
+                                "A total of ${snapshot.data!.first.totalScholar} Scholars.",
+                                style: const TextStyle(
+                                  color: ColorPalette.accentWhite,
+                                  fontFamily: 'Inter',
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 14,
+                                ),
+                              ),
+                              SfCircularChart(
+                                legend: Legend(
+                                    isVisible: true,
+                                    position: LegendPosition.bottom),
+                                series: <CircularSeries>[
+                                  PieSeries<StatusData, String>(
+                                    dataSource: snapshot.data,
+                                    pointColorMapper: (StatusData data, _) =>
+                                        data.color,
+                                    xValueMapper: (StatusData data, _) =>
+                                        data.status,
+                                    yValueMapper: (StatusData data, _) =>
+                                        data.percentage,
+                                    dataLabelSettings: const DataLabelSettings(
+                                      isVisible: true,
+                                      showZeroValue: false,
+                                      textStyle: TextStyle(
+                                        color: ColorPalette.accentWhite,
+                                        fontFamily: 'Inter',
+                                        fontSize: 17,
+                                        fontWeight: FontWeight.w700,
+                                      ),
+                                    ),
+                                    dataLabelMapper: (StatusData data, _) =>
+                                        data.percentStr,
+                                  ),
+                                ],
+                              ),
+                            ],
+                          );
+                        },
+                      ),
+                      FutureBuilder(
+                        future: getFinishedUnfinished(),
+                        builder: (context, snapshot) {
+                          if (!snapshot.hasData) {
+                            return Container();
+                          }
+                          if (snapshot.hasError) {
+                            return SizedBox(
+                              child: Center(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    const SizedBox(height: 8),
+                                    Container(
+                                        height: 1,
+                                        color: ColorPalette.accentWhite),
+                                    const SizedBox(height: 16),
+                                    const Icon(
+                                      Icons.warning_rounded,
+                                      size: 200,
+                                      color: ColorPalette.errorColor,
+                                    ),
+                                    const Text(
+                                      'Something went wrong!',
+                                      style: TextStyle(
+                                        fontFamily: 'Inter',
+                                        color: ColorPalette.accentBlack,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 5),
+                                    const Text(
+                                      'Please try again later.',
+                                      style: TextStyle(
+                                        fontFamily: 'Inter',
+                                        color: ColorPalette.accentBlack,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          }
+                          return Column(
+                            children: [
+                              const SizedBox(height: 8),
+                              Container(
+                                  height: 1, color: ColorPalette.accentWhite),
+                              const SizedBox(height: 16),
+                              const Text(
+                                "Finished and unfinished scholars",
+                                style: TextStyle(
+                                  color: ColorPalette.accentWhite,
+                                  fontFamily: 'Inter',
+                                  fontWeight: FontWeight.w300,
+                                  fontSize: 14,
+                                ),
+                              ),
+                              SfCircularChart(
+                                legend: Legend(
+                                    isVisible: true,
+                                    position: LegendPosition.bottom),
+                                series: <CircularSeries>[
+                                  PieSeries<StatusData, String>(
+                                    dataSource: snapshot.data,
+                                    pointColorMapper: (StatusData data, _) =>
+                                        data.color,
+                                    xValueMapper: (StatusData data, _) =>
+                                        data.status,
+                                    yValueMapper: (StatusData data, _) =>
+                                        data.percentage,
+                                    dataLabelSettings: const DataLabelSettings(
+                                      isVisible: true,
+                                      showZeroValue: false,
+                                      textStyle: TextStyle(
+                                        color: ColorPalette.accentWhite,
+                                        fontFamily: 'Inter',
+                                        fontSize: 17,
+                                        fontWeight: FontWeight.w700,
+                                      ),
+                                    ),
+                                    dataLabelMapper: (StatusData data, _) =>
+                                        data.percentStr,
+                                  ),
+                                ],
+                              ),
+                            ],
+                          );
+                        },
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ],
