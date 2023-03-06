@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:another_flushbar/flushbar.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:hksa/api/storage_service.dart';
@@ -261,6 +262,7 @@ class _ProfileState extends State<Profile> {
 
   @override
   Widget build(BuildContext context) {
+    final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
     DatabaseReference dbReference = FirebaseDatabase.instance
         .ref()
         .child("Users/Scholars/$userID/password");
@@ -555,7 +557,8 @@ class _ProfileState extends State<Profile> {
                                       logInBox.put("userName", "");
                                       logInBox.put("getTimeInLS", "");
                                       logInBox.put("dateTimedIn", "");
-
+                                      _firebaseMessaging
+                                          .unsubscribeFromTopic('user_all');
                                       Navigator.of(context).pushAndRemoveUntil(
                                           MaterialPageRoute(
                                               builder: (context) =>

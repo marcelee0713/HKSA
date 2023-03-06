@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:another_flushbar/flushbar.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -28,6 +29,7 @@ class _ProfProfileState extends State<ProfProfile> {
   final logInBox = Hive.box("myLoginBox");
   late var userID = logInBox.get("userID");
   String userProfileListener = "";
+  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
 
   @override
   void initState() {
@@ -386,7 +388,8 @@ class _ProfProfileState extends State<ProfProfile> {
                                       logInBox.put("userName", "");
                                       logInBox.put("getTimeInLS", "");
                                       logInBox.put("dateTimedIn", "");
-
+                                      _firebaseMessaging
+                                          .unsubscribeFromTopic('user_all');
                                       Navigator.of(context).pushAndRemoveUntil(
                                           MaterialPageRoute(
                                               builder: (context) =>
