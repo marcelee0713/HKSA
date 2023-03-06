@@ -13,7 +13,7 @@ class ScholarDTRInformation extends StatelessWidget {
           HKSAStrings.dtrInfo,
           textAlign: TextAlign.center,
           style: TextStyle(
-            color: ColorPalette.primary,
+            color: ColorPalette.accentBlack,
             fontFamily: 'Inter',
             fontSize: 12,
           ),
@@ -23,7 +23,7 @@ class ScholarDTRInformation extends StatelessWidget {
           "Also when you logged out, your time in will be cleared out.",
           textAlign: TextAlign.center,
           style: TextStyle(
-            color: ColorPalette.primary,
+            color: ColorPalette.accentBlack,
             fontFamily: 'Inter',
             fontSize: 12,
           ),

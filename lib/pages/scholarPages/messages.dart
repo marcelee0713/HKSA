@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:hive/hive.dart';
 import 'package:hksa/constant/colors.dart';
 import 'package:hksa/main.dart';
@@ -268,7 +269,7 @@ class _MessagesState extends State<Messages> {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 20),
-      color: ColorPalette.secondary,
+      color: ColorPalette.accentWhite,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -337,12 +338,12 @@ class _MessagesState extends State<Messages> {
               const Text(
                 "Contacts",
                 style: TextStyle(
-                  color: ColorPalette.accentWhite,
+                  color: ColorPalette.primary,
                   fontFamily: 'Frank Ruhl Libre',
                   fontSize: 20,
                 ),
               ),
-              Container(height: 1, color: ColorPalette.accentWhite)
+              Container(height: 1, color: ColorPalette.primary)
             ],
           ),
           const SizedBox(height: 10),
@@ -356,12 +357,9 @@ class _MessagesState extends State<Messages> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: const <Widget>[
-                        SizedBox(
-                          width: 30,
-                          height: 30,
-                          child: CircularProgressIndicator(
-                            color: ColorPalette.primary,
-                          ),
+                        SpinKitCircle(
+                          size: 100,
+                          color: ColorPalette.secondary,
                         ),
                         SizedBox(height: 20),
                         Text("Loading..."),

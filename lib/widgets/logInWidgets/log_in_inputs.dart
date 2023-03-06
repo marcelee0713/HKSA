@@ -248,8 +248,8 @@ class _LogInInputsState extends State<LogInInputs> {
                 ),
                 child: ElevatedButton(
                   style: ButtonStyle(
-                    backgroundColor:
-                        MaterialStateProperty.all<Color>(ColorPalette.primary),
+                    backgroundColor: MaterialStateProperty.all<Color>(
+                        ColorPalette.accentDarkWhite),
                   ),
                   onPressed: (() async {
                     setState(() {
@@ -546,7 +546,7 @@ class _LogInInputsState extends State<LogInInputs> {
                   child: const Text(
                     "Log in",
                     style: TextStyle(
-                      color: ColorPalette.accentWhite,
+                      color: ColorPalette.accentBlack,
                       fontFamily: 'Frank Ruhl Libre',
                       fontWeight: FontWeight.w400,
                       fontSize: 20,

@@ -9,7 +9,7 @@ class AdminRegisterScholarPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: ColorPalette.secondary,
+      backgroundColor: ColorPalette.accentWhite,
       body: LayoutBuilder(
         builder: (context, constraints) => SingleChildScrollView(
           child: ConstrainedBox(

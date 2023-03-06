@@ -12,7 +12,7 @@ class InfoWidget extends StatelessWidget {
       children: [
         Container(
           padding: const EdgeInsets.all(20),
-          color: ColorPalette.secondary,
+          color: ColorPalette.accentWhite,
           child: Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,

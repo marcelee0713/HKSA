@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:hive/hive.dart';
 import 'package:hksa/constant/colors.dart';
 import 'package:hksa/models/chat.dart';
@@ -152,166 +153,167 @@ class _MessagesState extends State<Messages> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 20),
-      color: ColorPalette.secondary,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Expanded(
-                child: SizedBox(
-                  height: 50,
-                  child: TextFormField(
-                    onChanged: (value) {
-                      setState(() {
-                        searchname = value;
-                        searchid = value;
-                      });
-                    },
-                    controller: controller,
-                    maxLength: 20,
-                    decoration: InputDecoration(
-                      counterText: "",
-                      enabledBorder: OutlineInputBorder(
-                        borderSide: const BorderSide(color: Colors.transparent),
-                        borderRadius: BorderRadius.circular(10.0),
+    return Center(
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 20),
+        color: ColorPalette.accentWhite,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Expanded(
+                  child: SizedBox(
+                    height: 50,
+                    child: TextFormField(
+                      onChanged: (value) {
+                        setState(() {
+                          searchname = value;
+                          searchid = value;
+                        });
+                      },
+                      controller: controller,
+                      maxLength: 20,
+                      decoration: InputDecoration(
+                        counterText: "",
+                        enabledBorder: OutlineInputBorder(
+                          borderSide:
+                              const BorderSide(color: Colors.transparent),
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide:
+                              const BorderSide(color: Colors.transparent),
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                        filled: true,
+                        fillColor: ColorPalette.accentDarkWhite,
+                        hintStyle: const TextStyle(
+                          fontWeight: FontWeight.w300,
+                          fontStyle: FontStyle.italic,
+                        ),
+                        hintText: "Search...",
+                        prefixIcon: const Icon(Icons.search_rounded),
                       ),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: const BorderSide(color: Colors.transparent),
-                        borderRadius: BorderRadius.circular(10.0),
+                      style: const TextStyle(
+                        color: ColorPalette.primary,
+                        fontFamily: 'Inter',
+                        fontSize: 14,
+                        fontWeight: FontWeight.w700,
                       ),
-                      filled: true,
-                      fillColor: ColorPalette.accentDarkWhite,
-                      hintStyle: const TextStyle(
-                        fontWeight: FontWeight.w300,
-                        fontStyle: FontStyle.italic,
-                      ),
-                      hintText: "Search...",
-                      prefixIcon: const Icon(Icons.search_rounded),
-                    ),
-                    style: const TextStyle(
-                      color: ColorPalette.primary,
-                      fontFamily: 'Inter',
-                      fontSize: 14,
-                      fontWeight: FontWeight.w700,
                     ),
                   ),
                 ),
-              ),
-              /* For the admin soon.
-              const SizedBox(width: 10),
-              InkWell(
-                onTap: () {
-                  //announcements supposed to be here!
-                },
-                child: const Icon(
-                  Icons.campaign,
-                  color: ColorPalette.primary,
-                  size: 40.0,
-                ),
-              )
-              */
-            ],
-          ),
-          const SizedBox(height: 20),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                "Contacts",
-                style: TextStyle(
-                  color: ColorPalette.accentWhite,
-                  fontFamily: 'Frank Ruhl Libre',
-                  fontSize: 20,
-                ),
-              ),
-              Container(height: 1, color: ColorPalette.accentWhite)
-            ],
-          ),
-          const SizedBox(height: 10),
-          Expanded(
-            child: FutureBuilder(
-              future: getScholarsAndHead(),
-              builder: (context, AsyncSnapshot<List<Chat>> snapshot) {
-                if (!snapshot.hasData) {
-                  return Center(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: const <Widget>[
-                        SizedBox(
-                          width: 30,
-                          height: 30,
-                          child: CircularProgressIndicator(
-                            color: ColorPalette.primary,
-                          ),
-                        ),
-                        SizedBox(height: 20),
-                        Text("Loading..."),
-                      ],
-                    ),
-                  );
-                }
-                if (snapshot.hasError) {
-                  return Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: const [
-                        Icon(
-                          Icons.warning_rounded,
-                          size: 200,
-                          color: ColorPalette.errorColor,
-                        ),
-                        Text(
-                          'Something went wrong!',
-                          style: TextStyle(
-                            fontFamily: 'Inter',
-                            color: ColorPalette.accentBlack,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        SizedBox(height: 5),
-                        Text(
-                          'Please try again later.',
-                          style: TextStyle(
-                            fontFamily: 'Inter',
-                            color: ColorPalette.accentBlack,
-                          ),
-                        ),
-                      ],
-                    ),
-                  );
-                }
-
-                return ListView.builder(
-                  padding: const EdgeInsets.all(0),
-                  shrinkWrap: true,
-                  itemCount: snapshot.data?.length,
-                  itemBuilder: (context, index) {
-                    if (snapshot.data![index].name
-                            .toLowerCase()
-                            .contains(searchname.toLowerCase()) ||
-                        snapshot.data![index].userId
-                            .toLowerCase()
-                            .contains(searchid.toLowerCase())) {
-                      return ChatBox(
-                        name: snapshot.data![index].name,
-                        userId: snapshot.data![index].userId,
-                        pfpUrl: snapshot.data![index].pfp,
-                        userType: snapshot.data![index].userType,
-                      );
-                    }
-                    return Container();
+                /* For the admin soon.
+                const SizedBox(width: 10),
+                InkWell(
+                  onTap: () {
+                    //announcements supposed to be here!
                   },
-                );
-              },
+                  child: const Icon(
+                    Icons.campaign,
+                    color: ColorPalette.primary,
+                    size: 40.0,
+                  ),
+                )
+                */
+              ],
             ),
-          ),
-        ],
+            const SizedBox(height: 20),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  "Contacts",
+                  style: TextStyle(
+                    color: ColorPalette.primary,
+                    fontFamily: 'Frank Ruhl Libre',
+                    fontSize: 20,
+                  ),
+                ),
+                Container(height: 1, color: ColorPalette.primary)
+              ],
+            ),
+            const SizedBox(height: 10),
+            Expanded(
+              child: FutureBuilder(
+                future: getScholarsAndHead(),
+                builder: (context, AsyncSnapshot<List<Chat>> snapshot) {
+                  if (!snapshot.hasData) {
+                    return Center(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: const <Widget>[
+                          SpinKitCircle(
+                            size: 100,
+                            color: ColorPalette.secondary,
+                          ),
+                          SizedBox(height: 20),
+                          Text("Loading..."),
+                        ],
+                      ),
+                    );
+                  }
+                  if (snapshot.hasError) {
+                    return Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: const [
+                          Icon(
+                            Icons.warning_rounded,
+                            size: 200,
+                            color: ColorPalette.errorColor,
+                          ),
+                          Text(
+                            'Something went wrong!',
+                            style: TextStyle(
+                              fontFamily: 'Inter',
+                              color: ColorPalette.accentBlack,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          SizedBox(height: 5),
+                          Text(
+                            'Please try again later.',
+                            style: TextStyle(
+                              fontFamily: 'Inter',
+                              color: ColorPalette.accentBlack,
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  }
+
+                  return ListView.builder(
+                    padding: const EdgeInsets.all(0),
+                    shrinkWrap: true,
+                    itemCount: snapshot.data?.length,
+                    itemBuilder: (context, index) {
+                      if (snapshot.data![index].name
+                              .toLowerCase()
+                              .contains(searchname.toLowerCase()) ||
+                          snapshot.data![index].userId
+                              .toLowerCase()
+                              .contains(searchid.toLowerCase())) {
+                        return ChatBox(
+                          name: snapshot.data![index].name,
+                          userId: snapshot.data![index].userId,
+                          pfpUrl: snapshot.data![index].pfp,
+                          userType: snapshot.data![index].userType,
+                        );
+                      }
+                      return Container();
+                    },
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

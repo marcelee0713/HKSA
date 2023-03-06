@@ -22,6 +22,7 @@ class _HomeProfessorState extends State<HomeProfessor> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: ColorPalette.accentWhite,
       body: pages[pageIndexProf],
       bottomNavigationBar: Container(
         height: 60,

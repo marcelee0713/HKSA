@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:hive/hive.dart';
 import 'package:hksa/api/pdf_api.dart';
 import 'package:hksa/constant/colors.dart';
@@ -30,21 +31,16 @@ class ScholarProfile extends StatefulWidget {
 
 class _ScholarProfileState extends State<ScholarProfile> {
   List<Logs> dataList = [];
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    createLogsCollection();
-  }
 
   final logInBox = Hive.box("myLoginBox");
   late var userType = logInBox.get("userType");
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: ColorPalette.accentWhite,
       body: Container(
         padding: const EdgeInsets.all(20),
-        color: ColorPalette.secondary,
+        color: ColorPalette.accentWhite,
         child: FutureBuilder(
           future: getScholar(),
           builder: (context, snapshot) {
@@ -54,12 +50,9 @@ class _ScholarProfileState extends State<ScholarProfile> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: const <Widget>[
-                    SizedBox(
-                      width: 30,
-                      height: 30,
-                      child: CircularProgressIndicator(
-                        color: ColorPalette.primary,
-                      ),
+                    SpinKitCircle(
+                      size: 100,
+                      color: ColorPalette.secondary,
                     ),
                     SizedBox(height: 20),
                     Text("Loading..."),
@@ -324,8 +317,7 @@ class _ScholarProfileState extends State<ScholarProfile> {
                                                 )));
                                   },
                                   style: ElevatedButton.styleFrom(
-                                    backgroundColor:
-                                        ColorPalette.accentDarkWhite,
+                                    backgroundColor: ColorPalette.primary,
                                   ),
                                   child: const Text(
                                     "Message",
@@ -333,7 +325,7 @@ class _ScholarProfileState extends State<ScholarProfile> {
                                         fontFamily: 'Inter',
                                         fontSize: 16,
                                         fontWeight: FontWeight.w400,
-                                        color: ColorPalette.primary),
+                                        color: ColorPalette.accentWhite),
                                   ),
                                 ),
                               ),
@@ -349,7 +341,7 @@ class _ScholarProfileState extends State<ScholarProfile> {
                                                   .data!.first.studentNumber)));
                                 },
                                 style: ElevatedButton.styleFrom(
-                                  backgroundColor: ColorPalette.accentDarkWhite,
+                                  backgroundColor: ColorPalette.primary,
                                 ),
                                 child: const Text(
                                   "Edit",
@@ -357,7 +349,7 @@ class _ScholarProfileState extends State<ScholarProfile> {
                                       fontFamily: 'Inter',
                                       fontSize: 16,
                                       fontWeight: FontWeight.w400,
-                                      color: ColorPalette.primary),
+                                      color: ColorPalette.accentWhite),
                                 ),
                               )),
                             ],
@@ -372,8 +364,7 @@ class _ScholarProfileState extends State<ScholarProfile> {
                                       return ElevatedButton(
                                         onPressed: () {},
                                         style: ElevatedButton.styleFrom(
-                                          backgroundColor:
-                                              ColorPalette.accentDarkWhite,
+                                          backgroundColor: ColorPalette.primary,
                                         ),
                                         child: const Text(
                                           "Fetching...",
@@ -381,7 +372,7 @@ class _ScholarProfileState extends State<ScholarProfile> {
                                               fontFamily: 'Inter',
                                               fontSize: 16,
                                               fontWeight: FontWeight.w400,
-                                              color: ColorPalette.primary),
+                                              color: ColorPalette.accentWhite),
                                         ),
                                       );
                                     }
@@ -398,8 +389,7 @@ class _ScholarProfileState extends State<ScholarProfile> {
                                         PdfApi.openFile(pdfFile);
                                       },
                                       style: ElevatedButton.styleFrom(
-                                        backgroundColor:
-                                            ColorPalette.accentDarkWhite,
+                                        backgroundColor: ColorPalette.primary,
                                       ),
                                       child: const Text(
                                         "PDF",
@@ -407,7 +397,7 @@ class _ScholarProfileState extends State<ScholarProfile> {
                                           fontFamily: 'Inter',
                                           fontSize: 16,
                                           fontWeight: FontWeight.w400,
-                                          color: ColorPalette.primary,
+                                          color: ColorPalette.accentWhite,
                                         ),
                                       ),
                                     );
@@ -451,7 +441,7 @@ class _ScholarProfileState extends State<ScholarProfile> {
                                           final DatabaseReference
                                               userReference =
                                               FirebaseDatabase.instance.ref().child(
-                                                  'Users/Professors/${widget.userID}');
+                                                  'Users/Scholars/${widget.userID}');
 
                                           await userReference.remove();
                                           if (FirebaseStorage.instance
@@ -510,7 +500,7 @@ class _ScholarProfileState extends State<ScholarProfile> {
                                       )));
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: ColorPalette.accentDarkWhite,
+                          backgroundColor: ColorPalette.primary,
                         ),
                         child: const Text(
                           "Message",
@@ -518,7 +508,7 @@ class _ScholarProfileState extends State<ScholarProfile> {
                               fontFamily: 'Inter',
                               fontSize: 16,
                               fontWeight: FontWeight.w400,
-                              color: ColorPalette.primary),
+                              color: ColorPalette.accentWhite),
                         ),
                       ),
               ],

@@ -35,6 +35,7 @@ class _HomeScholarState extends State<HomeScholar> {
     return Scaffold(
       // responsible for calling respective pages
       body: pages[pageIndex],
+      backgroundColor: ColorPalette.accentWhite,
       bottomNavigationBar: Container(
         height: 60,
         decoration: const BoxDecoration(

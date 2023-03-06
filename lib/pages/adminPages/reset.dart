@@ -15,6 +15,7 @@ class _ResetState extends State<Reset> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: ColorPalette.accentWhite,
       drawer: const NavDraw(),
       body: Stack(
         children: [

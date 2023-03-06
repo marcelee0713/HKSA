@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:hive/hive.dart';
 import 'package:hksa/constant/colors.dart';
 import 'package:hksa/constant/string.dart';
@@ -31,10 +32,10 @@ class _ProfessorProfileState extends State<ProfessorProfile> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: ColorPalette.secondary,
+      backgroundColor: ColorPalette.accentWhite,
       body: Container(
         padding: const EdgeInsets.all(20),
-        color: ColorPalette.secondary,
+        color: ColorPalette.accentWhite,
         child: FutureBuilder(
           future: getProfessor(),
           builder: (context, snapshot) {
@@ -44,12 +45,9 @@ class _ProfessorProfileState extends State<ProfessorProfile> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: const <Widget>[
-                    SizedBox(
-                      width: 30,
-                      height: 30,
-                      child: CircularProgressIndicator(
-                        color: ColorPalette.primary,
-                      ),
+                    SpinKitCircle(
+                      color: ColorPalette.secondary,
+                      size: 100,
                     ),
                     SizedBox(height: 20),
                     Text("Loading..."),
@@ -250,8 +248,7 @@ class _ProfessorProfileState extends State<ProfessorProfile> {
                                                     )));
                                       },
                                       style: ElevatedButton.styleFrom(
-                                        backgroundColor:
-                                            ColorPalette.accentDarkWhite,
+                                        backgroundColor: ColorPalette.primary,
                                       ),
                                       child: const Text(
                                         "Message",
@@ -259,7 +256,7 @@ class _ProfessorProfileState extends State<ProfessorProfile> {
                                             fontFamily: 'Inter',
                                             fontSize: 16,
                                             fontWeight: FontWeight.w400,
-                                            color: ColorPalette.primary),
+                                            color: ColorPalette.accentWhite),
                                       ),
                                     ),
                                   ),
@@ -278,8 +275,7 @@ class _ProfessorProfileState extends State<ProfessorProfile> {
                                                             .professorId)));
                                       },
                                       style: ElevatedButton.styleFrom(
-                                        backgroundColor:
-                                            ColorPalette.accentDarkWhite,
+                                        backgroundColor: ColorPalette.primary,
                                       ),
                                       child: const Text(
                                         "Edit",
@@ -287,7 +283,7 @@ class _ProfessorProfileState extends State<ProfessorProfile> {
                                             fontFamily: 'Inter',
                                             fontSize: 16,
                                             fontWeight: FontWeight.w400,
-                                            color: ColorPalette.primary),
+                                            color: ColorPalette.accentWhite),
                                       ),
                                     ),
                                   ),
@@ -372,7 +368,7 @@ class _ProfessorProfileState extends State<ProfessorProfile> {
                                           )));
                             },
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: ColorPalette.accentDarkWhite,
+                              backgroundColor: ColorPalette.primary,
                             ),
                             child: const Text(
                               "Message",
@@ -380,7 +376,7 @@ class _ProfessorProfileState extends State<ProfessorProfile> {
                                   fontFamily: 'Inter',
                                   fontSize: 16,
                                   fontWeight: FontWeight.w400,
-                                  color: ColorPalette.primary),
+                                  color: ColorPalette.accentWhite),
                             ),
                           ),
                   ],

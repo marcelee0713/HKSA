@@ -15,6 +15,7 @@ class _AdminRegistrationState extends State<AdminRegistration> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: ColorPalette.accentWhite,
       drawer: const NavDraw(),
       body: Stack(
         children: [
@@ -54,7 +55,7 @@ class _AdminRegistrationState extends State<AdminRegistration> {
                     const Text(
                       "REGISTRATION",
                       style: TextStyle(
-                        color: ColorPalette.accentWhite,
+                        color: ColorPalette.primary,
                         fontFamily: 'Frank Ruhl Libre',
                         fontWeight: FontWeight.w700,
                         fontSize: 20,

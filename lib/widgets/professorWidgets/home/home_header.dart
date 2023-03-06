@@ -36,7 +36,7 @@ class _ProfessorHomeHeaderState extends State<ProfessorHomeHeader> {
           "Welcome",
           textAlign: TextAlign.center,
           style: TextStyle(
-            color: ColorPalette.accentWhite,
+            color: ColorPalette.primary,
             fontFamily: 'Frank Ruhl Libre',
             fontWeight: FontWeight.w700,
             fontSize: 25,
@@ -49,7 +49,7 @@ class _ProfessorHomeHeaderState extends State<ProfessorHomeHeader> {
           userName,
           textAlign: TextAlign.center,
           style: const TextStyle(
-            color: ColorPalette.accentWhite,
+            color: ColorPalette.primary,
             fontFamily: 'Inter',
             fontWeight: FontWeight.w300,
             fontSize: 17,

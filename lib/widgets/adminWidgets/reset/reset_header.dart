@@ -21,7 +21,7 @@ class ResetHeader extends StatelessWidget {
         Text(
           "You are responsible for your own actions.",
           style: TextStyle(
-            color: ColorPalette.accentWhite,
+            color: ColorPalette.errorColor,
             fontFamily: 'Inter',
             fontSize: 13,
             fontWeight: FontWeight.w400,
@@ -30,7 +30,7 @@ class ResetHeader extends StatelessWidget {
         Text(
           "Please choose wisely.",
           style: TextStyle(
-            color: ColorPalette.accentWhite,
+            color: ColorPalette.errorColor,
             fontFamily: 'Inter',
             fontSize: 13,
             fontWeight: FontWeight.w400,

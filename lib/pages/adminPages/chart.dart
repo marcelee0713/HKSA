@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:hksa/constant/colors.dart';
 import 'package:hksa/models/active_inactive_data.dart';
 import 'package:hksa/models/scholar.dart';
@@ -19,6 +20,7 @@ class _AdminChartState extends State<AdminChart> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: ColorPalette.accentWhite,
       drawer: const NavDraw(),
       body: ListView(
         shrinkWrap: true,
@@ -60,12 +62,9 @@ class _AdminChartState extends State<AdminChart> {
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: const <Widget>[
-                                    SizedBox(
-                                      width: 30,
-                                      height: 30,
-                                      child: CircularProgressIndicator(
-                                        color: ColorPalette.primary,
-                                      ),
+                                    SpinKitCircle(
+                                      size: 100,
+                                      color: ColorPalette.secondary,
                                     ),
                                     SizedBox(height: 20),
                                     Text("Loading..."),
@@ -111,7 +110,7 @@ class _AdminChartState extends State<AdminChart> {
                               const Text(
                                 "Pie Chart",
                                 style: TextStyle(
-                                  color: ColorPalette.accentWhite,
+                                  color: ColorPalette.primary,
                                   fontFamily: 'Inter',
                                   fontWeight: FontWeight.w700,
                                   fontSize: 18,
@@ -120,7 +119,7 @@ class _AdminChartState extends State<AdminChart> {
                               const Text(
                                 "Status of active and inactive scholars.",
                                 style: TextStyle(
-                                  color: ColorPalette.accentWhite,
+                                  color: ColorPalette.primary,
                                   fontFamily: 'Inter',
                                   fontWeight: FontWeight.w300,
                                   fontSize: 14,
@@ -130,7 +129,7 @@ class _AdminChartState extends State<AdminChart> {
                               Text(
                                 "A total of ${snapshot.data!.first.totalScholar} Scholars.",
                                 style: const TextStyle(
-                                  color: ColorPalette.accentWhite,
+                                  color: ColorPalette.primary,
                                   fontFamily: 'Inter',
                                   fontWeight: FontWeight.w700,
                                   fontSize: 14,
@@ -183,8 +182,7 @@ class _AdminChartState extends State<AdminChart> {
                                   children: [
                                     const SizedBox(height: 8),
                                     Container(
-                                        height: 1,
-                                        color: ColorPalette.accentWhite),
+                                        height: 1, color: ColorPalette.primary),
                                     const SizedBox(height: 16),
                                     const Icon(
                                       Icons.warning_rounded,
@@ -215,13 +213,12 @@ class _AdminChartState extends State<AdminChart> {
                           return Column(
                             children: [
                               const SizedBox(height: 8),
-                              Container(
-                                  height: 1, color: ColorPalette.accentWhite),
+                              Container(height: 1, color: ColorPalette.primary),
                               const SizedBox(height: 16),
                               const Text(
                                 "Finished and unfinished scholars",
                                 style: TextStyle(
-                                  color: ColorPalette.accentWhite,
+                                  color: ColorPalette.primary,
                                   fontFamily: 'Inter',
                                   fontWeight: FontWeight.w300,
                                   fontSize: 14,

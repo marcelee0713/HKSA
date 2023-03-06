@@ -84,7 +84,7 @@ class _ScholarHomeInputsState extends State<ScholarHomeInputs> {
                   fontSize: 14,
                   fontFamily: 'Inter',
                   fontWeight: FontWeight.w600,
-                  color: ColorPalette.accentWhite),
+                  color: ColorPalette.accentBlack),
             ),
             const SizedBox(height: 2),
             Container(
@@ -122,7 +122,7 @@ class _ScholarHomeInputsState extends State<ScholarHomeInputs> {
                   fontSize: 14,
                   fontFamily: 'Inter',
                   fontWeight: FontWeight.w600,
-                  color: ColorPalette.accentWhite),
+                  color: ColorPalette.accentBlack),
             ),
             const SizedBox(height: 2),
             Container(

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:hksa/constant/colors.dart';
 import 'package:hksa/widgets/dialogs/dialog_loading.dart';
 
@@ -38,7 +39,7 @@ class _ChangePasswordState extends State<ChangePassword> {
         .child("Users/${widget.userType}/${widget.userID}/password");
     String result = "";
     return Scaffold(
-      backgroundColor: ColorPalette.secondary,
+      backgroundColor: ColorPalette.accentWhite,
       body: Form(
         key: _formKey,
         child: Center(
@@ -53,12 +54,9 @@ class _ChangePasswordState extends State<ChangePassword> {
                           crossAxisAlignment: CrossAxisAlignment.center,
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: const <Widget>[
-                            SizedBox(
-                              width: 30,
-                              height: 30,
-                              child: CircularProgressIndicator(
-                                color: ColorPalette.primary,
-                              ),
+                            SpinKitCircle(
+                              size: 100,
+                              color: ColorPalette.secondary,
                             ),
                             SizedBox(height: 20),
                             Text("Loading..."),
@@ -83,7 +81,7 @@ class _ChangePasswordState extends State<ChangePassword> {
                               const Text(
                                 "Change your password",
                                 style: TextStyle(
-                                  color: ColorPalette.accentWhite,
+                                  color: ColorPalette.primary,
                                   fontFamily: 'Frank Ruhl Libre',
                                   fontSize: 18,
                                   fontWeight: FontWeight.w700,
@@ -93,6 +91,8 @@ class _ChangePasswordState extends State<ChangePassword> {
                           ),
                           const SizedBox(height: 10),
                           Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: [
                               TextFormField(
                                 controller: _inputControllerOldPassword,
@@ -262,11 +262,12 @@ class _ChangePasswordState extends State<ChangePassword> {
                               ),
                               const SizedBox(height: 8),
                               const Text(
-                                "Do not share your signature.",
+                                "Do not share your password.",
+                                textAlign: TextAlign.center,
                                 style: TextStyle(
                                   fontFamily: 'Inter',
                                   fontSize: 14.5,
-                                  color: ColorPalette.accentDarkWhite,
+                                  color: ColorPalette.primary,
                                 ),
                               ),
                               const SizedBox(height: 5),

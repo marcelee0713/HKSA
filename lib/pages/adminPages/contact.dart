@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:hksa/constant/colors.dart';
 import 'package:hksa/constant/string.dart';
 import 'package:hksa/models/chat.dart';
@@ -36,10 +37,11 @@ class _AdminContactsState extends State<AdminContacts> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: ColorPalette.accentWhite,
       drawer: const NavDraw(),
       body: Container(
         padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 20),
-        color: ColorPalette.secondary,
+        color: ColorPalette.accentWhite,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -164,12 +166,9 @@ class _AdminContactsState extends State<AdminContacts> {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: const <Widget>[
-                          SizedBox(
-                            width: 30,
-                            height: 30,
-                            child: CircularProgressIndicator(
-                              color: ColorPalette.primary,
-                            ),
+                          SpinKitCircle(
+                            size: 100,
+                            color: ColorPalette.secondary,
                           ),
                           SizedBox(height: 20),
                           Text("Loading..."),

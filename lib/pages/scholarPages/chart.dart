@@ -251,7 +251,7 @@ class _ChartState extends State<Chart> {
     return ListView(
       children: [
         Container(
-          color: ColorPalette.secondary,
+          color: ColorPalette.accentWhite,
           padding: const EdgeInsets.all(10),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -269,7 +269,11 @@ class _ChartState extends State<Chart> {
                       child: Text(
                         textAlign: TextAlign.center,
                         "This is where your DTR logs are recorded that can be also printed and your total hours.",
-                        style: TextStyle(fontSize: 12),
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontFamily: 'Inter',
+                          color: ColorPalette.primary,
+                        ),
                       ),
                     )
                   ],

@@ -13,6 +13,7 @@ import 'package:hksa/widgets/dialogs/dialog_confirm.dart';
 import 'package:hksa/widgets/dialogs/dialog_loading.dart';
 import 'package:hksa/widgets/dialogs/dialog_success.dart';
 import 'package:hksa/widgets/universal/change_password.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 class Profile extends StatefulWidget {
   const Profile({Key? key}) : super(key: key);
@@ -266,7 +267,7 @@ class _ProfileState extends State<Profile> {
 
     return Container(
       padding: const EdgeInsets.all(20),
-      color: ColorPalette.secondary,
+      color: ColorPalette.accentWhite,
       child: FutureBuilder(
         future: getScholar(),
         builder: (context, snapshot) {
@@ -276,12 +277,9 @@ class _ProfileState extends State<Profile> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: const <Widget>[
-                  SizedBox(
-                    width: 30,
-                    height: 30,
-                    child: CircularProgressIndicator(
-                      color: ColorPalette.primary,
-                    ),
+                  SpinKitCircle(
+                    size: 100,
+                    color: ColorPalette.secondary,
                   ),
                   SizedBox(height: 20),
                   Text("Loading..."),

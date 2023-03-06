@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:hksa/constant/colors.dart';
 import 'package:hksa/constant/string.dart';
 import 'package:hksa/models/professor.dart';
@@ -40,13 +41,14 @@ class _EditProfessorState extends State<EditProfessor> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: ColorPalette.accentWhite,
       body: Center(
         child: ListView(
           shrinkWrap: true,
           children: [
             Container(
               padding: const EdgeInsets.all(20),
-              color: ColorPalette.secondary,
+              color: ColorPalette.accentWhite,
               child: FutureBuilder(
                 future: getProfessor(),
                 builder: (context, snapshot) {
@@ -56,12 +58,9 @@ class _EditProfessorState extends State<EditProfessor> {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: const <Widget>[
-                          SizedBox(
-                            width: 30,
-                            height: 30,
-                            child: CircularProgressIndicator(
-                              color: ColorPalette.primary,
-                            ),
+                          SpinKitCircle(
+                            color: ColorPalette.secondary,
+                            size: 100,
                           ),
                           SizedBox(height: 20),
                           Text("Loading..."),
@@ -112,7 +111,7 @@ class _EditProfessorState extends State<EditProfessor> {
                             const Text(
                               "You are currently editing:",
                               style: TextStyle(
-                                color: ColorPalette.accentWhite,
+                                color: ColorPalette.primary,
                                 fontSize: 20,
                                 fontFamily: 'Inter',
                                 fontWeight: FontWeight.w700,
@@ -121,7 +120,7 @@ class _EditProfessorState extends State<EditProfessor> {
                             Text(
                               snapshot.data!.first.name,
                               style: const TextStyle(
-                                color: ColorPalette.accentWhite,
+                                color: ColorPalette.primary,
                                 fontSize: 14,
                                 fontFamily: 'Inter',
                                 fontWeight: FontWeight.w300,
@@ -130,7 +129,7 @@ class _EditProfessorState extends State<EditProfessor> {
                             Text(
                               snapshot.data!.first.professorId,
                               style: const TextStyle(
-                                color: ColorPalette.accentWhite,
+                                color: ColorPalette.primary,
                                 fontSize: 14,
                                 fontFamily: 'Inter',
                                 fontWeight: FontWeight.w300,
@@ -139,7 +138,7 @@ class _EditProfessorState extends State<EditProfessor> {
                           ],
                         ),
                         const SizedBox(height: 2),
-                        Container(height: 1, color: ColorPalette.accentWhite),
+                        Container(height: 1, color: ColorPalette.primary),
                         const SizedBox(height: 20),
                         Column(
                           children: [
@@ -298,7 +297,7 @@ class _EditProfessorState extends State<EditProfessor> {
                                 ),
                                 const SizedBox(height: 2),
                                 Text(
-                                  "Course was ${snapshot.data!.first.department}",
+                                  "Department was ${snapshot.data!.first.department}",
                                   style: const TextStyle(
                                     fontFamily: 'Inter',
                                     fontSize: 11,
@@ -584,8 +583,7 @@ class _EditProfessorState extends State<EditProfessor> {
                               ],
                             ),
                             const SizedBox(height: 18),
-                            Container(
-                                height: 1, color: ColorPalette.accentWhite),
+                            Container(height: 1, color: ColorPalette.primary),
                             const SizedBox(height: 18),
                             Column(
                               children: [
