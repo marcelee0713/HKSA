@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
+import 'package:hksa/api/send_message.dart';
 import 'package:hksa/constant/colors.dart';
 import 'package:hksa/widgets/dialogs/dialog_confirm.dart';
 import 'package:hksa/widgets/dialogs/dialog_loading.dart';
@@ -149,7 +150,8 @@ class _AnnounceState extends State<Announce> {
                             Navigator.of(context, rootNavigator: true).pop();
                             DialogLoading(subtext: "Sending...")
                                 .buildLoadingScreen(context);
-
+                            sendNotificationToTopic('user_all', "Announcement!",
+                                _inputController.text.trim());
                             Future.delayed(const Duration(seconds: 2), () {
                               _scholarReference.get().then((snapshot) {
                                 for (final scholarsId in snapshot.children) {

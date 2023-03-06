@@ -1,3 +1,4 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:hksa/constant/colors.dart';
 import 'package:hksa/pages/scholarPages/chart.dart';
@@ -30,6 +31,13 @@ class _HomeScholarState extends State<HomeScholar> {
     const Profile(),
     const Info(),
   ];
+  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
+  @override
+  void initState() {
+    _firebaseMessaging.subscribeToTopic('user_all');
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
