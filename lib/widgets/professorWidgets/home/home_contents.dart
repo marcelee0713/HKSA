@@ -21,7 +21,7 @@ class _ProfessorHomeContentState extends State<ProfessorHomeContent> {
             "Want to know more about the HKSA?",
             textAlign: TextAlign.center,
             style: TextStyle(
-              color: ColorPalette.accentWhite,
+              color: ColorPalette.primary,
               fontFamily: 'Inter',
               fontSize: 18,
               fontWeight: FontWeight.w700,

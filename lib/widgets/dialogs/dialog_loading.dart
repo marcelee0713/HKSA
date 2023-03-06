@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:hksa/constant/colors.dart';
 
 class DialogLoading {
@@ -24,10 +25,9 @@ class DialogLoading {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    const SizedBox(
-                      width: 50,
-                      height: 50,
-                      child: Center(child: CircularProgressIndicator()),
+                    const SpinKitCircle(
+                      color: ColorPalette.secondary,
+                      size: 50,
                     ),
                     const SizedBox(height: 8),
                     Text(

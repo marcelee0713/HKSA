@@ -23,7 +23,7 @@ class _AdminHomeContentState extends State<AdminHomeContent> {
           "Have something to-do today?",
           textAlign: TextAlign.center,
           style: TextStyle(
-            color: ColorPalette.accentWhite,
+            color: ColorPalette.primary,
             fontFamily: 'Inter',
             fontSize: 18,
             fontWeight: FontWeight.w700,
@@ -41,7 +41,7 @@ class _AdminHomeContentState extends State<AdminHomeContent> {
                       child: InkWell(
                         child: Container(
                           decoration: BoxDecoration(
-                            color: ColorPalette.accentWhite,
+                            color: ColorPalette.primary,
                             borderRadius: BorderRadius.circular(10),
                             boxShadow: const [
                               BoxShadow(
@@ -59,7 +59,7 @@ class _AdminHomeContentState extends State<AdminHomeContent> {
                               Icon(
                                 Icons.campaign,
                                 size: 100,
-                                color: ColorPalette.primary,
+                                color: ColorPalette.accentWhite,
                               ),
                               Text(
                                 "Announce",
@@ -67,7 +67,7 @@ class _AdminHomeContentState extends State<AdminHomeContent> {
                                     fontFamily: 'Inter',
                                     fontSize: 16,
                                     fontWeight: FontWeight.w700,
-                                    color: ColorPalette.primary),
+                                    color: ColorPalette.accentWhite),
                               )
                             ],
                           ),
@@ -85,7 +85,7 @@ class _AdminHomeContentState extends State<AdminHomeContent> {
                       child: InkWell(
                         child: Container(
                           decoration: BoxDecoration(
-                            color: ColorPalette.accentWhite,
+                            color: ColorPalette.primary,
                             borderRadius: BorderRadius.circular(10),
                             boxShadow: const [
                               BoxShadow(
@@ -103,7 +103,7 @@ class _AdminHomeContentState extends State<AdminHomeContent> {
                               Icon(
                                 Icons.person,
                                 size: 100,
-                                color: ColorPalette.primary,
+                                color: ColorPalette.accentWhite,
                               ),
                               Text(
                                 "Users",
@@ -111,7 +111,7 @@ class _AdminHomeContentState extends State<AdminHomeContent> {
                                     fontFamily: 'Inter',
                                     fontSize: 16,
                                     fontWeight: FontWeight.w700,
-                                    color: ColorPalette.primary),
+                                    color: ColorPalette.accentWhite),
                               )
                             ],
                           ),
@@ -138,7 +138,7 @@ class _AdminHomeContentState extends State<AdminHomeContent> {
                       child: InkWell(
                         child: Container(
                           decoration: BoxDecoration(
-                            color: ColorPalette.accentWhite,
+                            color: ColorPalette.primary,
                             borderRadius: BorderRadius.circular(10),
                             boxShadow: const [
                               BoxShadow(
@@ -156,7 +156,7 @@ class _AdminHomeContentState extends State<AdminHomeContent> {
                               Icon(
                                 Icons.pie_chart,
                                 size: 100,
-                                color: ColorPalette.primary,
+                                color: ColorPalette.accentWhite,
                               ),
                               Text(
                                 "Status",
@@ -164,7 +164,7 @@ class _AdminHomeContentState extends State<AdminHomeContent> {
                                     fontFamily: 'Inter',
                                     fontSize: 16,
                                     fontWeight: FontWeight.w700,
-                                    color: ColorPalette.primary),
+                                    color: ColorPalette.accentWhite),
                               )
                             ],
                           ),
@@ -185,7 +185,7 @@ class _AdminHomeContentState extends State<AdminHomeContent> {
                       child: InkWell(
                         child: Container(
                           decoration: BoxDecoration(
-                            color: ColorPalette.accentWhite,
+                            color: ColorPalette.primary,
                             borderRadius: BorderRadius.circular(10),
                             boxShadow: const [
                               BoxShadow(
@@ -203,7 +203,7 @@ class _AdminHomeContentState extends State<AdminHomeContent> {
                               Icon(
                                 Icons.person_add,
                                 size: 100,
-                                color: ColorPalette.primary,
+                                color: ColorPalette.accentWhite,
                               ),
                               Text(
                                 "Registration",
@@ -211,7 +211,7 @@ class _AdminHomeContentState extends State<AdminHomeContent> {
                                     fontFamily: 'Inter',
                                     fontSize: 16,
                                     fontWeight: FontWeight.w700,
-                                    color: ColorPalette.primary),
+                                    color: ColorPalette.accentWhite),
                               )
                             ],
                           ),
@@ -242,7 +242,7 @@ class _AdminHomeContentState extends State<AdminHomeContent> {
                 fontFamily: 'Inter',
                 fontSize: 16,
                 fontWeight: FontWeight.w300,
-                color: ColorPalette.accentWhite),
+                color: ColorPalette.primary),
           ),
           onTap: () {
             // Have to reuse it cause why not?

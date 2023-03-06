@@ -398,6 +398,7 @@ class _RegisterInputsState extends State<RegisterInputs> {
               fontSize: 12,
               fontStyle: FontStyle.italic,
               fontWeight: FontWeight.w300,
+              color: ColorPalette.primary,
             ),
           ),
           const SizedBox(height: 18),

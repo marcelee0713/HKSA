@@ -15,6 +15,7 @@ class _HomeAdminState extends State<HomeAdmin> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: ColorPalette.accentWhite,
       drawer: const NavDraw(),
       body: Stack(
         children: [

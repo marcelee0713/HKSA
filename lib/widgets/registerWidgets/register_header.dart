@@ -29,7 +29,7 @@ class RegisterHeader extends StatelessWidget {
             "REGISTRATION",
             textAlign: TextAlign.center,
             style: TextStyle(
-              color: ColorPalette.accentWhite,
+              color: ColorPalette.primary,
               fontFamily: 'Frank Ruhl Libre',
               fontWeight: FontWeight.w700,
               fontSize: 20,

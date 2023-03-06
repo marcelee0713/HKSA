@@ -51,7 +51,7 @@ class _ChatBoxState extends State<ChatBox> {
         padding: const EdgeInsets.all(10),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10),
-          color: ColorPalette.accentWhite,
+          color: ColorPalette.accentDarkWhite,
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,

@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:hive/hive.dart';
 import 'package:hksa/constant/colors.dart';
 import 'package:hksa/widgets/universal/message_box.dart';
@@ -114,12 +115,9 @@ class _InboxState extends State<Inbox> {
                             crossAxisAlignment: CrossAxisAlignment.center,
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: const <Widget>[
-                              SizedBox(
-                                width: 30,
-                                height: 30,
-                                child: CircularProgressIndicator(
-                                  color: ColorPalette.secondary,
-                                ),
+                              SpinKitCircle(
+                                color: ColorPalette.secondary,
+                                size: 100,
                               ),
                               SizedBox(height: 20),
                               Text("Loading...",

@@ -17,7 +17,7 @@ class _LoginState extends State<Login> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: ColorPalette.secondary,
+      backgroundColor: ColorPalette.primary,
       // Always put FutureBuilder if you're using firebase?
       // Is it? I need to research this up its 11:34pm
       // I have class at 7am omaygot. -Marcel
@@ -61,6 +61,7 @@ class LogInContainer extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: const [
           LoginHeader(),
+          SizedBox(height: 10),
           LogInInputs(),
         ],
       ),

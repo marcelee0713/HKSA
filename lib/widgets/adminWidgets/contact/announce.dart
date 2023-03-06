@@ -8,7 +8,6 @@ import 'package:hksa/widgets/dialogs/dialog_loading.dart';
 import 'package:hksa/widgets/dialogs/dialog_success.dart';
 import 'package:intl/intl.dart';
 
-final _inputController = TextEditingController();
 final _formKey = GlobalKey<FormState>();
 
 class Announce extends StatefulWidget {
@@ -19,6 +18,7 @@ class Announce extends StatefulWidget {
 }
 
 class _AnnounceState extends State<Announce> {
+  final _inputController = TextEditingController();
   // For Firebase
   final DatabaseReference _scholarReference =
       FirebaseDatabase.instance.ref().child("Users/Scholars/");
@@ -32,12 +32,13 @@ class _AnnounceState extends State<Announce> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: ColorPalette.accentWhite,
       body: Form(
         key: _formKey,
         child: Center(
           child: Container(
             padding: const EdgeInsets.all(20),
-            color: ColorPalette.secondary,
+            color: ColorPalette.accentWhite,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -262,5 +263,12 @@ class _AnnounceState extends State<Announce> {
 
     // SET THIS RECEIVER
     await sendInboxToReceiver.set(json);
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    _inputController.dispose();
+    super.dispose();
   }
 }

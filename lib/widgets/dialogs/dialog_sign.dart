@@ -11,7 +11,6 @@ import 'package:hksa/pages/login.dart';
 import 'package:hksa/widgets/dialogs/dialog_loading.dart';
 import 'package:hksa/widgets/dialogs/dialog_unsuccessful.dart';
 
-final _inputControllerSignature = TextEditingController();
 final _formKey = GlobalKey<FormState>();
 
 class DialogSign extends StatefulWidget {
@@ -22,6 +21,7 @@ class DialogSign extends StatefulWidget {
 }
 
 class _DialogSignState extends State<DialogSign> {
+  final _inputControllerSignature = TextEditingController();
   String? multiplierValue;
   bool _signatureVisible = false;
   @override
@@ -261,7 +261,7 @@ class _DialogSignState extends State<DialogSign> {
     DatabaseReference _testReference =
         FirebaseDatabase.instance.ref().child("Users/Professors/");
     return Scaffold(
-      backgroundColor: ColorPalette.secondary,
+      backgroundColor: ColorPalette.primary,
       body: Center(
         child: Form(
           key: _formKey,
@@ -269,12 +269,12 @@ class _DialogSignState extends State<DialogSign> {
             child: Container(
               padding: const EdgeInsets.all(10),
               decoration: const BoxDecoration(
-                color: ColorPalette.secondary,
+                color: ColorPalette.primary,
                 borderRadius: BorderRadius.all(Radius.circular(10)),
               ),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Center(
                     child: Container(
@@ -330,6 +330,22 @@ class _DialogSignState extends State<DialogSign> {
                               borderSide:
                                   const BorderSide(color: Colors.transparent),
                               borderRadius: BorderRadius.circular(10.0),
+                            ),
+                            errorBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10.0),
+                              borderSide: const BorderSide(
+                                color: ColorPalette.errorColor,
+                                width: 1,
+                                style: BorderStyle.solid,
+                              ),
+                            ),
+                            focusedErrorBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10.0),
+                              borderSide: const BorderSide(
+                                color: ColorPalette.errorColor,
+                                width: 1,
+                                style: BorderStyle.solid,
+                              ),
                             ),
                             filled: true,
                             fillColor: ColorPalette.accentDarkWhite,
@@ -404,102 +420,109 @@ class _DialogSignState extends State<DialogSign> {
                   const Text(
                     HKSAStrings.signatureInfo,
                     style: TextStyle(
-                      color: ColorPalette.primary,
+                      color: ColorPalette.accentWhite,
                       fontFamily: 'Inter',
                       fontSize: 12,
                     ),
                   ),
                   const SizedBox(height: 10),
-                  Align(
-                    alignment: Alignment.center,
-                    child: ElevatedButton(
-                      onPressed: (() => setState(
-                            () {
-                              if (!_formKey.currentState!.validate()) {
-                                return;
-                              }
-                              if (multiplierValue == null) {
-                                Flushbar(
-                                  backgroundColor: ColorPalette.primary,
-                                  messageText: const Text(
-                                    "Enter a multiplier please.",
-                                    style: TextStyle(
-                                      fontFamily: 'Inter',
-                                      fontSize: 14,
-                                      color: ColorPalette.accentWhite,
-                                    ),
+                  ElevatedButton(
+                    onPressed: (() => setState(
+                          () {
+                            if (!_formKey.currentState!.validate()) {
+                              return;
+                            }
+                            if (multiplierValue == null) {
+                              Flushbar(
+                                backgroundColor: ColorPalette.secondary,
+                                borderRadius: const BorderRadius.only(
+                                    topLeft: Radius.circular(10),
+                                    topRight: Radius.circular(10)),
+                                messageText: const Text(
+                                  "Enter a multiplier please.",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontFamily: 'Inter',
+                                    fontSize: 14,
+                                    color: ColorPalette.primary,
                                   ),
-                                  duration: const Duration(seconds: 3),
-                                ).show(context);
-                                return;
-                              }
+                                ),
+                                duration: const Duration(seconds: 3),
+                              ).show(context);
+                              return;
+                            }
 
-                              String signatureInput =
-                                  _inputControllerSignature.text.trim();
-                              bool userExist = false;
-                              bool doneCheckingUsers = false;
+                            String signatureInput =
+                                _inputControllerSignature.text.trim();
+                            bool userExist = false;
+                            bool doneCheckingUsers = false;
 
-                              DialogLoading(subtext: "Checking")
-                                  .buildLoadingScreen(context);
+                            DialogLoading(subtext: "Checking...")
+                                .buildLoadingScreen(context);
 
-                              Future.delayed(const Duration(seconds: 2), () {
-                                _testReference.get().then((snapshot) {
-                                  for (final test in snapshot.children) {
-                                    Map<String, dynamic> myObj =
-                                        jsonDecode(jsonEncode(test.value));
+                            Future.delayed(const Duration(seconds: 2), () {
+                              _testReference.get().then((snapshot) {
+                                for (final test in snapshot.children) {
+                                  Map<String, dynamic> myObj =
+                                      jsonDecode(jsonEncode(test.value));
 
-                                    Professor myProfessorObj =
-                                        Professor.fromJson(myObj);
+                                  Professor myProfessorObj =
+                                      Professor.fromJson(myObj);
 
-                                    if (myProfessorObj.signaturecode ==
-                                        signatureInput) {
+                                  if (myProfessorObj.signaturecode ==
+                                      signatureInput) {
+                                    Navigator.of(context, rootNavigator: true)
+                                        .pop();
+                                    userExist = true;
+                                    doneCheckingUsers = false;
+                                    result = multiplierValue! + signatureInput;
+                                    Navigator.pop(context, result);
+                                    break;
+                                  } else {
+                                    userExist = false;
+                                    continue;
+                                  }
+                                }
+                                doneCheckingUsers = true;
+                              });
+                            }).whenComplete(() => {
+                                  Future.delayed(
+                                      const Duration(milliseconds: 2500), () {
+                                    if (!userExist && doneCheckingUsers) {
                                       Navigator.of(context, rootNavigator: true)
                                           .pop();
-                                      userExist = true;
-                                      doneCheckingUsers = false;
-                                      result =
-                                          multiplierValue! + signatureInput;
-                                      Navigator.pop(context, result);
-                                      break;
-                                    } else {
-                                      userExist = false;
-                                      continue;
+                                      DialogUnsuccessful(
+                                          headertext: "Unavailable Signature",
+                                          subtext:
+                                              "We currently don't have the signature you input",
+                                          textButton: "Close",
+                                          callback: () => {
+                                                Navigator.of(context,
+                                                        rootNavigator: true)
+                                                    .pop()
+                                              }).buildUnsuccessfulScreen(
+                                          context);
                                     }
-                                  }
-                                  doneCheckingUsers = true;
+                                  }),
+                                  _inputControllerSignature.text = "",
                                 });
-                              }).whenComplete(() => {
-                                    Future.delayed(
-                                        const Duration(milliseconds: 2500), () {
-                                      if (!userExist && doneCheckingUsers) {
-                                        Navigator.of(context,
-                                                rootNavigator: true)
-                                            .pop();
-                                        DialogUnsuccessful(
-                                            headertext: "Unavailable Signature",
-                                            subtext:
-                                                "We currently don't have the signature you input",
-                                            textButton: "Close",
-                                            callback: () => {
-                                                  Navigator.of(context,
-                                                          rootNavigator: true)
-                                                      .pop()
-                                                }).buildUnsuccessfulScreen(
-                                            context);
-                                      }
-                                    }),
-                                    _inputControllerSignature.text = "",
-                                  });
-                            },
-                          )),
-                      child: const Text(
-                        "CONFIRM",
-                        style: TextStyle(
-                          color: ColorPalette.accentWhite,
-                          fontFamily: 'Inter',
-                          fontWeight: FontWeight.w400,
-                          fontSize: 13,
-                        ),
+                          },
+                        )),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: ColorPalette.secondary,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                      disabledBackgroundColor:
+                          const Color.fromARGB(137, 114, 177, 139),
+                    ),
+                    child: const Text(
+                      "CONFIRM",
+                      style: TextStyle(
+                        color: ColorPalette.accentWhite,
+                        fontFamily: 'Inter',
+                        fontWeight: FontWeight.w400,
+                        fontSize: 13,
                       ),
                     ),
                   )
@@ -524,4 +547,11 @@ class _DialogSignState extends State<DialogSign> {
           ),
         ),
       );
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    _inputControllerSignature.dispose();
+  }
 }

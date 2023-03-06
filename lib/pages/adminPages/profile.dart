@@ -4,6 +4,7 @@ import 'package:another_flushbar/flushbar.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:hive/hive.dart';
 import 'package:hksa/api/storage_service.dart';
 import 'package:hksa/constant/colors.dart';
@@ -30,9 +31,10 @@ class _AdminProfileState extends State<AdminProfile> {
     DatabaseReference dbReference =
         FirebaseDatabase.instance.ref().child("Users/Head/$userID/password");
     return Scaffold(
+      backgroundColor: ColorPalette.accentWhite,
       drawer: const NavDraw(),
       body: Container(
-        color: ColorPalette.secondary,
+        color: ColorPalette.accentWhite,
         child: FutureBuilder(
           future: getHead(),
           builder: (context, snapshot) {
@@ -42,12 +44,9 @@ class _AdminProfileState extends State<AdminProfile> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: const <Widget>[
-                    SizedBox(
-                      width: 30,
-                      height: 30,
-                      child: CircularProgressIndicator(
-                        color: ColorPalette.primary,
-                      ),
+                    SpinKitCircle(
+                      size: 100,
+                      color: ColorPalette.secondary,
                     ),
                     SizedBox(height: 20),
                     Text("Loading..."),

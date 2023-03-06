@@ -1,5 +1,6 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:hive/hive.dart';
 import 'package:hksa/constant/colors.dart';
 import 'package:hksa/pages/login.dart';
@@ -155,7 +156,7 @@ class _ChangeProfessorSignatureState extends State<ChangeProfessorSignature> {
   Widget build(BuildContext context) {
     String result = "";
     return Scaffold(
-      backgroundColor: ColorPalette.secondary,
+      backgroundColor: ColorPalette.accentWhite,
       body: Form(
         key: _formKey,
         child: Center(
@@ -170,12 +171,9 @@ class _ChangeProfessorSignatureState extends State<ChangeProfessorSignature> {
                           crossAxisAlignment: CrossAxisAlignment.center,
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: const <Widget>[
-                            SizedBox(
-                              width: 30,
-                              height: 30,
-                              child: CircularProgressIndicator(
-                                color: ColorPalette.primary,
-                              ),
+                            SpinKitCircle(
+                              color: ColorPalette.secondary,
+                              size: 100,
                             ),
                             SizedBox(height: 20),
                             Text("Loading..."),
@@ -200,7 +198,7 @@ class _ChangeProfessorSignatureState extends State<ChangeProfessorSignature> {
                               const Text(
                                 "Change your signature",
                                 style: TextStyle(
-                                  color: ColorPalette.accentWhite,
+                                  color: ColorPalette.primary,
                                   fontFamily: 'Frank Ruhl Libre',
                                   fontSize: 18,
                                   fontWeight: FontWeight.w700,
@@ -210,6 +208,8 @@ class _ChangeProfessorSignatureState extends State<ChangeProfessorSignature> {
                           ),
                           const SizedBox(height: 10),
                           Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: [
                               TextFormField(
                                 controller: _inputControllerOldSignature,
@@ -377,10 +377,11 @@ class _ChangeProfessorSignatureState extends State<ChangeProfessorSignature> {
                               const SizedBox(height: 8),
                               const Text(
                                 "Do not share your signature.",
+                                textAlign: TextAlign.center,
                                 style: TextStyle(
                                   fontFamily: 'Inter',
                                   fontSize: 14.5,
-                                  color: ColorPalette.accentDarkWhite,
+                                  color: ColorPalette.primary,
                                 ),
                               ),
                               const SizedBox(height: 5),

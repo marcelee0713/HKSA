@@ -30,7 +30,7 @@ class DialogSuccess {
                 width: 275,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     const Icon(
                       Icons.check_box_rounded,
@@ -40,6 +40,7 @@ class DialogSuccess {
                     const SizedBox(height: 2),
                     Text(
                       headertext,
+                      textAlign: TextAlign.center,
                       style: const TextStyle(
                         color: ColorPalette.primary,
                         fontFamily: 'Inter',
@@ -60,29 +61,27 @@ class DialogSuccess {
                     ),
                     const SizedBox(height: 8),
                     ElevatedButton(
-                        onPressed: (() {
-                          callback();
-                        }),
-                        child: Container(
-                          height: 40,
-                          width: 100,
-                          decoration: const BoxDecoration(
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(10.0)),
-                            color: ColorPalette.primary,
-                          ),
-                          child: Center(
-                            child: Text(
-                              textButton,
-                              style: const TextStyle(
-                                color: ColorPalette.accentWhite,
-                                fontFamily: 'Inter',
-                                fontWeight: FontWeight.w700,
-                                fontSize: 15,
-                              ),
-                            ),
-                          ),
-                        ))
+                      onPressed: (() {
+                        callback();
+                      }),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: ColorPalette.primary,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                        disabledBackgroundColor:
+                            const Color.fromARGB(137, 114, 177, 139),
+                      ),
+                      child: Text(
+                        textButton,
+                        style: const TextStyle(
+                          color: ColorPalette.accentWhite,
+                          fontFamily: 'Inter',
+                          fontWeight: FontWeight.w700,
+                          fontSize: 15,
+                        ),
+                      ),
+                    )
                   ],
                 ),
               ),

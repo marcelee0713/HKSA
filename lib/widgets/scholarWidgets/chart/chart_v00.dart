@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:hksa/api/pdf_api.dart';
 import 'package:hksa/models/logs.dart';
 import 'package:hksa/widgets/dialogs/dialog_unsuccessful.dart';
@@ -42,7 +43,7 @@ class _ScholarHoursRadialChartState extends State<ScholarHoursRadialChart> {
         future: createLogsCollection(),
         builder: (context, snapshot) {
           return Container(
-            color: ColorPalette.secondary,
+            color: ColorPalette.accentWhite,
             child: Stack(
               alignment: Alignment.center,
               children: [
@@ -71,12 +72,8 @@ class _ScholarHoursRadialChartState extends State<ScholarHoursRadialChart> {
                                       crossAxisAlignment:
                                           CrossAxisAlignment.center,
                                       children: const <Widget>[
-                                        SizedBox(
-                                          width: 30,
-                                          height: 30,
-                                          child: CircularProgressIndicator(
-                                            color: Color(0xffffd700),
-                                          ),
+                                        SpinKitCircle(
+                                          color: Color(0xffffd700),
                                         ),
                                         SizedBox(height: 20),
                                         Text(
@@ -98,6 +95,7 @@ class _ScholarHoursRadialChartState extends State<ScholarHoursRadialChart> {
                                           fontSize: 32,
                                           fontFamily: 'Inter',
                                           fontWeight: FontWeight.w700,
+                                          color: ColorPalette.primary,
                                         ),
                                       ),
                                       Text(
@@ -108,6 +106,7 @@ class _ScholarHoursRadialChartState extends State<ScholarHoursRadialChart> {
                                           fontSize: 32,
                                           fontFamily: 'Inter',
                                           fontWeight: FontWeight.w700,
+                                          color: ColorPalette.primary,
                                         ),
                                       ),
                                       const SizedBox(height: 65),

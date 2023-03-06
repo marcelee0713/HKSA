@@ -19,14 +19,14 @@ class DialogConfirm {
                 child: Container(
                   padding: const EdgeInsets.all(10),
                   decoration: const BoxDecoration(
-                    color: ColorPalette.secondary,
+                    color: ColorPalette.primary,
                     borderRadius: BorderRadius.all(Radius.circular(10)),
                   ),
                   height: 200,
                   width: 300,
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       Text(
                         headertext,
@@ -45,6 +45,9 @@ class DialogConfirm {
                           Checkbox(
                               value: isChecked,
                               activeColor: ColorPalette.primary,
+                              checkColor: ColorPalette.primary,
+                              fillColor: MaterialStateProperty.all(
+                                  ColorPalette.accentWhite),
                               onChanged: (newBool) {
                                 setState(() {
                                   isChecked = newBool;
@@ -62,22 +65,31 @@ class DialogConfirm {
                         ],
                       ),
                       ElevatedButton(
-                          onPressed: isChecked == true
-                              ? (() => setState(
-                                    () {
-                                      callback();
-                                    },
-                                  ))
-                              : null,
-                          child: const Text(
-                            "CONFIRM",
-                            style: TextStyle(
-                              color: ColorPalette.accentWhite,
-                              fontFamily: 'Inter',
-                              fontWeight: FontWeight.w400,
-                              fontSize: 13,
-                            ),
-                          ))
+                        onPressed: isChecked == true
+                            ? (() => setState(
+                                  () {
+                                    callback();
+                                  },
+                                ))
+                            : null,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: ColorPalette.secondary,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10.0),
+                          ),
+                          disabledBackgroundColor:
+                              const Color.fromARGB(137, 114, 177, 139),
+                        ),
+                        child: const Text(
+                          "CONFIRM",
+                          style: TextStyle(
+                            color: ColorPalette.accentWhite,
+                            fontFamily: 'Inter',
+                            fontWeight: FontWeight.w400,
+                            fontSize: 13,
+                          ),
+                        ),
+                      )
                     ],
                   ),
                 ),
