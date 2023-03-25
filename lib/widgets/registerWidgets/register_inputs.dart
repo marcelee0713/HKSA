@@ -19,6 +19,14 @@ class _RegisterInputsState extends State<RegisterInputs> {
   // For DropDown Default Values
   String? coursesValue;
   String? hkTypeValue;
+  //sakin ulit
+  String? vacanttimevalue;
+  String? onsitevalue;
+  String? vacanttimeday2value;
+  String? onsiteday2value;
+  String? vacantdayvalue;
+  String? facitypevalue;
+  String? townvalue;
 
   bool _passwordVisible = false;
   bool _cfrmPasswordVisible = false;
@@ -257,6 +265,235 @@ class _RegisterInputsState extends State<RegisterInputs> {
               ),
             ),
           ),
+          //sakin to
+          const SizedBox(height: 18),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                color: ColorPalette.accentDarkWhite),
+            child: DropdownButtonHideUnderline(
+              child: DropdownButton(
+                hint: const Text(
+                  "Faci Type",
+                  style: TextStyle(
+                    fontFamily: 'Inter',
+                    fontSize: 14,
+                    fontStyle: FontStyle.italic,
+                    fontWeight: FontWeight.w300,
+                  ),
+                ),
+                value: facitypevalue,
+                isExpanded: true,
+                iconSize: 32,
+                icon: const Icon(
+                  Icons.arrow_drop_down,
+                  color: ColorPalette.primary,
+                ),
+                items: HKSAStrings.facitype.map(buildMenuItemFaciType).toList(),
+                onChanged: ((facitypevalue) => setState(() {
+                      this.facitypevalue = facitypevalue ?? "";
+                    })),
+              ),
+            ),
+          ),
+          const SizedBox(height: 18),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                color: ColorPalette.accentDarkWhite),
+            child: DropdownButtonHideUnderline(
+              child: DropdownButton(
+                hint: const Text(
+                  "Day 1 - Onsite",
+                  style: TextStyle(
+                    fontFamily: 'Inter',
+                    fontSize: 14,
+                    fontStyle: FontStyle.italic,
+                    fontWeight: FontWeight.w300,
+                  ),
+                ),
+                value: onsitevalue,
+                isExpanded: true,
+                iconSize: 32,
+                icon: const Icon(
+                  Icons.arrow_drop_down,
+                  color: ColorPalette.primary,
+                ),
+                items: HKSAStrings.onsite.map(buildMenuItemOnsite).toList(),
+                onChanged: ((onsitevalue) => setState(() {
+                      this.onsitevalue = onsitevalue ?? "";
+                    })),
+              ),
+            ),
+          ),
+          const SizedBox(height: 18),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+              color: ColorPalette.accentDarkWhite,
+            ),
+            child: DropdownButtonHideUnderline(
+              child: DropdownButton(
+                hint: const Text(
+                  " Day 1 - Vacant Time",
+                  style: TextStyle(
+                    fontFamily: 'Inter',
+                    fontSize: 14,
+                    fontStyle: FontStyle.italic,
+                    fontWeight: FontWeight.w300,
+                  ),
+                ),
+                value: vacanttimevalue,
+                isExpanded: true,
+                iconSize: 32,
+                icon: const Icon(
+                  Icons.arrow_drop_down,
+                  color: ColorPalette.primary,
+                ),
+                items: HKSAStrings.vacanttime
+                    .map(buildMenuItemVacantTime)
+                    .toList(),
+                onChanged: ((vacanttimevalue) => setState(() {
+                      this.vacanttimevalue = vacanttimevalue ?? "";
+                    })),
+              ),
+            ),
+          ),
+          const SizedBox(height: 18),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                color: ColorPalette.accentDarkWhite),
+            child: DropdownButtonHideUnderline(
+              child: DropdownButton(
+                hint: const Text(
+                  "Day 2 - Onsite",
+                  style: TextStyle(
+                    fontFamily: 'Inter',
+                    fontSize: 14,
+                    fontStyle: FontStyle.italic,
+                    fontWeight: FontWeight.w300,
+                  ),
+                ),
+                value: onsiteday2value,
+                isExpanded: true,
+                iconSize: 32,
+                icon: const Icon(
+                  Icons.arrow_drop_down,
+                  color: ColorPalette.primary,
+                ),
+                items: HKSAStrings.onsite.map(buildMenuItemOnsiteDay2).toList(),
+                onChanged: ((onsiteday2value) => setState(() {
+                      this.onsiteday2value = onsiteday2value ?? "";
+                    })),
+              ),
+            ),
+          ),
+          const SizedBox(height: 18),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+              color: ColorPalette.accentDarkWhite,
+            ),
+            child: DropdownButtonHideUnderline(
+              child: DropdownButton(
+                hint: const Text(
+                  " Day 2 - Vacant Time",
+                  style: TextStyle(
+                    fontFamily: 'Inter',
+                    fontSize: 14,
+                    fontStyle: FontStyle.italic,
+                    fontWeight: FontWeight.w300,
+                  ),
+                ),
+                value: vacanttimeday2value,
+                isExpanded: true,
+                iconSize: 32,
+                icon: const Icon(
+                  Icons.arrow_drop_down,
+                  color: ColorPalette.primary,
+                ),
+                items: HKSAStrings.vacanttime
+                    .map(buildMenuItemVacantTimeDay2)
+                    .toList(),
+                onChanged: ((vacanttimeday2value) => setState(() {
+                      this.vacanttimeday2value = vacanttimeday2value ?? "";
+                    })),
+              ),
+            ),
+          ),
+          const SizedBox(height: 18),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+              color: ColorPalette.accentDarkWhite,
+            ),
+            child: DropdownButtonHideUnderline(
+              child: DropdownButton(
+                hint: const Text(
+                  " Vacant Day ",
+                  style: TextStyle(
+                    fontFamily: 'Inter',
+                    fontSize: 14,
+                    fontStyle: FontStyle.italic,
+                    fontWeight: FontWeight.w300,
+                  ),
+                ),
+                value: vacantdayvalue,
+                isExpanded: true,
+                iconSize: 32,
+                icon: const Icon(
+                  Icons.arrow_drop_down,
+                  color: ColorPalette.primary,
+                ),
+                items: HKSAStrings.vacantday
+                    .map(buildMenuItemVacantTimeDay2)
+                    .toList(),
+                onChanged: ((vacantdayvalue) => setState(() {
+                      this.vacantdayvalue = vacantdayvalue ?? "";
+                    })),
+              ),
+            ),
+          ),
+          const SizedBox(height: 18),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+              color: ColorPalette.accentDarkWhite,
+            ),
+            child: DropdownButtonHideUnderline(
+              child: DropdownButton(
+                hint: const Text(
+                  "Towns",
+                  style: TextStyle(
+                    fontFamily: 'Inter',
+                    fontSize: 14,
+                    fontStyle: FontStyle.italic,
+                    fontWeight: FontWeight.w300,
+                  ),
+                ),
+                value: townvalue,
+                isExpanded: true,
+                iconSize: 32,
+                icon: const Icon(
+                  Icons.arrow_drop_down,
+                  color: ColorPalette.primary,
+                ),
+                items: HKSAStrings.towns.map(buildMenuItemTowns).toList(),
+                onChanged: ((townvalue) => setState(() {
+                      this.townvalue = townvalue ?? "";
+                    })),
+              ),
+            ),
+          ),
+          //hanggang dito sakin pataas
           const SizedBox(height: 18),
           TextFormField(
             controller: _inputControllerEmail,
@@ -608,6 +845,96 @@ class _RegisterInputsState extends State<RegisterInputs> {
       );
   DropdownMenuItem<String> buildMenuItemHKTypes(String item) =>
       DropdownMenuItem(
+        value: item,
+        child: Text(
+          item,
+          style: const TextStyle(
+            fontFamily: 'Inter',
+            fontWeight: FontWeight.w300,
+            fontSize: 12,
+            color: ColorPalette.primary,
+          ),
+        ),
+      );
+  //sakin ulit to pababa
+  DropdownMenuItem<String> buildMenuItemVacantTime(String item) =>
+      DropdownMenuItem(
+        value: item,
+        child: Text(
+          item,
+          style: const TextStyle(
+            fontFamily: 'Inter',
+            fontWeight: FontWeight.w300,
+            fontSize: 12,
+            color: ColorPalette.primary,
+          ),
+        ),
+      );
+  DropdownMenuItem<String> buildMenuItemOnsite(String item) => DropdownMenuItem(
+        value: item,
+        child: Text(
+          item,
+          style: const TextStyle(
+            fontFamily: 'Inter',
+            fontWeight: FontWeight.w300,
+            fontSize: 12,
+            color: ColorPalette.primary,
+          ),
+        ),
+      );
+  DropdownMenuItem<String> buildMenuItemVacantTimeDay2(String item) =>
+      DropdownMenuItem(
+        value: item,
+        child: Text(
+          item,
+          style: const TextStyle(
+            fontFamily: 'Inter',
+            fontWeight: FontWeight.w300,
+            fontSize: 12,
+            color: ColorPalette.primary,
+          ),
+        ),
+      );
+  DropdownMenuItem<String> buildMenuItemOnsiteDay2(String item) =>
+      DropdownMenuItem(
+        value: item,
+        child: Text(
+          item,
+          style: const TextStyle(
+            fontFamily: 'Inter',
+            fontWeight: FontWeight.w300,
+            fontSize: 12,
+            color: ColorPalette.primary,
+          ),
+        ),
+      );
+  DropdownMenuItem<String> buildMenuItemVacantday(String item) =>
+      DropdownMenuItem(
+        value: item,
+        child: Text(
+          item,
+          style: const TextStyle(
+            fontFamily: 'Inter',
+            fontWeight: FontWeight.w300,
+            fontSize: 12,
+            color: ColorPalette.primary,
+          ),
+        ),
+      );
+  DropdownMenuItem<String> buildMenuItemFaciType(String item) =>
+      DropdownMenuItem(
+        value: item,
+        child: Text(
+          item,
+          style: const TextStyle(
+            fontFamily: 'Inter',
+            fontWeight: FontWeight.w300,
+            fontSize: 12,
+            color: ColorPalette.primary,
+          ),
+        ),
+      );
+  DropdownMenuItem<String> buildMenuItemTowns(String item) => DropdownMenuItem(
         value: item,
         child: Text(
           item,
