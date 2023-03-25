@@ -27,6 +27,7 @@ class _RegisterInputsState extends State<RegisterInputs> {
   String? vacantdayvalue;
   String? facitypevalue;
   String? townvalue;
+  //HANGGANG DITO
 
   bool _passwordVisible = false;
   bool _cfrmPasswordVisible = false;
@@ -766,14 +767,10 @@ class _RegisterInputsState extends State<RegisterInputs> {
                           } else {
                             // If it doesn't exist then let's create a new account
                             // Show a new dialog that this user is now successfully created.
-                            if (hkType == "25%") {
+                            if (hkType == "HK25") {
                               totalHoursRequired = "60";
-                            } else if (hkType == "50%" || hkType == "75%") {
+                            } else if (hkType == "HK50" || hkType == "HK75") {
                               totalHoursRequired = "90";
-                            } else if (hkType == "100%") {
-                              totalHoursRequired = "90";
-                            } else if (hkType == "SA") {
-                              totalHoursRequired = "360";
                             }
                             Scholar scholarObj = Scholar(
                                 studentNumber: studentNumber,
