@@ -1,8 +1,9 @@
 class HKSAStrings {
   static const String appTitle = "Handog Kaibigan Scholar Assistant";
   static const items = ['Scholar', 'Professor', 'Head'];
-  static const hkTypes = ['25%', '50%', '75%', '100%', 'SA'];
-  static const departments = ['CITE', 'CEA', 'CSS', 'CMA', 'CHS'];
+  static const hkTypes = ['HK25', 'HK50', 'HK75'];
+  static const facitype = ['Faci', 'Non-Faci'];
+  static const departments = ['CITE', 'CEA', 'CSS', 'CMA', 'CHS', 'CELA'];
   static const courses = [
     'Bachelor of Science in Information Technology',
     'Bachelor of Science in Architecture',
@@ -30,6 +31,85 @@ class HKSAStrings {
     'Bachelor of Science in Pharmacy',
     'Bachelor of Science in Midwifery',
   ];
+  static const towns = [
+    'Agno',
+    'Aguilar',
+    'Alaminos',
+    'Alcala',
+    'Anda',
+    'Asingan',
+    'Balungao',
+    'Bani',
+    'Basista',
+    'Bautista',
+    'Bayambang',
+    'Binalonan',
+    'Binmaley',
+    'Bolinao',
+    'Bugallon',
+    'Burgos',
+    'Calasiao',
+    'Dagupan City',
+    'Dasol',
+    'Infanta',
+    'Labrador',
+    'Laoac',
+    'Lingayen',
+    'Mabini',
+    'Malasiqui',
+    'Manaoag',
+    'Mangaldan',
+    'Mangatarem',
+    'Mapandan',
+    'Natividad',
+    'Pozorrubio',
+    'Rosales',
+    'San Carlos City',
+    'San Fabian',
+    'San Jacinto',
+    'San Manuel',
+    'San Nicolas',
+    'San Quintin',
+    'Sison',
+    'Sta. Barbara',
+    'Sta. Maria',
+    'Sto. Tomas',
+    'Sual',
+    'Tayug',
+    'Umingan',
+    'Urbiztondo',
+    'Urdaneta City',
+    'Villasis',
+    'Others'
+  ];
+  static const vacanttime = [
+    '07:30 - 09:00 AM',
+    '09:00 - 10:30 AM',
+    '10:30 - 12:00 NN',
+    '12:00 - 01:30 PM',
+    '01:30 - 03:00 PM',
+    '03:00 - 04:30 PM',
+    '04:30 - 06:00 PM',
+    'NONE'
+  ];
+  static const onsite = [
+    'MONDAY',
+    'TUESDAY',
+    'WEDNESDAY',
+    'THURSDAY',
+    'FRIDAY',
+    'SATURDAY',
+    'NONE'
+  ];
+  static const vacantday = [
+    'MONDAY',
+    'TUESDAY',
+    'WEDNESDAY',
+    'THURSDAY',
+    'FRIDAY',
+    'SATURDAY',
+    'NONE'
+  ];
   static const multipliers = ["1", "2", "3"];
   static const members = [
     "Delgado, Melchor Lorenz",
@@ -38,6 +118,7 @@ class HKSAStrings {
     "Columbres, Charlie",
     "Duenas, Monico"
   ];
+  static const closedquestions = ['Yes', 'No'];
   static const dtrInfo =
       "For your information, you can not time in or out if you are NOT between 7:30 AM to 8:00 PM. It also won't record your DTR logs even though you had timed in.";
   static const signatureInfo = "Do not share your signature code to anyone.";
