@@ -385,7 +385,13 @@ class _ScholarProfileState extends State<ScholarProfile> {
                                                 fullName:
                                                     snapshot.data!.first.name,
                                                 totalHours:
-                                                    snapshot.data!.first.hours);
+                                                    snapshot.data!.first.hours,
+                                                hkType: snapshot.data!.first
+                                                            .scholarType ==
+                                                        "Faci"
+                                                    ? snapshot
+                                                        .data!.first.hkType
+                                                    : "Non-Faci");
                                         PdfApi.openFile(pdfFile);
                                       },
                                       style: ElevatedButton.styleFrom(
@@ -546,7 +552,7 @@ class _ScholarProfileState extends State<ScholarProfile> {
         Logs myLogs = Logs(
             timeIn: myObj["timein"],
             timeOut: myObj["timeout"],
-            signature: myObj["signature"],
+            profName: myObj["profName"],
             date: myObj["date"],
             multiplier: myObj["multiplier"]);
         dataList.add(myLogs);

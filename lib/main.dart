@@ -25,6 +25,7 @@ void main() async {
   await Hive.initFlutter();
 
   var logInBox = await Hive.openBox("myLoginBox");
+  var registrationBox = await Hive.openBox("myRegistrationBox");
   userLoggedIn = await logInBox.get("isLoggedIn");
   userType = await logInBox.get("userType");
 

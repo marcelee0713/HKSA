@@ -20,6 +20,16 @@ class Scholar {
     required this.totalHoursRequired,
     required this.isFinished,
     required this.profilePicture,
+    required this.onSiteDay1,
+    required this.onSiteDay2,
+    required this.vacantTimeDay1,
+    required this.vacantTimeDay2,
+    required this.wholeDayVacantTime,
+    required this.scholarType,
+    required this.town,
+    required this.assignedProfD1,
+    required this.assignedProfD2,
+    required this.assignedProfWd,
   });
 
   String studentNumber;
@@ -36,6 +46,16 @@ class Scholar {
   String totalHoursRequired;
   String isFinished;
   String profilePicture;
+  String onSiteDay1;
+  String onSiteDay2;
+  String vacantTimeDay1;
+  String vacantTimeDay2;
+  String wholeDayVacantTime;
+  String scholarType;
+  String town;
+  String assignedProfD1;
+  String assignedProfD2;
+  String assignedProfWd;
 
   factory Scholar.fromJson(Map<String, dynamic> json) => Scholar(
         studentNumber: json["studentNumber"],
@@ -52,6 +72,16 @@ class Scholar {
         totalHoursRequired: json["totalHoursRequired"],
         isFinished: json["isFinished"],
         profilePicture: json["profilePicture"],
+        onSiteDay1: json["onSiteDay1"],
+        onSiteDay2: json["onSiteDay2"],
+        vacantTimeDay1: json["vacantTimeDay1"],
+        vacantTimeDay2: json["vacantTimeDay2"],
+        wholeDayVacantTime: json["wholeDayVacantTime"],
+        scholarType: json["scholarType"],
+        town: json["town"],
+        assignedProfD1: json["assignedProfD1"],
+        assignedProfD2: json["assignedProfD2"],
+        assignedProfWd: json["assignedProfWD"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -68,6 +98,16 @@ class Scholar {
         "totalHoursInDuration": totalHoursInDuration,
         "totalHoursRequired": totalHoursRequired,
         "isFinished": isFinished,
-        "profilePicture": profilePicture
+        "profilePicture": profilePicture,
+        "onSiteDay1": onSiteDay1,
+        "onSiteDay2": onSiteDay2,
+        "vacantTimeDay1": vacantTimeDay1,
+        "vacantTimeDay2": vacantTimeDay2,
+        "wholeDayVacantTime": wholeDayVacantTime,
+        "scholarType": scholarType,
+        "town": town,
+        "assignedProfD1": assignedProfD1,
+        "assignedProfD2": assignedProfD2,
+        "assignedProfWD": assignedProfWd,
       };
 }

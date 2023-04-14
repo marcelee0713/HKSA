@@ -13,7 +13,6 @@ import 'package:hksa/widgets/dialogs/dialog_loading.dart';
 import 'package:hksa/widgets/dialogs/dialog_unsuccessful.dart';
 import '/constant/colors.dart';
 import 'package:hksa/constant/string.dart';
-import 'package:firebase_core/firebase_core.dart';
 
 class LogInInputs extends StatefulWidget {
   const LogInInputs({super.key});
@@ -327,6 +326,8 @@ class _LogInInputsState extends State<LogInInputs> {
                                           _myLoginBox.put(
                                               "userName", myScholarObj.name);
                                           _myLoginBox.put("getTimeInLS", "");
+                                          _myLoginBox.put("scholarType",
+                                              myScholarObj.scholarType);
 
                                           // Will now go to the ScholarPage
                                           // And literally replace any pages.
@@ -559,6 +560,14 @@ class _LogInInputsState extends State<LogInInputs> {
         ],
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    _inputControllerPassword.dispose();
+    _inputControllerUserID.dispose();
+    super.dispose();
   }
 
   DropdownMenuItem<String> buildMenuItem(String item) => DropdownMenuItem(

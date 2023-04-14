@@ -475,7 +475,8 @@ class _DialogSignState extends State<DialogSign> {
                                         .pop();
                                     userExist = true;
                                     doneCheckingUsers = false;
-                                    result = multiplierValue! + signatureInput;
+                                    result =
+                                        multiplierValue! + myProfessorObj.name;
                                     Navigator.pop(context, result);
                                     break;
                                   } else {

@@ -1,7 +1,11 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
+import 'package:hive/hive.dart';
 import 'package:hksa/constant/colors.dart';
 import 'package:hksa/pages/scholarPages/chart.dart';
+import 'package:hksa/pages/scholarPages/schedule.dart';
+import 'package:hksa/widgets/dialogs/dialog_old_dtr.dart';
 import 'messages.dart';
 //import 'chart.dart';
 import 'dtr.dart';
@@ -29,13 +33,28 @@ class _HomeScholarState extends State<HomeScholar> {
     const Chart(),
     const DTR(),
     const Profile(),
+    const Schedule(),
     const Info(),
   ];
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
+  final logInBox = Hive.box("myLoginBox");
+  late var scholarType = logInBox.get("scholarType");
+  late var name = logInBox.get("userName");
+  late var showOldDTR = logInBox.get("showDTRDialog");
   @override
   void initState() {
     _firebaseMessaging.subscribeToTopic('user_all');
     super.initState();
+    showOldDTR ??= true;
+    if (showOldDTR) {
+      SchedulerBinding.instance.addPostFrameCallback((_) {
+        DialogOldDTR(
+                name: name,
+                callback: () =>
+                    Navigator.of(context, rootNavigator: true).pop())
+            .buildReminder(context);
+      });
+    }
   }
 
   @override
@@ -128,25 +147,45 @@ class _HomeScholarState extends State<HomeScholar> {
                       size: 35,
                     ),
             ),
-            IconButton(
-              enableFeedback: false,
-              onPressed: () {
-                setState(() {
-                  pageIndex = 4;
-                });
-              },
-              icon: pageIndex == 4
-                  ? const Icon(
-                      Icons.info,
-                      color: Colors.white,
-                      size: 35,
-                    )
-                  : const Icon(
-                      Icons.info_outline,
-                      color: Colors.white,
-                      size: 35,
-                    ),
-            ),
+            scholarType == "Faci"
+                ? IconButton(
+                    enableFeedback: false,
+                    onPressed: () {
+                      setState(() {
+                        pageIndex = 4;
+                      });
+                    },
+                    icon: pageIndex == 4
+                        ? const Icon(
+                            Icons.calendar_month,
+                            color: Colors.white,
+                            size: 35,
+                          )
+                        : const Icon(
+                            Icons.calendar_month_outlined,
+                            color: Colors.white,
+                            size: 35,
+                          ),
+                  )
+                : IconButton(
+                    enableFeedback: false,
+                    onPressed: () {
+                      setState(() {
+                        pageIndex = 5;
+                      });
+                    },
+                    icon: pageIndex == 5
+                        ? const Icon(
+                            Icons.info,
+                            color: Colors.white,
+                            size: 35,
+                          )
+                        : const Icon(
+                            Icons.info_outline,
+                            color: Colors.white,
+                            size: 35,
+                          ),
+                  ),
           ],
         ),
       ),

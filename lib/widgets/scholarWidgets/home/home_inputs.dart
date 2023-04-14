@@ -236,7 +236,7 @@ class _ScholarHomeInputsState extends State<ScholarHomeInputs> {
                         setState(() {
                           int multiplier =
                               int.parse(result.toString().substring(0, 1));
-                          String signature = result.toString().substring(1);
+                          String profName = result.toString().substring(1);
 
                           DialogLoading(subtext: "Loading...")
                               .buildLoadingScreen(context);
@@ -252,7 +252,7 @@ class _ScholarHomeInputsState extends State<ScholarHomeInputs> {
                               timeIn: formattedTimeInDateForDB,
                               timeOut: formattedTimeOutDateForDB,
                               workingHoursTodayInDuration: totalHoursInDuration,
-                              signature: signature,
+                              profName: profName,
                               date: compareTimeToday,
                               multiplier: multiplier.toString());
 
@@ -336,7 +336,7 @@ class _ScholarHomeInputsState extends State<ScholarHomeInputs> {
       {required String timeIn,
       required String timeOut,
       required String workingHoursTodayInDuration,
-      required String signature,
+      required String profName,
       required String date,
       required String multiplier}) async {
     DatabaseReference dbReference =
@@ -347,7 +347,7 @@ class _ScholarHomeInputsState extends State<ScholarHomeInputs> {
       'timein': timeIn,
       'timeout': timeOut,
       'hoursInDuration': workingHoursTodayInDuration,
-      'signature': signature,
+      'profName': profName,
       'date': date,
       'multiplier': multiplier,
     };

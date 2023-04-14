@@ -528,7 +528,12 @@ class _AdminRegisterProfessorInputsState
                                   phonenumber: phoneNumber,
                                   professorId: professorID,
                                   signaturecode: signature,
-                                  profilePicture: HKSAStrings.pfpPlaceholder);
+                                  profilePicture: HKSAStrings.pfpPlaceholder,
+                                  day: '',
+                                  room: '',
+                                  section: '',
+                                  subject: '',
+                                  time: '');
 
                               await _dbReference
                                   .child(professorID)
