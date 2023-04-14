@@ -8,21 +8,21 @@ class Logs {
   Logs({
     required this.timeIn,
     required this.timeOut,
-    required this.signature,
+    required this.profName,
     required this.date,
     required this.multiplier,
   });
 
   String timeIn;
   String timeOut;
-  String signature;
+  String profName;
   String date;
   String multiplier;
 
   factory Logs.fromJson(Map<String, dynamic> json) => Logs(
         timeIn: json["timeIn"],
         timeOut: json["timeOut"],
-        signature: json["signature"],
+        profName: json["profName"],
         date: json["date"],
         multiplier: json["multiplier"],
       );
@@ -30,7 +30,7 @@ class Logs {
   Map<String, dynamic> toJson() => {
         "timeIn": timeIn,
         "timeOut": timeOut,
-        "signature": signature,
+        "profName": profName,
         "date": date,
         "multiplier": multiplier,
       };

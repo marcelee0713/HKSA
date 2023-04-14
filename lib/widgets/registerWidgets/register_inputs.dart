@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 import 'package:hksa/constant/colors.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:hksa/constant/string.dart';
@@ -7,6 +8,7 @@ import 'package:hksa/pages/login.dart';
 import 'package:hksa/widgets/dialogs/dialog_loading.dart';
 import 'package:hksa/widgets/dialogs/dialog_success.dart';
 import 'package:hksa/widgets/dialogs/dialog_unsuccessful.dart';
+import 'package:hksa/widgets/registerWidgets/register_profile_picture.dart';
 
 class RegisterInputs extends StatefulWidget {
   const RegisterInputs({super.key});
@@ -16,17 +18,18 @@ class RegisterInputs extends StatefulWidget {
 }
 
 class _RegisterInputsState extends State<RegisterInputs> {
+  final _myRegBox = Hive.box('myRegistrationBox');
   // For DropDown Default Values
   String? coursesValue;
   String? hkTypeValue;
   //sakin ulit
-  String? vacanttimevalue;
-  String? onsitevalue;
-  String? vacanttimeday2value;
-  String? onsiteday2value;
-  String? vacantdayvalue;
-  String? facitypevalue;
-  String? townvalue;
+  String? vacantTimeValue;
+  String? onSiteValue;
+  String? vacantTime2Value;
+  String? onSite2Value;
+  String? vacantDayValue;
+  String? faciTypeValue;
+  String? townValue;
   //HANGGANG DITO
 
   bool _passwordVisible = false;
@@ -284,7 +287,7 @@ class _RegisterInputsState extends State<RegisterInputs> {
                     fontWeight: FontWeight.w300,
                   ),
                 ),
-                value: facitypevalue,
+                value: faciTypeValue,
                 isExpanded: true,
                 iconSize: 32,
                 icon: const Icon(
@@ -292,8 +295,8 @@ class _RegisterInputsState extends State<RegisterInputs> {
                   color: ColorPalette.primary,
                 ),
                 items: HKSAStrings.facitype.map(buildMenuItemFaciType).toList(),
-                onChanged: ((facitypevalue) => setState(() {
-                      this.facitypevalue = facitypevalue ?? "";
+                onChanged: ((faciTypeValue) => setState(() {
+                      this.faciTypeValue = faciTypeValue ?? "";
                     })),
               ),
             ),
@@ -315,7 +318,7 @@ class _RegisterInputsState extends State<RegisterInputs> {
                     fontWeight: FontWeight.w300,
                   ),
                 ),
-                value: onsitevalue,
+                value: onSiteValue,
                 isExpanded: true,
                 iconSize: 32,
                 icon: const Icon(
@@ -323,8 +326,8 @@ class _RegisterInputsState extends State<RegisterInputs> {
                   color: ColorPalette.primary,
                 ),
                 items: HKSAStrings.onsite.map(buildMenuItemOnsite).toList(),
-                onChanged: ((onsitevalue) => setState(() {
-                      this.onsitevalue = onsitevalue ?? "";
+                onChanged: ((onSiteValue) => setState(() {
+                      this.onSiteValue = onSiteValue ?? "";
                     })),
               ),
             ),
@@ -347,7 +350,7 @@ class _RegisterInputsState extends State<RegisterInputs> {
                     fontWeight: FontWeight.w300,
                   ),
                 ),
-                value: vacanttimevalue,
+                value: vacantTimeValue,
                 isExpanded: true,
                 iconSize: 32,
                 icon: const Icon(
@@ -357,8 +360,8 @@ class _RegisterInputsState extends State<RegisterInputs> {
                 items: HKSAStrings.vacanttime
                     .map(buildMenuItemVacantTime)
                     .toList(),
-                onChanged: ((vacanttimevalue) => setState(() {
-                      this.vacanttimevalue = vacanttimevalue ?? "";
+                onChanged: ((vacantTimeValue) => setState(() {
+                      this.vacantTimeValue = vacantTimeValue ?? "";
                     })),
               ),
             ),
@@ -380,7 +383,7 @@ class _RegisterInputsState extends State<RegisterInputs> {
                     fontWeight: FontWeight.w300,
                   ),
                 ),
-                value: onsiteday2value,
+                value: onSite2Value,
                 isExpanded: true,
                 iconSize: 32,
                 icon: const Icon(
@@ -388,8 +391,8 @@ class _RegisterInputsState extends State<RegisterInputs> {
                   color: ColorPalette.primary,
                 ),
                 items: HKSAStrings.onsite.map(buildMenuItemOnsiteDay2).toList(),
-                onChanged: ((onsiteday2value) => setState(() {
-                      this.onsiteday2value = onsiteday2value ?? "";
+                onChanged: ((onSite2Value) => setState(() {
+                      this.onSite2Value = onSite2Value ?? "";
                     })),
               ),
             ),
@@ -412,7 +415,7 @@ class _RegisterInputsState extends State<RegisterInputs> {
                     fontWeight: FontWeight.w300,
                   ),
                 ),
-                value: vacanttimeday2value,
+                value: vacantTime2Value,
                 isExpanded: true,
                 iconSize: 32,
                 icon: const Icon(
@@ -422,8 +425,8 @@ class _RegisterInputsState extends State<RegisterInputs> {
                 items: HKSAStrings.vacanttime
                     .map(buildMenuItemVacantTimeDay2)
                     .toList(),
-                onChanged: ((vacanttimeday2value) => setState(() {
-                      this.vacanttimeday2value = vacanttimeday2value ?? "";
+                onChanged: ((vacantTime2Value) => setState(() {
+                      this.vacantTime2Value = vacantTime2Value ?? "";
                     })),
               ),
             ),
@@ -446,7 +449,7 @@ class _RegisterInputsState extends State<RegisterInputs> {
                     fontWeight: FontWeight.w300,
                   ),
                 ),
-                value: vacantdayvalue,
+                value: vacantDayValue,
                 isExpanded: true,
                 iconSize: 32,
                 icon: const Icon(
@@ -456,8 +459,8 @@ class _RegisterInputsState extends State<RegisterInputs> {
                 items: HKSAStrings.vacantday
                     .map(buildMenuItemVacantTimeDay2)
                     .toList(),
-                onChanged: ((vacantdayvalue) => setState(() {
-                      this.vacantdayvalue = vacantdayvalue ?? "";
+                onChanged: ((vacantDayValue) => setState(() {
+                      this.vacantDayValue = vacantDayValue ?? "";
                     })),
               ),
             ),
@@ -480,7 +483,7 @@ class _RegisterInputsState extends State<RegisterInputs> {
                     fontWeight: FontWeight.w300,
                   ),
                 ),
-                value: townvalue,
+                value: townValue,
                 isExpanded: true,
                 iconSize: 32,
                 icon: const Icon(
@@ -488,8 +491,8 @@ class _RegisterInputsState extends State<RegisterInputs> {
                   color: ColorPalette.primary,
                 ),
                 items: HKSAStrings.towns.map(buildMenuItemTowns).toList(),
-                onChanged: ((townvalue) => setState(() {
-                      this.townvalue = townvalue ?? "";
+                onChanged: ((townValue) => setState(() {
+                      this.townValue = townValue ?? "";
                     })),
               ),
             ),
@@ -707,9 +710,24 @@ class _RegisterInputsState extends State<RegisterInputs> {
               ),
               onPressed: (() {
                 setState(() {
-                  if (!_formKey.currentState!.validate() ||
-                      coursesValue == null ||
-                      hkTypeValue == null) {
+                  if (!_formKey.currentState!.validate()) {
+                    return;
+                  } else if (coursesValue == null ||
+                      hkTypeValue == null ||
+                      vacantTimeValue == null ||
+                      onSiteValue == null ||
+                      vacantTime2Value == null ||
+                      onSite2Value == null ||
+                      vacantDayValue == null ||
+                      faciTypeValue == null ||
+                      townValue == null) {
+                    DialogUnsuccessful(
+                      headertext: "Fill all the corresponding inputs!",
+                      subtext: "Seems like there's something you missed?",
+                      textButton: "Close",
+                      callback: (() =>
+                          Navigator.of(context, rootNavigator: true).pop()),
+                    ).buildUnsuccessfulScreen(context);
                     return;
                   }
                   // This is where it finds the user in the firebase database
@@ -718,7 +736,7 @@ class _RegisterInputsState extends State<RegisterInputs> {
                   // NO USER FOUND
 
                   // Show loading screen for 2 seconds
-                  DialogLoading(subtext: "Creating...")
+                  DialogLoading(subtext: "Validating...")
                       .buildLoadingScreen(context);
 
                   String studentNumber =
@@ -727,6 +745,13 @@ class _RegisterInputsState extends State<RegisterInputs> {
                       "${_inputControllerLastName.text.trim()} ${_inputControllerFirstName.text.trim()} ${_inputControllerMiddleName.text.trim()}";
                   String? course = coursesValue;
                   String? hkType = hkTypeValue;
+                  String? onSite1 = onSiteValue;
+                  String? onSite2 = onSite2Value;
+                  String? vacantTime1 = vacantTimeValue;
+                  String? vacantTime2 = vacantTime2Value;
+                  String? vacantDay = vacantDayValue;
+                  String? scholarType = faciTypeValue;
+                  String? town = townValue;
                   String email = _inputControllerEmail.text.trim();
                   String phoneNumber = _inputControllerPhoneNumber.text.trim();
                   String password = _inputControllerCfrmPassword.text.trim();
@@ -736,6 +761,7 @@ class _RegisterInputsState extends State<RegisterInputs> {
                   String totalHoursInDuration = "0:00:00.000000";
                   String totalHoursRequired = "";
                   String isFinished = "false";
+
                   bool userExist = false;
 
                   Future.delayed(
@@ -765,6 +791,38 @@ class _RegisterInputsState extends State<RegisterInputs> {
                                       .pop()),
                             ).buildUnsuccessfulScreen(context);
                           } else {
+                            _myRegBox.put("studentNumber", studentNumber);
+                            _myRegBox.put("name", fullName);
+                            _myRegBox.put("course", course);
+                            _myRegBox.put("email", email);
+                            _myRegBox.put("phoneNumber", phoneNumber);
+                            _myRegBox.put("password", password);
+                            _myRegBox.put("hkType", hkType);
+                            _myRegBox.put("hours", hours);
+                            _myRegBox.put("status", status);
+                            _myRegBox.put(
+                                "totalHoursInDisplay", totalHoursInDisplay);
+                            _myRegBox.put(
+                                "totalHoursInDuration", totalHoursInDuration);
+                            _myRegBox.put(
+                                "totalHoursRequired", totalHoursRequired);
+                            _myRegBox.put("isFinished", isFinished);
+                            _myRegBox.put("onSiteDay1", onSite1);
+                            _myRegBox.put("onSiteDay2", onSite2);
+                            _myRegBox.put("vacantTimeDay1", vacantTime1);
+                            _myRegBox.put("vacantTimeDay2", vacantTime2);
+                            _myRegBox.put("wholeDayVacantTime", vacantDay);
+                            _myRegBox.put("scholarType", scholarType);
+                            _myRegBox.put("town", town);
+
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    const RegisterInputsProfilePicture(),
+                              ),
+                            );
+                            /*
                             // If it doesn't exist then let's create a new account
                             // Show a new dialog that this user is now successfully created.
                             if (hkType == "HK25") {
@@ -773,20 +831,28 @@ class _RegisterInputsState extends State<RegisterInputs> {
                               totalHoursRequired = "90";
                             }
                             Scholar scholarObj = Scholar(
-                                studentNumber: studentNumber,
-                                name: fullName,
-                                course: course.toString(),
-                                email: email,
-                                phonenumber: phoneNumber,
-                                password: password,
-                                hkType: hkType.toString(),
-                                hours: hours,
-                                status: status,
-                                totalHoursInDisplay: totalHoursInDisplay,
-                                totalHoursInDuration: totalHoursInDuration,
-                                totalHoursRequired: totalHoursRequired,
-                                isFinished: isFinished,
-                                profilePicture: HKSAStrings.pfpPlaceholder);
+                              studentNumber: studentNumber,
+                              name: fullName,
+                              course: course.toString(),
+                              email: email,
+                              phonenumber: phoneNumber,
+                              password: password,
+                              hkType: hkType.toString(),
+                              hours: hours,
+                              status: status,
+                              totalHoursInDisplay: totalHoursInDisplay,
+                              totalHoursInDuration: totalHoursInDuration,
+                              totalHoursRequired: totalHoursRequired,
+                              isFinished: isFinished,
+                              profilePicture: HKSAStrings.pfpPlaceholder,
+                              onSiteDay1: '',
+                              onSiteDay2: '',
+                              vacantTimeDay1: '',
+                              vacantTimeDay2: '',
+                              wholeDayVacantTime: '',
+                              scholarType: '',
+                              town: '',
+                            );
 
                             await _testReference
                                 .child(studentNumber)
@@ -800,12 +866,14 @@ class _RegisterInputsState extends State<RegisterInputs> {
                                     callback: goBackToLogin)
                                 .buildSuccessScreen(context);
                           }
+                          */
+                          }
                         })
                       });
                 });
               }),
               child: const Text(
-                "Sign up",
+                "Next",
                 style: TextStyle(
                   color: ColorPalette.accentWhite,
                   fontFamily: 'Frank Ruhl Libre',
@@ -818,6 +886,20 @@ class _RegisterInputsState extends State<RegisterInputs> {
         ],
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    _inputControllerCfrmPassword.dispose();
+    _inputControllerEmail.dispose();
+    _inputControllerFirstName.dispose();
+    _inputControllerLastName.dispose();
+    _inputControllerMiddleName.dispose();
+    _inputControllerPassword.dispose();
+    _inputControllerPhoneNumber.dispose();
+    _inputControllerStudentNumberID.dispose();
+    super.dispose();
   }
 
   void goBackToLogin() {

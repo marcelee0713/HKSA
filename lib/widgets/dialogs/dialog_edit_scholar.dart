@@ -837,24 +837,35 @@ class _EditScholarState extends State<EditScholar> {
                                                 snapshot.data!.first.isFinished;
 
                                             Scholar scholarObj = Scholar(
-                                                studentNumber: studentNumber,
-                                                name: fullName,
-                                                course: course.toString(),
-                                                email: email,
-                                                phonenumber: phoneNumber,
-                                                password: password,
-                                                hkType: hkType.toString(),
-                                                hours: hours,
-                                                status: status.toString(),
-                                                totalHoursInDisplay:
-                                                    totalHoursInDisplay,
-                                                totalHoursInDuration:
-                                                    totalHoursInDuration,
-                                                totalHoursRequired:
-                                                    totalHoursRequired,
-                                                isFinished: isFinished,
-                                                profilePicture: snapshot.data!
-                                                    .first.profilePicture);
+                                              studentNumber: studentNumber,
+                                              name: fullName,
+                                              course: course.toString(),
+                                              email: email,
+                                              phonenumber: phoneNumber,
+                                              password: password,
+                                              hkType: hkType.toString(),
+                                              hours: hours,
+                                              status: status.toString(),
+                                              totalHoursInDisplay:
+                                                  totalHoursInDisplay,
+                                              totalHoursInDuration:
+                                                  totalHoursInDuration,
+                                              totalHoursRequired:
+                                                  totalHoursRequired,
+                                              isFinished: isFinished,
+                                              profilePicture: snapshot
+                                                  .data!.first.profilePicture,
+                                              onSiteDay1: '',
+                                              onSiteDay2: '',
+                                              vacantTimeDay1: '',
+                                              vacantTimeDay2: '',
+                                              wholeDayVacantTime: '',
+                                              scholarType: '',
+                                              town: '',
+                                              assignedProfD1: '',
+                                              assignedProfD2: '',
+                                              assignedProfWd: '',
+                                            );
 
                                             await _dbReference
                                                 .child(studentNumber)

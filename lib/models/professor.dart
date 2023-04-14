@@ -14,6 +14,11 @@ class Professor {
     required this.professorId,
     required this.signaturecode,
     required this.profilePicture,
+    required this.section,
+    required this.subject,
+    required this.day,
+    required this.time,
+    required this.room,
   });
 
   String department;
@@ -24,6 +29,11 @@ class Professor {
   String professorId;
   String signaturecode;
   String profilePicture;
+  String section;
+  String subject;
+  String day;
+  String time;
+  String room;
 
   factory Professor.fromJson(Map<String, dynamic> json) => Professor(
         department: json["department"],
@@ -34,6 +44,11 @@ class Professor {
         professorId: json["professorID"],
         signaturecode: json["signaturecode"],
         profilePicture: json["profilePicture"],
+        section: json["section"],
+        subject: json["subject"],
+        day: json["day"],
+        time: json["time"],
+        room: json["room"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -44,6 +59,11 @@ class Professor {
         "phonenumber": phonenumber,
         "professorID": professorId,
         "signaturecode": signaturecode,
-        "profilePicture": profilePicture
+        "profilePicture": profilePicture,
+        "section": section,
+        "subject": subject,
+        "day": day,
+        "time": time,
+        "room": room,
       };
 }

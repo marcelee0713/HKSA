@@ -43,6 +43,7 @@ dependencies:
   hive_flutter: ^1.1.0
   intl: ^0.17.0
   another_flushbar: ^1.12.29
+  url_launcher: ^6.1.10
   syncfusion_flutter_gauges: ^20.4.44
   syncfusion_flutter_charts: ^20.4.49
   pdf: ^3.9.0

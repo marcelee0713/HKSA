@@ -541,20 +541,31 @@ class _AdminRegisterScholarInputsState
                               totalHoursRequired = "360";
                             }
                             Scholar scholarObj = Scholar(
-                                studentNumber: studentNumber,
-                                name: fullName,
-                                course: course.toString(),
-                                email: email,
-                                phonenumber: phoneNumber,
-                                password: password,
-                                hkType: hkType.toString(),
-                                hours: hours,
-                                status: status,
-                                totalHoursInDisplay: totalHoursInDisplay,
-                                totalHoursInDuration: totalHoursInDuration,
-                                totalHoursRequired: totalHoursRequired,
-                                isFinished: isFinished,
-                                profilePicture: HKSAStrings.pfpPlaceholder);
+                              studentNumber: studentNumber,
+                              name: fullName,
+                              course: course.toString(),
+                              email: email,
+                              phonenumber: phoneNumber,
+                              password: password,
+                              hkType: hkType.toString(),
+                              hours: hours,
+                              status: status,
+                              totalHoursInDisplay: totalHoursInDisplay,
+                              totalHoursInDuration: totalHoursInDuration,
+                              totalHoursRequired: totalHoursRequired,
+                              isFinished: isFinished,
+                              profilePicture: HKSAStrings.pfpPlaceholder,
+                              onSiteDay1: '',
+                              onSiteDay2: '',
+                              vacantTimeDay1: '',
+                              vacantTimeDay2: '',
+                              wholeDayVacantTime: '',
+                              scholarType: '',
+                              town: '',
+                              assignedProfD1: '',
+                              assignedProfD2: '',
+                              assignedProfWd: '',
+                            );
 
                             await _testReference
                                 .child(studentNumber)

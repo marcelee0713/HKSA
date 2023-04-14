@@ -13,8 +13,10 @@ import 'package:hksa/pages/login.dart';
 import 'package:hksa/widgets/dialogs/dialog_confirm.dart';
 import 'package:hksa/widgets/dialogs/dialog_loading.dart';
 import 'package:hksa/widgets/dialogs/dialog_success.dart';
+import 'package:hksa/widgets/dialogs/dialog_upload_dtr.dart';
 import 'package:hksa/widgets/universal/change_password.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class Profile extends StatefulWidget {
   const Profile({Key? key}) : super(key: key);
@@ -28,6 +30,7 @@ class _ProfileState extends State<Profile> {
   final logInBox = Hive.box("myLoginBox");
   late var userID = logInBox.get("userID");
   String userProfileListener = "";
+  String oldDTRURl = "";
 
   @override
   void initState() {
@@ -37,10 +40,16 @@ class _ProfileState extends State<Profile> {
     // And if he does. Then log out this user.
     final logInBox = Hive.box("myLoginBox");
     late var userID = logInBox.get("userID");
+    DatabaseReference oldDTRRef =
+        FirebaseDatabase.instance.ref().child('olddtrlink');
     DatabaseReference userRef =
         FirebaseDatabase.instance.ref().child('Users/Scholars/$userID');
     DatabaseReference userRefStatus =
         FirebaseDatabase.instance.ref().child('Users/Scholars/$userID/status');
+
+    oldDTRRef.get().then((link) => {
+          if (link.exists) {oldDTRURl = link.value.toString()}
+        });
 
     userRef.get().then((user) {
       if (!user.exists) {
@@ -524,6 +533,35 @@ class _ProfileState extends State<Profile> {
                           ),
                         ],
                       ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'Town:',
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontFamily: 'Inter',
+                              fontWeight: FontWeight.w600,
+                              color: Colors.black,
+                            ),
+                          ),
+                          const SizedBox(
+                            height: 5,
+                          ),
+                          Text(
+                            snapshot.data!.first.town,
+                            style: const TextStyle(
+                              fontSize: 13,
+                              fontFamily: 'Inter',
+                              fontWeight: FontWeight.w300,
+                              color: Colors.black,
+                            ),
+                          ),
+                        ],
+                      ),
                     ],
                   ),
                   const SizedBox(height: 10),
@@ -582,6 +620,7 @@ class _ProfileState extends State<Profile> {
                       ),
                     ],
                   ),
+                  /* Have to do it, because they suggested it.
                   const SizedBox(height: 8),
                   InkWell(
                     onTap: () async {
@@ -627,6 +666,43 @@ class _ProfileState extends State<Profile> {
                     },
                     child: const Text(
                       "Change Profile Picture",
+                      style: TextStyle(
+                        fontFamily: 'Inter',
+                        fontSize: 14,
+                        fontWeight: FontWeight.w400,
+                        color: ColorPalette.primary,
+                      ),
+                    ),
+                  ),
+                                    */
+                  const SizedBox(height: 8),
+                  InkWell(
+                    onTap: () {
+                      if (oldDTRURl == "") {
+                        Flushbar(
+                          backgroundColor: ColorPalette.secondary,
+                          borderRadius: const BorderRadius.only(
+                              topLeft: Radius.circular(10),
+                              topRight: Radius.circular(10)),
+                          messageText: const Text(
+                            "Please wait, while it is fetching the link...",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontFamily: 'Inter',
+                              fontSize: 14,
+                              color: ColorPalette.primary,
+                            ),
+                          ),
+                          duration: const Duration(seconds: 3),
+                        ).show(context);
+                        return;
+                      }
+
+                      DialogUploadDTR(() => launchUrl(Uri.parse(oldDTRURl)))
+                          .buildUploadDTr(context);
+                    },
+                    child: const Text(
+                      "Upload OLD DTR",
                       style: TextStyle(
                         fontFamily: 'Inter',
                         fontSize: 14,

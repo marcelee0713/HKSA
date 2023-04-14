@@ -161,7 +161,7 @@ class _LogsListViewState extends State<LogsListView> {
         Logs myLogs = Logs(
             timeIn: myObj["timein"],
             timeOut: myObj["timeout"],
-            signature: myObj["signature"],
+            profName: myObj["profName"],
             date: myObj["date"],
             multiplier: myObj["multiplier"]);
         dataList.add(myLogs);

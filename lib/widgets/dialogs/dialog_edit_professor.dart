@@ -708,8 +708,13 @@ class _EditProfessorState extends State<EditProfessor> {
                                                 phonenumber: phoneNumber,
                                                 professorId: professorID,
                                                 signaturecode: signature,
-                                                profilePicture: snapshot.data!
-                                                    .first.profilePicture);
+                                                profilePicture: snapshot
+                                                    .data!.first.profilePicture,
+                                                day: '',
+                                                room: '',
+                                                section: '',
+                                                subject: '',
+                                                time: '');
 
                                             await _dbReference
                                                 .child(professorID)
