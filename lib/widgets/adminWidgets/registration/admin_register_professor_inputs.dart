@@ -20,6 +20,8 @@ class AdminRegisterProfessorInputs extends StatefulWidget {
 class _AdminRegisterProfessorInputsState
     extends State<AdminRegisterProfessorInputs> {
   String? departmentValue;
+  String? dayValue;
+  String? timeValue;
 
   bool _passwordVisible = false;
   bool _cfrmPasswordVisible = false;
@@ -33,6 +35,9 @@ class _AdminRegisterProfessorInputsState
   final _inputControllerPassword = TextEditingController();
   final _inputControllerCfrmPassword = TextEditingController();
   final _inputControllerSignatureCode = TextEditingController();
+  final _inputControllerRoom = TextEditingController();
+  final _inputControllerSection = TextEditingController();
+  final _inputControllerSubject = TextEditingController();
 
   final _formKey = GlobalKey<FormState>();
 
@@ -226,6 +231,185 @@ class _AdminRegisterProfessorInputsState
                     .toList(),
                 onChanged: ((departmentValue) => setState(() {
                       this.departmentValue = departmentValue ?? "";
+                    })),
+              ),
+            ),
+          ),
+          const SizedBox(height: 18),
+          TextFormField(
+            controller: _inputControllerSubject,
+            validator: (value) {
+              if (value!.isNotEmpty) {
+                return null;
+              } else {
+                return "Invalid input.";
+              }
+            },
+            keyboardType: TextInputType.text,
+            decoration: InputDecoration(
+              counterText: "",
+              enabledBorder: OutlineInputBorder(
+                borderSide: const BorderSide(color: Colors.transparent),
+                borderRadius: BorderRadius.circular(10.0),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderSide: const BorderSide(color: Colors.transparent),
+                borderRadius: BorderRadius.circular(10.0),
+              ),
+              filled: true,
+              fillColor: ColorPalette.accentDarkWhite,
+              hintStyle: const TextStyle(
+                fontWeight: FontWeight.w300,
+                fontStyle: FontStyle.italic,
+              ),
+              hintText: "Enter Subject Code",
+            ),
+            maxLength: 10,
+            style: const TextStyle(
+              color: ColorPalette.primary,
+              fontFamily: 'Inter',
+              fontSize: 14,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          const SizedBox(height: 18),
+          TextFormField(
+            controller: _inputControllerSection,
+            validator: (value) {
+              if (value!.isNotEmpty) {
+                return null;
+              } else {
+                return "Invalid input.";
+              }
+            },
+            keyboardType: TextInputType.text,
+            decoration: InputDecoration(
+              counterText: "",
+              enabledBorder: OutlineInputBorder(
+                borderSide: const BorderSide(color: Colors.transparent),
+                borderRadius: BorderRadius.circular(10.0),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderSide: const BorderSide(color: Colors.transparent),
+                borderRadius: BorderRadius.circular(10.0),
+              ),
+              filled: true,
+              fillColor: ColorPalette.accentDarkWhite,
+              hintStyle: const TextStyle(
+                fontWeight: FontWeight.w300,
+                fontStyle: FontStyle.italic,
+              ),
+              hintText: "Enter Section",
+            ),
+            maxLength: 20,
+            style: const TextStyle(
+              color: ColorPalette.primary,
+              fontFamily: 'Inter',
+              fontSize: 14,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          const SizedBox(height: 18),
+          TextFormField(
+            controller: _inputControllerRoom,
+            validator: (value) {
+              if (value!.isNotEmpty) {
+                return null;
+              } else {
+                return "Invalid input.";
+              }
+            },
+            keyboardType: TextInputType.text,
+            decoration: InputDecoration(
+              counterText: "",
+              enabledBorder: OutlineInputBorder(
+                borderSide: const BorderSide(color: Colors.transparent),
+                borderRadius: BorderRadius.circular(10.0),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderSide: const BorderSide(color: Colors.transparent),
+                borderRadius: BorderRadius.circular(10.0),
+              ),
+              filled: true,
+              fillColor: ColorPalette.accentDarkWhite,
+              hintStyle: const TextStyle(
+                fontWeight: FontWeight.w300,
+                fontStyle: FontStyle.italic,
+              ),
+              hintText: "Enter Room",
+            ),
+            maxLength: 20,
+            style: const TextStyle(
+              color: ColorPalette.primary,
+              fontFamily: 'Inter',
+              fontSize: 14,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          const SizedBox(height: 18),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+              color: ColorPalette.accentDarkWhite,
+            ),
+            child: DropdownButtonHideUnderline(
+              child: DropdownButton(
+                hint: const Text(
+                  "Enter Day",
+                  style: TextStyle(
+                    fontFamily: 'Inter',
+                    fontSize: 14,
+                    fontStyle: FontStyle.italic,
+                    fontWeight: FontWeight.w300,
+                  ),
+                ),
+                value: dayValue,
+                isExpanded: true,
+                iconSize: 32,
+                icon: const Icon(
+                  Icons.arrow_drop_down,
+                  color: ColorPalette.primary,
+                ),
+                items: HKSAStrings.vacantday
+                    .map(buildMenuItemDepartments)
+                    .toList(),
+                onChanged: ((dayValue) => setState(() {
+                      this.dayValue = dayValue ?? "";
+                    })),
+              ),
+            ),
+          ),
+          const SizedBox(height: 18),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+              color: ColorPalette.accentDarkWhite,
+            ),
+            child: DropdownButtonHideUnderline(
+              child: DropdownButton(
+                hint: const Text(
+                  "Enter Time",
+                  style: TextStyle(
+                    fontFamily: 'Inter',
+                    fontSize: 14,
+                    fontStyle: FontStyle.italic,
+                    fontWeight: FontWeight.w300,
+                  ),
+                ),
+                value: timeValue,
+                isExpanded: true,
+                iconSize: 32,
+                icon: const Icon(
+                  Icons.arrow_drop_down,
+                  color: ColorPalette.primary,
+                ),
+                items: HKSAStrings.vacanttime
+                    .map(buildMenuItemDepartments)
+                    .toList(),
+                onChanged: ((timeValue) => setState(() {
+                      this.timeValue = timeValue ?? "";
                     })),
               ),
             ),
@@ -464,6 +648,16 @@ class _AdminRegisterProfessorInputsState
               fontWeight: FontWeight.w700,
             ),
           ),
+          const SizedBox(height: 2),
+          const Text(
+            "Note: Don't share this to anybody, this will be the professor's signature code in order to time out a scholar",
+            style: TextStyle(
+              fontFamily: 'Inter',
+              fontSize: 12,
+              fontStyle: FontStyle.italic,
+              fontWeight: FontWeight.w300,
+            ),
+          ),
           const SizedBox(height: 18),
           Container(
             width: 125,
@@ -479,7 +673,9 @@ class _AdminRegisterProfessorInputsState
               onPressed: (() {
                 setState(() {
                   if (!_formKey.currentState!.validate() ||
-                      departmentValue == null) {
+                      departmentValue == null ||
+                      dayValue == null ||
+                      timeValue == null) {
                     return;
                   }
 
@@ -495,6 +691,14 @@ class _AdminRegisterProfessorInputsState
                   String password = _inputControllerCfrmPassword.text.trim();
                   String signature = _inputControllerSignatureCode.text.trim();
                   bool userExist = false;
+
+                  String subject =
+                      _inputControllerSubject.text.trim().toUpperCase();
+                  String section =
+                      _inputControllerSection.text.trim().toUpperCase();
+                  String room = _inputControllerRoom.text.trim().toUpperCase();
+                  String? day = dayValue;
+                  String? time = timeValue;
 
                   Future.delayed(const Duration(seconds: 2), () async {
                     await _dbReference.get().then((snapshot) {
@@ -529,11 +733,11 @@ class _AdminRegisterProfessorInputsState
                                   professorId: professorID,
                                   signaturecode: signature,
                                   profilePicture: HKSAStrings.pfpPlaceholder,
-                                  day: '',
-                                  room: '',
-                                  section: '',
-                                  subject: '',
-                                  time: '');
+                                  day: day.toString(),
+                                  room: room,
+                                  section: section,
+                                  subject: subject,
+                                  time: time.toString());
 
                               await _dbReference
                                   .child(professorID)
@@ -583,6 +787,30 @@ class _AdminRegisterProfessorInputsState
 
   DropdownMenuItem<String> buildMenuItemDepartments(String item) =>
       DropdownMenuItem(
+        value: item,
+        child: Text(
+          item,
+          style: const TextStyle(
+            fontFamily: 'Inter',
+            fontWeight: FontWeight.w300,
+            fontSize: 12,
+            color: ColorPalette.primary,
+          ),
+        ),
+      );
+  DropdownMenuItem<String> buildMenuItemDay(String item) => DropdownMenuItem(
+        value: item,
+        child: Text(
+          item,
+          style: const TextStyle(
+            fontFamily: 'Inter',
+            fontWeight: FontWeight.w300,
+            fontSize: 12,
+            color: ColorPalette.primary,
+          ),
+        ),
+      );
+  DropdownMenuItem<String> buildMenuItemTime(String item) => DropdownMenuItem(
         value: item,
         child: Text(
           item,
