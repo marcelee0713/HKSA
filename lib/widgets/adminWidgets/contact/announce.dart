@@ -7,6 +7,7 @@ import 'package:hksa/constant/colors.dart';
 import 'package:hksa/widgets/dialogs/dialog_confirm.dart';
 import 'package:hksa/widgets/dialogs/dialog_loading.dart';
 import 'package:hksa/widgets/dialogs/dialog_success.dart';
+import 'package:hksa/widgets/dialogs/dialog_unsuccessful.dart';
 import 'package:intl/intl.dart';
 
 final _formKey = GlobalKey<FormState>();
@@ -146,11 +147,13 @@ class _AnnounceState extends State<Announce> {
                       DialogConfirm(
                           headertext:
                               "Are you sure you want to post this announcement?",
-                          callback: () {
+                          callback: () async {
                             Navigator.of(context, rootNavigator: true).pop();
                             DialogLoading(subtext: "Sending...")
                                 .buildLoadingScreen(context);
-                            sendNotificationToTopic('user_all', "Announcement!",
+                            String res = await sendNotificationToTopic(
+                                'user_all',
+                                "Announcement!",
                                 _inputController.text.trim());
                             Future.delayed(const Duration(seconds: 2), () {
                               _scholarReference.get().then((snapshot) {
@@ -179,17 +182,33 @@ class _AnnounceState extends State<Announce> {
                                 });
                               });
                             }).whenComplete(() {
-                              Navigator.of(context, rootNavigator: true).pop();
-                              DialogSuccess(
-                                  headertext: "Successfully posted!",
-                                  subtext:
-                                      "You have succesfully sent to all users, care to share another?",
-                                  textButton: "Clear",
-                                  callback: () {
-                                    Navigator.of(context, rootNavigator: true)
-                                        .pop();
-                                    _inputController.text = "";
-                                  }).buildSuccessScreen(context);
+                              if (res == "success") {
+                                Navigator.of(context, rootNavigator: true)
+                                    .pop();
+                                DialogSuccess(
+                                    headertext: "Successfully posted!",
+                                    subtext:
+                                        "You have succesfully sent to all users, care to share another?",
+                                    textButton: "Clear",
+                                    callback: () {
+                                      Navigator.of(context, rootNavigator: true)
+                                          .pop();
+                                      _inputController.text = "";
+                                    }).buildSuccessScreen(context);
+                              } else {
+                                Navigator.of(context, rootNavigator: true)
+                                    .pop();
+                                DialogUnsuccessful(
+                                    headertext: "Error",
+                                    subtext:
+                                        "Something went wrong, please try again later.",
+                                    textButton: "Clear",
+                                    callback: () {
+                                      Navigator.of(context, rootNavigator: true)
+                                          .pop();
+                                      _inputController.text = "";
+                                    }).buildUnsuccessfulScreen(context);
+                              }
                             });
                           }).buildConfirmScreen(context);
                     },

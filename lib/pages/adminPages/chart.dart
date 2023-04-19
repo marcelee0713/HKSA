@@ -116,7 +116,7 @@ class _AdminChartState extends State<AdminChart> {
                               ),
                             ),
                             const Text(
-                              "Status of active and inactive scholars.",
+                              "Status of active and inactive Faci Scholars.",
                               style: TextStyle(
                                 color: ColorPalette.primary,
                                 fontFamily: 'Inter',
@@ -126,7 +126,7 @@ class _AdminChartState extends State<AdminChart> {
                             ),
                             const SizedBox(height: 8),
                             Text(
-                              "A total of ${snapshot.data!.first.totalScholar} Scholars.",
+                              "A total of ${snapshot.data!.first.totalScholar} Faci Scholars.",
                               style: const TextStyle(
                                 color: ColorPalette.primary,
                                 fontFamily: 'Inter',
@@ -215,7 +215,7 @@ class _AdminChartState extends State<AdminChart> {
                             Container(height: 1, color: ColorPalette.primary),
                             const SizedBox(height: 16),
                             const Text(
-                              "Finished and unfinished scholars",
+                              "Finished and unfinished Faci Scholars",
                               style: TextStyle(
                                 color: ColorPalette.primary,
                                 fontFamily: 'Inter',
@@ -279,11 +279,13 @@ class _AdminChartState extends State<AdminChart> {
       for (final data in snapshot.children) {
         Map<String, dynamic> myObj = jsonDecode(jsonEncode(data.value));
         Scholar myScholarObj = Scholar.fromJson(myObj);
-        myScholarObj.status == "active"
-            ? activeStatusCount++
-            : inActiveStatusCount++;
-        scholarTotal++;
-        scholarsLength++;
+        if (myScholarObj.scholarType == "Faci") {
+          myScholarObj.status == "active"
+              ? activeStatusCount++
+              : inActiveStatusCount++;
+          scholarTotal++;
+          scholarsLength++;
+        }
       }
 
       double percentageOfActive = (activeStatusCount / scholarTotal) * 100;
@@ -324,8 +326,12 @@ class _AdminChartState extends State<AdminChart> {
       for (final data in snapshot.children) {
         Map<String, dynamic> myObj = jsonDecode(jsonEncode(data.value));
         Scholar myScholarObj = Scholar.fromJson(myObj);
-        myScholarObj.isFinished == "true" ? finishedCount++ : unFinishedCount++;
-        scholarTotal++;
+        if (myScholarObj.scholarType == "Faci") {
+          myScholarObj.isFinished == "true"
+              ? finishedCount++
+              : unFinishedCount++;
+          scholarTotal++;
+        }
       }
 
       double percentageOfFinished = (finishedCount / scholarTotal) * 100;

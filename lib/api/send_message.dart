@@ -1,7 +1,7 @@
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-Future<void> sendNotificationToTopic(
+Future<String> sendNotificationToTopic(
     String topic, String title, String body) async {
   final Uri url = Uri.parse('https://fcm.googleapis.com/fcm/send');
   final headers = <String, String>{
@@ -22,7 +22,9 @@ Future<void> sendNotificationToTopic(
   final response = await http.post(url, headers: headers, body: bodyJson);
   if (response.statusCode == 200) {
     print('Notification sent to topic: $topic');
+    return "success";
   } else {
     print('Failed to send notification. Error: ${response.body}');
   }
+  return "failed";
 }
