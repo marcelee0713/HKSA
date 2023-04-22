@@ -277,7 +277,7 @@ class _ProfileState extends State<Profile> {
         .child("Users/Scholars/$userID/password");
 
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.fromLTRB(20, 20, 20, 5),
       color: ColorPalette.accentWhite,
       child: FutureBuilder(
         future: getScholar(),

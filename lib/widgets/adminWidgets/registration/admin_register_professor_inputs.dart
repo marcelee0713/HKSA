@@ -264,7 +264,7 @@ class _AdminRegisterProfessorInputsState
               ),
               hintText: "Enter Subject Code",
             ),
-            maxLength: 10,
+            maxLength: 15,
             style: const TextStyle(
               color: ColorPalette.primary,
               fontFamily: 'Inter',

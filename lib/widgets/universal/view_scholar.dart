@@ -457,478 +457,440 @@ class _ScholarProfileState extends State<ScholarProfile> {
                                     physics:
                                         const NeverScrollableScrollPhysics(),
                                     children: [
-                                      Expanded(
-                                        child: Container(
-                                          padding: const EdgeInsets.all(5),
-                                          decoration: BoxDecoration(
-                                            border: Border.all(width: 1),
-                                          ),
-                                          child: const Center(
-                                            child: Text(
-                                              "Day 1",
-                                              textAlign: TextAlign.center,
-                                              style: TextStyle(
-                                                fontFamily: 'Inter',
-                                              ),
+                                      Container(
+                                        padding: const EdgeInsets.all(5),
+                                        decoration: BoxDecoration(
+                                          border: Border.all(width: 1),
+                                        ),
+                                        child: const Center(
+                                          child: Text(
+                                            "Day 1",
+                                            textAlign: TextAlign.center,
+                                            style: TextStyle(
+                                              fontFamily: 'Inter',
                                             ),
                                           ),
                                         ),
                                       ),
-                                      Expanded(
-                                        child: Container(
-                                          padding: const EdgeInsets.all(5),
-                                          decoration: BoxDecoration(
-                                            border: Border.all(width: 1),
-                                          ),
-                                          child: Center(
-                                            child: Text(
-                                              snapshot.data!.first.onSiteDay1,
-                                              textAlign: TextAlign.center,
-                                              style: const TextStyle(
-                                                fontFamily: 'Inter',
-                                              ),
+                                      Container(
+                                        padding: const EdgeInsets.all(5),
+                                        decoration: BoxDecoration(
+                                          border: Border.all(width: 1),
+                                        ),
+                                        child: Center(
+                                          child: Text(
+                                            snapshot.data!.first.onSiteDay1,
+                                            textAlign: TextAlign.center,
+                                            style: const TextStyle(
+                                              fontFamily: 'Inter',
                                             ),
                                           ),
                                         ),
                                       ),
-                                      Expanded(
-                                        child: Container(
-                                          padding: const EdgeInsets.all(5),
-                                          decoration: BoxDecoration(
-                                            border: Border.all(width: 1),
-                                          ),
-                                          child: Center(
-                                            child: Text(
-                                              snapshot
-                                                  .data!.first.vacantTimeDay1,
-                                              textAlign: TextAlign.center,
-                                              style: const TextStyle(
-                                                fontFamily: 'Inter',
-                                              ),
+                                      Container(
+                                        padding: const EdgeInsets.all(5),
+                                        decoration: BoxDecoration(
+                                          border: Border.all(width: 1),
+                                        ),
+                                        child: Center(
+                                          child: Text(
+                                            snapshot.data!.first.vacantTimeDay1,
+                                            textAlign: TextAlign.center,
+                                            style: const TextStyle(
+                                              fontFamily: 'Inter',
                                             ),
                                           ),
                                         ),
                                       ),
-                                      Expanded(
-                                        child: Container(
-                                          padding: const EdgeInsets.all(5),
-                                          decoration: BoxDecoration(
-                                            border: Border.all(width: 1),
-                                          ),
-                                          child: Center(
-                                            child: snapshot.data!.first
-                                                        .assignedProfD1 ==
-                                                    ""
-                                                ? const Text(
-                                                    "N/A",
-                                                    textAlign: TextAlign.center,
-                                                    style: TextStyle(
-                                                      fontFamily: 'Inter',
-                                                    ),
-                                                  )
-                                                : ListView(
-                                                    shrinkWrap: true,
-                                                    scrollDirection:
-                                                        Axis.vertical,
-                                                    children: [
-                                                      FutureBuilder(
-                                                        future: getProfNameSectionRoom(
-                                                            day1ProfID: snapshot
-                                                                .data!
-                                                                .first
-                                                                .assignedProfD1,
-                                                            day2ProfID: snapshot
-                                                                .data!
-                                                                .first
-                                                                .assignedProfD2,
-                                                            wDProfID: snapshot
-                                                                .data!
-                                                                .first
-                                                                .assignedProfWd),
-                                                        builder: (context,
-                                                            snapshotProf1) {
-                                                          if (!snapshotProf1
-                                                              .hasData) {
-                                                            return const SpinKitThreeBounce(
-                                                              color: ColorPalette
-                                                                  .secondary,
-                                                              size: 15,
-                                                            );
-                                                          }
-                                                          if (snapshotProf1
-                                                              .hasError) {
-                                                            return Column(
-                                                              mainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .center,
-                                                              crossAxisAlignment:
-                                                                  CrossAxisAlignment
-                                                                      .center,
-                                                              children: const [
-                                                                Icon(
-                                                                  Icons
-                                                                      .warning_rounded,
-                                                                  size: 20,
+                                      Container(
+                                        padding: const EdgeInsets.all(5),
+                                        decoration: BoxDecoration(
+                                          border: Border.all(width: 1),
+                                        ),
+                                        child: Center(
+                                          child: snapshot.data!.first
+                                                      .assignedProfD1 ==
+                                                  ""
+                                              ? const Text(
+                                                  "N/A",
+                                                  textAlign: TextAlign.center,
+                                                  style: TextStyle(
+                                                    fontFamily: 'Inter',
+                                                  ),
+                                                )
+                                              : ListView(
+                                                  shrinkWrap: true,
+                                                  scrollDirection:
+                                                      Axis.vertical,
+                                                  children: [
+                                                    FutureBuilder(
+                                                      future: getProfNameSectionRoom(
+                                                          day1ProfID: snapshot
+                                                              .data!
+                                                              .first
+                                                              .assignedProfD1,
+                                                          day2ProfID: snapshot
+                                                              .data!
+                                                              .first
+                                                              .assignedProfD2,
+                                                          wDProfID: snapshot
+                                                              .data!
+                                                              .first
+                                                              .assignedProfWd),
+                                                      builder: (context,
+                                                          snapshotProf1) {
+                                                        if (!snapshotProf1
+                                                            .hasData) {
+                                                          return const SpinKitThreeBounce(
+                                                            color: ColorPalette
+                                                                .secondary,
+                                                            size: 15,
+                                                          );
+                                                        }
+                                                        if (snapshotProf1
+                                                            .hasError) {
+                                                          return Column(
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .center,
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .center,
+                                                            children: const [
+                                                              Icon(
+                                                                Icons
+                                                                    .warning_rounded,
+                                                                size: 20,
+                                                                color: ColorPalette
+                                                                    .errorColor,
+                                                              ),
+                                                              SizedBox(
+                                                                  width: 2),
+                                                              Text(
+                                                                "Error, try again later!",
+                                                                textAlign:
+                                                                    TextAlign
+                                                                        .center,
+                                                                style:
+                                                                    TextStyle(
+                                                                  fontSize: 12,
+                                                                  fontFamily:
+                                                                      'Inter',
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w300,
                                                                   color: ColorPalette
                                                                       .errorColor,
                                                                 ),
-                                                                SizedBox(
-                                                                    width: 2),
-                                                                Text(
-                                                                  "Error, try again later!",
-                                                                  textAlign:
-                                                                      TextAlign
-                                                                          .center,
-                                                                  style:
-                                                                      TextStyle(
-                                                                    fontSize:
-                                                                        12,
-                                                                    fontFamily:
-                                                                        'Inter',
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .w300,
-                                                                    color: ColorPalette
-                                                                        .errorColor,
-                                                                  ),
-                                                                )
-                                                              ],
-                                                            );
-                                                          }
-                                                          return Text(
-                                                            snapshotProf1
-                                                                .data!
-                                                                .first
-                                                                .d1ProfName,
-                                                            textAlign: TextAlign
-                                                                .center,
-                                                            style:
-                                                                const TextStyle(
-                                                              fontFamily:
-                                                                  'Inter',
-                                                            ),
+                                                              )
+                                                            ],
                                                           );
-                                                        },
-                                                      )
-                                                    ],
+                                                        }
+                                                        return Text(
+                                                          snapshotProf1.data!
+                                                              .first.d1ProfName,
+                                                          textAlign:
+                                                              TextAlign.center,
+                                                          style:
+                                                              const TextStyle(
+                                                            fontFamily: 'Inter',
+                                                          ),
+                                                        );
+                                                      },
+                                                    )
+                                                  ],
+                                                ),
+                                        ),
+                                      ),
+                                      Container(
+                                        padding: const EdgeInsets.all(5),
+                                        decoration: BoxDecoration(
+                                          border: Border.all(width: 1),
+                                        ),
+                                        child: const Center(
+                                          child: Text(
+                                            "Day 2",
+                                            textAlign: TextAlign.center,
+                                            style: TextStyle(
+                                              fontFamily: 'Inter',
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      Container(
+                                        padding: const EdgeInsets.all(5),
+                                        decoration: BoxDecoration(
+                                          border: Border.all(width: 1),
+                                        ),
+                                        child: Center(
+                                          child: Text(
+                                            snapshot.data!.first.onSiteDay2,
+                                            textAlign: TextAlign.center,
+                                            style: const TextStyle(
+                                              fontFamily: 'Inter',
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      Container(
+                                        padding: const EdgeInsets.all(5),
+                                        decoration: BoxDecoration(
+                                          border: Border.all(width: 1),
+                                        ),
+                                        child: Center(
+                                          child: Text(
+                                            snapshot.data!.first.vacantTimeDay2,
+                                            textAlign: TextAlign.center,
+                                            style: const TextStyle(
+                                              fontFamily: 'Inter',
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      Container(
+                                        padding: const EdgeInsets.all(5),
+                                        decoration: BoxDecoration(
+                                          border: Border.all(width: 1),
+                                        ),
+                                        child: Center(
+                                          child: snapshot.data!.first
+                                                      .assignedProfD2 ==
+                                                  ""
+                                              ? const Text(
+                                                  "N/A",
+                                                  textAlign: TextAlign.center,
+                                                  style: TextStyle(
+                                                    fontFamily: 'Inter',
                                                   ),
-                                          ),
-                                        ),
-                                      ),
-                                      Expanded(
-                                        child: Container(
-                                          padding: const EdgeInsets.all(5),
-                                          decoration: BoxDecoration(
-                                            border: Border.all(width: 1),
-                                          ),
-                                          child: const Center(
-                                            child: Text(
-                                              "Day 2",
-                                              textAlign: TextAlign.center,
-                                              style: TextStyle(
-                                                fontFamily: 'Inter',
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                      Expanded(
-                                        child: Container(
-                                          padding: const EdgeInsets.all(5),
-                                          decoration: BoxDecoration(
-                                            border: Border.all(width: 1),
-                                          ),
-                                          child: Center(
-                                            child: Text(
-                                              snapshot.data!.first.onSiteDay2,
-                                              textAlign: TextAlign.center,
-                                              style: const TextStyle(
-                                                fontFamily: 'Inter',
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                      Expanded(
-                                        child: Container(
-                                          padding: const EdgeInsets.all(5),
-                                          decoration: BoxDecoration(
-                                            border: Border.all(width: 1),
-                                          ),
-                                          child: Center(
-                                            child: Text(
-                                              snapshot
-                                                  .data!.first.vacantTimeDay2,
-                                              textAlign: TextAlign.center,
-                                              style: const TextStyle(
-                                                fontFamily: 'Inter',
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                      Expanded(
-                                        child: Container(
-                                          padding: const EdgeInsets.all(5),
-                                          decoration: BoxDecoration(
-                                            border: Border.all(width: 1),
-                                          ),
-                                          child: Center(
-                                            child: snapshot.data!.first
-                                                        .assignedProfD2 ==
-                                                    ""
-                                                ? const Text(
-                                                    "N/A",
-                                                    textAlign: TextAlign.center,
-                                                    style: TextStyle(
-                                                      fontFamily: 'Inter',
-                                                    ),
-                                                  )
-                                                : ListView(
-                                                    shrinkWrap: true,
-                                                    scrollDirection:
-                                                        Axis.vertical,
-                                                    children: [
-                                                      FutureBuilder(
-                                                        future: getProfNameSectionRoom(
-                                                            day1ProfID: snapshot
-                                                                .data!
-                                                                .first
-                                                                .assignedProfD1,
-                                                            day2ProfID: snapshot
-                                                                .data!
-                                                                .first
-                                                                .assignedProfD2,
-                                                            wDProfID: snapshot
-                                                                .data!
-                                                                .first
-                                                                .assignedProfWd),
-                                                        builder: (context,
-                                                            snapshotProf2) {
-                                                          if (!snapshotProf2
-                                                              .hasData) {
-                                                            return const SpinKitThreeBounce(
-                                                              color: ColorPalette
-                                                                  .secondary,
-                                                              size: 15,
-                                                            );
-                                                          }
-                                                          if (snapshotProf2
-                                                              .hasError) {
-                                                            return Column(
-                                                              mainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .center,
-                                                              crossAxisAlignment:
-                                                                  CrossAxisAlignment
-                                                                      .center,
-                                                              children: const [
-                                                                Icon(
-                                                                  Icons
-                                                                      .warning_rounded,
-                                                                  size: 20,
+                                                )
+                                              : ListView(
+                                                  shrinkWrap: true,
+                                                  scrollDirection:
+                                                      Axis.vertical,
+                                                  children: [
+                                                    FutureBuilder(
+                                                      future: getProfNameSectionRoom(
+                                                          day1ProfID: snapshot
+                                                              .data!
+                                                              .first
+                                                              .assignedProfD1,
+                                                          day2ProfID: snapshot
+                                                              .data!
+                                                              .first
+                                                              .assignedProfD2,
+                                                          wDProfID: snapshot
+                                                              .data!
+                                                              .first
+                                                              .assignedProfWd),
+                                                      builder: (context,
+                                                          snapshotProf2) {
+                                                        if (!snapshotProf2
+                                                            .hasData) {
+                                                          return const SpinKitThreeBounce(
+                                                            color: ColorPalette
+                                                                .secondary,
+                                                            size: 15,
+                                                          );
+                                                        }
+                                                        if (snapshotProf2
+                                                            .hasError) {
+                                                          return Column(
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .center,
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .center,
+                                                            children: const [
+                                                              Icon(
+                                                                Icons
+                                                                    .warning_rounded,
+                                                                size: 20,
+                                                                color: ColorPalette
+                                                                    .errorColor,
+                                                              ),
+                                                              SizedBox(
+                                                                  width: 2),
+                                                              Text(
+                                                                "Error, try again later!",
+                                                                textAlign:
+                                                                    TextAlign
+                                                                        .center,
+                                                                style:
+                                                                    TextStyle(
+                                                                  fontSize: 12,
+                                                                  fontFamily:
+                                                                      'Inter',
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w300,
                                                                   color: ColorPalette
                                                                       .errorColor,
                                                                 ),
-                                                                SizedBox(
-                                                                    width: 2),
-                                                                Text(
-                                                                  "Error, try again later!",
-                                                                  textAlign:
-                                                                      TextAlign
-                                                                          .center,
-                                                                  style:
-                                                                      TextStyle(
-                                                                    fontSize:
-                                                                        12,
-                                                                    fontFamily:
-                                                                        'Inter',
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .w300,
-                                                                    color: ColorPalette
-                                                                        .errorColor,
-                                                                  ),
-                                                                )
-                                                              ],
-                                                            );
-                                                          }
-                                                          return Text(
-                                                            snapshotProf2
-                                                                .data!
-                                                                .first
-                                                                .d2ProfName,
-                                                            textAlign: TextAlign
-                                                                .center,
-                                                            style:
-                                                                const TextStyle(
-                                                              fontFamily:
-                                                                  'Inter',
-                                                            ),
+                                                              )
+                                                            ],
                                                           );
-                                                        },
-                                                      )
-                                                    ],
+                                                        }
+                                                        return Text(
+                                                          snapshotProf2.data!
+                                                              .first.d2ProfName,
+                                                          textAlign:
+                                                              TextAlign.center,
+                                                          style:
+                                                              const TextStyle(
+                                                            fontFamily: 'Inter',
+                                                          ),
+                                                        );
+                                                      },
+                                                    )
+                                                  ],
+                                                ),
+                                        ),
+                                      ),
+                                      Container(
+                                        padding: const EdgeInsets.all(5),
+                                        decoration: BoxDecoration(
+                                          border: Border.all(width: 1),
+                                        ),
+                                        child: const Center(
+                                          child: Text(
+                                            "Whole Day",
+                                            textAlign: TextAlign.center,
+                                            style: TextStyle(
+                                              fontFamily: 'Inter',
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      Container(
+                                        padding: const EdgeInsets.all(5),
+                                        decoration: BoxDecoration(
+                                          border: Border.all(width: 1),
+                                        ),
+                                        child: Center(
+                                          child: Text(
+                                            snapshot
+                                                .data!.first.wholeDayVacantTime,
+                                            textAlign: TextAlign.center,
+                                            style: const TextStyle(
+                                              fontFamily: 'Inter',
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      Container(
+                                        padding: const EdgeInsets.all(5),
+                                        decoration: BoxDecoration(
+                                          border: Border.all(width: 1),
+                                        ),
+                                        child: const Center(
+                                          child: Text(
+                                            "07:30 - 6:30 PM",
+                                            textAlign: TextAlign.center,
+                                            style: TextStyle(
+                                              fontFamily: 'Inter',
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      Container(
+                                        padding: const EdgeInsets.all(5),
+                                        decoration: BoxDecoration(
+                                          border: Border.all(width: 1),
+                                        ),
+                                        child: Center(
+                                          child: snapshot.data!.first
+                                                      .assignedProfWd ==
+                                                  ""
+                                              ? const Text(
+                                                  "N/A",
+                                                  textAlign: TextAlign.center,
+                                                  style: TextStyle(
+                                                    fontFamily: 'Inter',
                                                   ),
-                                          ),
-                                        ),
-                                      ),
-                                      Expanded(
-                                        child: Container(
-                                          padding: const EdgeInsets.all(5),
-                                          decoration: BoxDecoration(
-                                            border: Border.all(width: 1),
-                                          ),
-                                          child: const Center(
-                                            child: Text(
-                                              "Whole Day",
-                                              textAlign: TextAlign.center,
-                                              style: TextStyle(
-                                                fontFamily: 'Inter',
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                      Expanded(
-                                        child: Container(
-                                          padding: const EdgeInsets.all(5),
-                                          decoration: BoxDecoration(
-                                            border: Border.all(width: 1),
-                                          ),
-                                          child: Center(
-                                            child: Text(
-                                              snapshot.data!.first
-                                                  .wholeDayVacantTime,
-                                              textAlign: TextAlign.center,
-                                              style: const TextStyle(
-                                                fontFamily: 'Inter',
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                      Expanded(
-                                        child: Container(
-                                          padding: const EdgeInsets.all(5),
-                                          decoration: BoxDecoration(
-                                            border: Border.all(width: 1),
-                                          ),
-                                          child: const Center(
-                                            child: Text(
-                                              "07:30 - 6:30 PM",
-                                              textAlign: TextAlign.center,
-                                              style: TextStyle(
-                                                fontFamily: 'Inter',
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                      Expanded(
-                                        child: Container(
-                                          padding: const EdgeInsets.all(5),
-                                          decoration: BoxDecoration(
-                                            border: Border.all(width: 1),
-                                          ),
-                                          child: Center(
-                                            child: snapshot.data!.first
-                                                        .assignedProfWd ==
-                                                    ""
-                                                ? const Text(
-                                                    "N/A",
-                                                    textAlign: TextAlign.center,
-                                                    style: TextStyle(
-                                                      fontFamily: 'Inter',
-                                                    ),
-                                                  )
-                                                : ListView(
-                                                    shrinkWrap: true,
-                                                    scrollDirection:
-                                                        Axis.vertical,
-                                                    children: [
-                                                      FutureBuilder(
-                                                        future: getProfNameSectionRoom(
-                                                            day1ProfID: snapshot
-                                                                .data!
-                                                                .first
-                                                                .assignedProfD1,
-                                                            day2ProfID: snapshot
-                                                                .data!
-                                                                .first
-                                                                .assignedProfD2,
-                                                            wDProfID: snapshot
-                                                                .data!
-                                                                .first
-                                                                .assignedProfWd),
-                                                        builder: (context,
-                                                            snapshotProfWd) {
-                                                          if (!snapshotProfWd
-                                                              .hasData) {
-                                                            return const SpinKitThreeBounce(
-                                                              color: ColorPalette
-                                                                  .secondary,
-                                                              size: 15,
-                                                            );
-                                                          }
-                                                          if (snapshotProfWd
-                                                              .hasError) {
-                                                            return Column(
-                                                              mainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .center,
-                                                              crossAxisAlignment:
-                                                                  CrossAxisAlignment
-                                                                      .center,
-                                                              children: const [
-                                                                Icon(
-                                                                  Icons
-                                                                      .warning_rounded,
-                                                                  size: 20,
+                                                )
+                                              : ListView(
+                                                  shrinkWrap: true,
+                                                  scrollDirection:
+                                                      Axis.vertical,
+                                                  children: [
+                                                    FutureBuilder(
+                                                      future: getProfNameSectionRoom(
+                                                          day1ProfID: snapshot
+                                                              .data!
+                                                              .first
+                                                              .assignedProfD1,
+                                                          day2ProfID: snapshot
+                                                              .data!
+                                                              .first
+                                                              .assignedProfD2,
+                                                          wDProfID: snapshot
+                                                              .data!
+                                                              .first
+                                                              .assignedProfWd),
+                                                      builder: (context,
+                                                          snapshotProfWd) {
+                                                        if (!snapshotProfWd
+                                                            .hasData) {
+                                                          return const SpinKitThreeBounce(
+                                                            color: ColorPalette
+                                                                .secondary,
+                                                            size: 15,
+                                                          );
+                                                        }
+                                                        if (snapshotProfWd
+                                                            .hasError) {
+                                                          return Column(
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .center,
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .center,
+                                                            children: const [
+                                                              Icon(
+                                                                Icons
+                                                                    .warning_rounded,
+                                                                size: 20,
+                                                                color: ColorPalette
+                                                                    .errorColor,
+                                                              ),
+                                                              SizedBox(
+                                                                  width: 2),
+                                                              Text(
+                                                                "Error, try again later!",
+                                                                textAlign:
+                                                                    TextAlign
+                                                                        .center,
+                                                                style:
+                                                                    TextStyle(
+                                                                  fontSize: 12,
+                                                                  fontFamily:
+                                                                      'Inter',
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w300,
                                                                   color: ColorPalette
                                                                       .errorColor,
                                                                 ),
-                                                                SizedBox(
-                                                                    width: 2),
-                                                                Text(
-                                                                  "Error, try again later!",
-                                                                  textAlign:
-                                                                      TextAlign
-                                                                          .center,
-                                                                  style:
-                                                                      TextStyle(
-                                                                    fontSize:
-                                                                        12,
-                                                                    fontFamily:
-                                                                        'Inter',
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .w300,
-                                                                    color: ColorPalette
-                                                                        .errorColor,
-                                                                  ),
-                                                                )
-                                                              ],
-                                                            );
-                                                          }
-                                                          return Text(
-                                                            snapshotProfWd
-                                                                .data!
-                                                                .first
-                                                                .wDProfName,
-                                                            textAlign: TextAlign
-                                                                .center,
-                                                            style:
-                                                                const TextStyle(
-                                                              fontFamily:
-                                                                  'Inter',
-                                                            ),
+                                                              )
+                                                            ],
                                                           );
-                                                        },
-                                                      )
-                                                    ],
-                                                  ),
-                                          ),
+                                                        }
+                                                        return Text(
+                                                          snapshotProfWd.data!
+                                                              .first.wDProfName,
+                                                          textAlign:
+                                                              TextAlign.center,
+                                                          style:
+                                                              const TextStyle(
+                                                            fontFamily: 'Inter',
+                                                          ),
+                                                        );
+                                                      },
+                                                    )
+                                                  ],
+                                                ),
                                         ),
                                       )
                                     ],
@@ -1049,12 +1011,8 @@ class _ScholarProfileState extends State<ScholarProfile> {
                                                         .data!.first.name,
                                                     totalHours: snapshot
                                                         .data!.first.hours,
-                                                    hkType: snapshot.data!.first
-                                                                .scholarType ==
-                                                            "Faci"
-                                                        ? snapshot
-                                                            .data!.first.hkType
-                                                        : "Non-Faci");
+                                                    hkType: snapshot
+                                                        .data!.first.hkType);
                                             PdfApi.openFile(pdfFile);
                                           },
                                           style: ElevatedButton.styleFrom(

@@ -61,6 +61,21 @@ class _RegisterInputsState extends State<RegisterInputs> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          Container(height: 1, color: ColorPalette.primary),
+          const SizedBox(height: 15),
+          const Align(
+            alignment: Alignment.centerLeft,
+            child: Text(
+              "Basic Information:",
+              style: TextStyle(
+                color: ColorPalette.primary,
+                fontSize: 20,
+                fontFamily: 'Inter',
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ),
+          const SizedBox(height: 10),
           TextFormField(
             controller: _inputControllerStudentNumberID,
             maxLength: 20,
@@ -206,6 +221,49 @@ class _RegisterInputsState extends State<RegisterInputs> {
             ),
           ),
           const SizedBox(height: 18),
+          TextFormField(
+            controller: _inputControllerPhoneNumber,
+            maxLength: 11,
+            validator: (value) {
+              final bool phoneValid =
+                  RegExp(r"^(09|\+639)\d{9}$").hasMatch(value!);
+              if (phoneValid) {
+                return null;
+              } else if (value.length <= 11 && !phoneValid) {
+                return "Invalid input.";
+              } else if (value.length <= 10 && value.isNotEmpty) {
+                return "Input is too short.";
+              } else {
+                return "Enter an input.";
+              }
+            },
+            keyboardType: TextInputType.phone,
+            decoration: InputDecoration(
+              counterText: "",
+              enabledBorder: OutlineInputBorder(
+                borderSide: const BorderSide(color: Colors.transparent),
+                borderRadius: BorderRadius.circular(10.0),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderSide: const BorderSide(color: Colors.transparent),
+                borderRadius: BorderRadius.circular(10.0),
+              ),
+              filled: true,
+              fillColor: ColorPalette.accentDarkWhite,
+              hintStyle: const TextStyle(
+                fontWeight: FontWeight.w300,
+                fontStyle: FontStyle.italic,
+              ),
+              hintText: "Phone Number",
+            ),
+            style: const TextStyle(
+              color: ColorPalette.primary,
+              fontFamily: 'Inter',
+              fontSize: 14,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          const SizedBox(height: 18),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
             decoration: BoxDecoration(
@@ -247,6 +305,65 @@ class _RegisterInputsState extends State<RegisterInputs> {
             child: DropdownButtonHideUnderline(
               child: DropdownButton(
                 hint: const Text(
+                  "Towns",
+                  style: TextStyle(
+                    fontFamily: 'Inter',
+                    fontSize: 14,
+                    fontStyle: FontStyle.italic,
+                    fontWeight: FontWeight.w300,
+                  ),
+                ),
+                value: townValue,
+                isExpanded: true,
+                iconSize: 32,
+                icon: const Icon(
+                  Icons.arrow_drop_down,
+                  color: ColorPalette.primary,
+                ),
+                items: HKSAStrings.towns.map(buildMenuItemTowns).toList(),
+                onChanged: ((townValue) => setState(() {
+                      this.townValue = townValue ?? "";
+                    })),
+              ),
+            ),
+          ),
+          const SizedBox(height: 18),
+          Container(height: 1, color: ColorPalette.primary),
+          const SizedBox(height: 15),
+          const Align(
+            alignment: Alignment.centerLeft,
+            child: Text(
+              "Dependent Information:",
+              style: TextStyle(
+                color: ColorPalette.primary,
+                fontSize: 20,
+                fontFamily: 'Inter',
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ),
+          const Align(
+            alignment: Alignment.centerLeft,
+            child: Text(
+              "Please choose on what you are assigned! Since they rely on other information also.",
+              style: TextStyle(
+                color: ColorPalette.primary,
+                fontSize: 14,
+                fontFamily: 'Inter',
+                fontWeight: FontWeight.w300,
+              ),
+            ),
+          ),
+          const SizedBox(height: 10),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+              color: ColorPalette.accentDarkWhite,
+            ),
+            child: DropdownButtonHideUnderline(
+              child: DropdownButton(
+                hint: const Text(
                   "HK Type",
                   style: TextStyle(
                     fontFamily: 'Inter',
@@ -269,7 +386,6 @@ class _RegisterInputsState extends State<RegisterInputs> {
               ),
             ),
           ),
-          //sakin to
           const SizedBox(height: 18),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
@@ -297,208 +413,232 @@ class _RegisterInputsState extends State<RegisterInputs> {
                 items: HKSAStrings.facitype.map(buildMenuItemFaciType).toList(),
                 onChanged: ((faciTypeValue) => setState(() {
                       this.faciTypeValue = faciTypeValue ?? "";
+                      if (faciTypeValue == "Non-Faci") {
+                        vacantTimeValue = "NONE";
+                        onSiteValue = "NONE";
+                        vacantTime2Value = "NONE";
+                        onSite2Value = "NONE";
+                        vacantDayValue = "NONE";
+                      } else {
+                        vacantTimeValue = null;
+                        onSiteValue = null;
+                        vacantTime2Value = null;
+                        onSite2Value = null;
+                        vacantDayValue = null;
+                      }
                     })),
               ),
             ),
           ),
           const SizedBox(height: 18),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-                color: ColorPalette.accentDarkWhite),
-            child: DropdownButtonHideUnderline(
-              child: DropdownButton(
-                hint: const Text(
-                  "Day 1 - Onsite",
-                  style: TextStyle(
-                    fontFamily: 'Inter',
-                    fontSize: 14,
-                    fontStyle: FontStyle.italic,
-                    fontWeight: FontWeight.w300,
-                  ),
-                ),
-                value: onSiteValue,
-                isExpanded: true,
-                iconSize: 32,
-                icon: const Icon(
-                  Icons.arrow_drop_down,
-                  color: ColorPalette.primary,
-                ),
-                items: HKSAStrings.onsite.map(buildMenuItemOnsite).toList(),
-                onChanged: ((onSiteValue) => setState(() {
-                      this.onSiteValue = onSiteValue ?? "";
-                    })),
-              ),
-            ),
-          ),
-          const SizedBox(height: 18),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
-              color: ColorPalette.accentDarkWhite,
-            ),
-            child: DropdownButtonHideUnderline(
-              child: DropdownButton(
-                hint: const Text(
-                  " Day 1 - Vacant Time",
-                  style: TextStyle(
-                    fontFamily: 'Inter',
-                    fontSize: 14,
-                    fontStyle: FontStyle.italic,
-                    fontWeight: FontWeight.w300,
-                  ),
-                ),
-                value: vacantTimeValue,
-                isExpanded: true,
-                iconSize: 32,
-                icon: const Icon(
-                  Icons.arrow_drop_down,
-                  color: ColorPalette.primary,
-                ),
-                items: HKSAStrings.vacanttime
-                    .map(buildMenuItemVacantTime)
-                    .toList(),
-                onChanged: ((vacantTimeValue) => setState(() {
-                      this.vacantTimeValue = vacantTimeValue ?? "";
-                    })),
-              ),
-            ),
-          ),
-          const SizedBox(height: 18),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-                color: ColorPalette.accentDarkWhite),
-            child: DropdownButtonHideUnderline(
-              child: DropdownButton(
-                hint: const Text(
-                  "Day 2 - Onsite",
-                  style: TextStyle(
-                    fontFamily: 'Inter',
-                    fontSize: 14,
-                    fontStyle: FontStyle.italic,
-                    fontWeight: FontWeight.w300,
-                  ),
-                ),
-                value: onSite2Value,
-                isExpanded: true,
-                iconSize: 32,
-                icon: const Icon(
-                  Icons.arrow_drop_down,
-                  color: ColorPalette.primary,
-                ),
-                items: HKSAStrings.onsite.map(buildMenuItemOnsiteDay2).toList(),
-                onChanged: ((onSite2Value) => setState(() {
-                      this.onSite2Value = onSite2Value ?? "";
-                    })),
-              ),
-            ),
-          ),
-          const SizedBox(height: 18),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
-              color: ColorPalette.accentDarkWhite,
-            ),
-            child: DropdownButtonHideUnderline(
-              child: DropdownButton(
-                hint: const Text(
-                  " Day 2 - Vacant Time",
-                  style: TextStyle(
-                    fontFamily: 'Inter',
-                    fontSize: 14,
-                    fontStyle: FontStyle.italic,
-                    fontWeight: FontWeight.w300,
-                  ),
-                ),
-                value: vacantTime2Value,
-                isExpanded: true,
-                iconSize: 32,
-                icon: const Icon(
-                  Icons.arrow_drop_down,
-                  color: ColorPalette.primary,
-                ),
-                items: HKSAStrings.vacanttime
-                    .map(buildMenuItemVacantTimeDay2)
-                    .toList(),
-                onChanged: ((vacantTime2Value) => setState(() {
-                      this.vacantTime2Value = vacantTime2Value ?? "";
-                    })),
-              ),
-            ),
-          ),
-          const SizedBox(height: 18),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
-              color: ColorPalette.accentDarkWhite,
-            ),
-            child: DropdownButtonHideUnderline(
-              child: DropdownButton(
-                hint: const Text(
-                  " Vacant Day ",
-                  style: TextStyle(
-                    fontFamily: 'Inter',
-                    fontSize: 14,
-                    fontStyle: FontStyle.italic,
-                    fontWeight: FontWeight.w300,
-                  ),
-                ),
-                value: vacantDayValue,
-                isExpanded: true,
-                iconSize: 32,
-                icon: const Icon(
-                  Icons.arrow_drop_down,
-                  color: ColorPalette.primary,
-                ),
-                items: HKSAStrings.vacantday
-                    .map(buildMenuItemVacantTimeDay2)
-                    .toList(),
-                onChanged: ((vacantDayValue) => setState(() {
-                      this.vacantDayValue = vacantDayValue ?? "";
-                    })),
-              ),
-            ),
-          ),
-          const SizedBox(height: 18),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
-              color: ColorPalette.accentDarkWhite,
-            ),
-            child: DropdownButtonHideUnderline(
-              child: DropdownButton(
-                hint: const Text(
-                  "Towns",
-                  style: TextStyle(
-                    fontFamily: 'Inter',
-                    fontSize: 14,
-                    fontStyle: FontStyle.italic,
-                    fontWeight: FontWeight.w300,
-                  ),
-                ),
-                value: townValue,
-                isExpanded: true,
-                iconSize: 32,
-                icon: const Icon(
-                  Icons.arrow_drop_down,
-                  color: ColorPalette.primary,
-                ),
-                items: HKSAStrings.towns.map(buildMenuItemTowns).toList(),
-                onChanged: ((townValue) => setState(() {
-                      this.townValue = townValue ?? "";
-                    })),
-              ),
-            ),
-          ),
-          //hanggang dito sakin pataas
-          const SizedBox(height: 18),
+          Container(height: 1, color: ColorPalette.primary),
+          faciTypeValue == "Faci"
+              ? Column(
+                  children: [
+                    const SizedBox(height: 18),
+                    const Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        "Schedule Information:",
+                        style: TextStyle(
+                          color: ColorPalette.primary,
+                          fontSize: 20,
+                          fontFamily: 'Inter',
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ),
+                    const Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        "This section will only available if you are a Faci and enter your information wisely!",
+                        style: TextStyle(
+                          color: ColorPalette.primary,
+                          fontSize: 14,
+                          fontFamily: 'Inter',
+                          fontWeight: FontWeight.w300,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 4),
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          color: ColorPalette.accentDarkWhite),
+                      child: DropdownButtonHideUnderline(
+                        child: DropdownButton(
+                          hint: const Text(
+                            "Day 1 - Onsite",
+                            style: TextStyle(
+                              fontFamily: 'Inter',
+                              fontSize: 14,
+                              fontStyle: FontStyle.italic,
+                              fontWeight: FontWeight.w300,
+                            ),
+                          ),
+                          value: onSiteValue,
+                          isExpanded: true,
+                          iconSize: 32,
+                          icon: const Icon(
+                            Icons.arrow_drop_down,
+                            color: ColorPalette.primary,
+                          ),
+                          items: HKSAStrings.onsite
+                              .map(buildMenuItemOnsite)
+                              .toList(),
+                          onChanged: ((onSiteValue) => setState(() {
+                                this.onSiteValue = onSiteValue ?? "";
+                              })),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 18),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 4),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: ColorPalette.accentDarkWhite,
+                      ),
+                      child: DropdownButtonHideUnderline(
+                        child: DropdownButton(
+                          hint: const Text(
+                            "Day 1 - Vacant Time",
+                            style: TextStyle(
+                              fontFamily: 'Inter',
+                              fontSize: 14,
+                              fontStyle: FontStyle.italic,
+                              fontWeight: FontWeight.w300,
+                            ),
+                          ),
+                          value: vacantTimeValue,
+                          isExpanded: true,
+                          iconSize: 32,
+                          icon: const Icon(
+                            Icons.arrow_drop_down,
+                            color: ColorPalette.primary,
+                          ),
+                          items: HKSAStrings.vacanttime
+                              .map(buildMenuItemVacantTime)
+                              .toList(),
+                          onChanged: ((vacantTimeValue) => setState(() {
+                                this.vacantTimeValue = vacantTimeValue ?? "";
+                              })),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 18),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 4),
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          color: ColorPalette.accentDarkWhite),
+                      child: DropdownButtonHideUnderline(
+                        child: DropdownButton(
+                          hint: const Text(
+                            "Day 2 - Onsite",
+                            style: TextStyle(
+                              fontFamily: 'Inter',
+                              fontSize: 14,
+                              fontStyle: FontStyle.italic,
+                              fontWeight: FontWeight.w300,
+                            ),
+                          ),
+                          value: onSite2Value,
+                          isExpanded: true,
+                          iconSize: 32,
+                          icon: const Icon(
+                            Icons.arrow_drop_down,
+                            color: ColorPalette.primary,
+                          ),
+                          items: HKSAStrings.onsite
+                              .map(buildMenuItemOnsiteDay2)
+                              .toList(),
+                          onChanged: ((onSite2Value) => setState(() {
+                                this.onSite2Value = onSite2Value ?? "";
+                              })),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 18),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 4),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: ColorPalette.accentDarkWhite,
+                      ),
+                      child: DropdownButtonHideUnderline(
+                        child: DropdownButton(
+                          hint: const Text(
+                            "Day 2 - Vacant Time",
+                            style: TextStyle(
+                              fontFamily: 'Inter',
+                              fontSize: 14,
+                              fontStyle: FontStyle.italic,
+                              fontWeight: FontWeight.w300,
+                            ),
+                          ),
+                          value: vacantTime2Value,
+                          isExpanded: true,
+                          iconSize: 32,
+                          icon: const Icon(
+                            Icons.arrow_drop_down,
+                            color: ColorPalette.primary,
+                          ),
+                          items: HKSAStrings.vacanttime
+                              .map(buildMenuItemVacantTimeDay2)
+                              .toList(),
+                          onChanged: ((vacantTime2Value) => setState(() {
+                                this.vacantTime2Value = vacantTime2Value ?? "";
+                              })),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 18),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 4),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: ColorPalette.accentDarkWhite,
+                      ),
+                      child: DropdownButtonHideUnderline(
+                        child: DropdownButton(
+                          hint: const Text(
+                            "Vacant Day ",
+                            style: TextStyle(
+                              fontFamily: 'Inter',
+                              fontSize: 14,
+                              fontStyle: FontStyle.italic,
+                              fontWeight: FontWeight.w300,
+                            ),
+                          ),
+                          value: vacantDayValue,
+                          isExpanded: true,
+                          iconSize: 32,
+                          icon: const Icon(
+                            Icons.arrow_drop_down,
+                            color: ColorPalette.primary,
+                          ),
+                          items: HKSAStrings.vacantday
+                              .map(buildMenuItemVacantTimeDay2)
+                              .toList(),
+                          onChanged: ((vacantDayValue) => setState(() {
+                                this.vacantDayValue = vacantDayValue ?? "";
+                              })),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 18),
+                    Container(height: 1, color: ColorPalette.primary),
+                    const SizedBox(height: 18),
+                  ],
+                )
+              : const SizedBox(height: 18),
           TextFormField(
             controller: _inputControllerEmail,
             validator: (value) {
@@ -529,49 +669,6 @@ class _RegisterInputsState extends State<RegisterInputs> {
                 fontStyle: FontStyle.italic,
               ),
               hintText: "Email",
-            ),
-            style: const TextStyle(
-              color: ColorPalette.primary,
-              fontFamily: 'Inter',
-              fontSize: 14,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-          const SizedBox(height: 18),
-          TextFormField(
-            controller: _inputControllerPhoneNumber,
-            maxLength: 11,
-            validator: (value) {
-              final bool phoneValid =
-                  RegExp(r"^(09|\+639)\d{9}$").hasMatch(value!);
-              if (phoneValid) {
-                return null;
-              } else if (value.length <= 11 && !phoneValid) {
-                return "Invalid input.";
-              } else if (value.length <= 10 && value.isNotEmpty) {
-                return "Input is too short.";
-              } else {
-                return "Enter an input.";
-              }
-            },
-            keyboardType: TextInputType.phone,
-            decoration: InputDecoration(
-              counterText: "",
-              enabledBorder: OutlineInputBorder(
-                borderSide: const BorderSide(color: Colors.transparent),
-                borderRadius: BorderRadius.circular(10.0),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderSide: const BorderSide(color: Colors.transparent),
-                borderRadius: BorderRadius.circular(10.0),
-              ),
-              filled: true,
-              fillColor: ColorPalette.accentDarkWhite,
-              hintStyle: const TextStyle(
-                fontWeight: FontWeight.w300,
-                fontStyle: FontStyle.italic,
-              ),
-              hintText: "Phone Number",
             ),
             style: const TextStyle(
               color: ColorPalette.primary,
@@ -822,51 +919,6 @@ class _RegisterInputsState extends State<RegisterInputs> {
                                     const RegisterInputsProfilePicture(),
                               ),
                             );
-                            /*
-                            // If it doesn't exist then let's create a new account
-                            // Show a new dialog that this user is now successfully created.
-                            if (hkType == "HK25") {
-                              totalHoursRequired = "60";
-                            } else if (hkType == "HK50" || hkType == "HK75") {
-                              totalHoursRequired = "90";
-                            }
-                            Scholar scholarObj = Scholar(
-                              studentNumber: studentNumber,
-                              name: fullName,
-                              course: course.toString(),
-                              email: email,
-                              phonenumber: phoneNumber,
-                              password: password,
-                              hkType: hkType.toString(),
-                              hours: hours,
-                              status: status,
-                              totalHoursInDisplay: totalHoursInDisplay,
-                              totalHoursInDuration: totalHoursInDuration,
-                              totalHoursRequired: totalHoursRequired,
-                              isFinished: isFinished,
-                              profilePicture: HKSAStrings.pfpPlaceholder,
-                              onSiteDay1: '',
-                              onSiteDay2: '',
-                              vacantTimeDay1: '',
-                              vacantTimeDay2: '',
-                              wholeDayVacantTime: '',
-                              scholarType: '',
-                              town: '',
-                            );
-
-                            await _testReference
-                                .child(studentNumber)
-                                .set(scholarObj.toJson());
-
-                            // ignore: use_build_context_synchronously
-                            DialogSuccess(
-                                    headertext: "Successfully Registered!",
-                                    subtext: "You are now registered!",
-                                    textButton: "Log in",
-                                    callback: goBackToLogin)
-                                .buildSuccessScreen(context);
-                          }
-                          */
                           }
                         })
                       });

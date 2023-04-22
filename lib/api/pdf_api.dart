@@ -16,11 +16,15 @@ class PdfApi {
       required String hkType}) async {
     final logInBox = Hive.box("myLoginBox");
     late var userID = logInBox.get("userID");
+    late var scholarType = logInBox.get("scholarType");
+
     String totalHoursRequired = "";
-    if (hkType == "HK25") {
-      totalHoursRequired = "60";
-    } else if (hkType == "HK50" || hkType == "HK75") {
-      totalHoursRequired = "90";
+    if (scholarType == "Faci") {
+      if (hkType == "HK25") {
+        totalHoursRequired = "60";
+      } else if (hkType == "HK50" || hkType == "HK75") {
+        totalHoursRequired = "90";
+      }
     } else {
       totalHoursRequired = "Non-Faci";
     }

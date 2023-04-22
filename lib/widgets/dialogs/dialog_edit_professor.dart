@@ -12,16 +12,6 @@ import 'package:hksa/widgets/dialogs/dialog_confirm.dart';
 import 'package:hksa/widgets/dialogs/dialog_loading.dart';
 import 'package:hksa/widgets/dialogs/dialog_success.dart';
 
-final _inputControllerProfessorID = TextEditingController();
-final _inputControllerName = TextEditingController();
-final _inputControllerEmail = TextEditingController();
-final _inputControllerPhoneNumber = TextEditingController();
-final _inputControllerPassword = TextEditingController();
-final _inputControllerCfrmPassword = TextEditingController();
-final _inputControllerSignatureCode = TextEditingController();
-
-final _formKey = GlobalKey<FormState>();
-
 class EditProfessor extends StatefulWidget {
   final String userID;
   const EditProfessor({super.key, required this.userID});
@@ -31,12 +21,29 @@ class EditProfessor extends StatefulWidget {
 }
 
 class _EditProfessorState extends State<EditProfessor> {
+  final _inputControllerProfessorID = TextEditingController();
+  final _inputControllerName = TextEditingController();
+  final _inputControllerEmail = TextEditingController();
+  final _inputControllerPhoneNumber = TextEditingController();
+  final _inputControllerPassword = TextEditingController();
+  final _inputControllerCfrmPassword = TextEditingController();
+  final _inputControllerSignatureCode = TextEditingController();
+  final _inputControllerSubject = TextEditingController();
+  final _inputControllerSection = TextEditingController();
+  final _inputControllerRoom = TextEditingController();
+
+  final _formKey = GlobalKey<FormState>();
   final DatabaseReference _dbReference =
       FirebaseDatabase.instance.ref().child("Users/Professors/");
+
   String? departmentValue;
+  String? dayValue;
+  String? timeValue;
 
   bool _passwordVisible = false;
   bool _cfrmPasswordVisible = false;
+  bool _signatureCodeVisible = false;
+  bool getOnce = true;
 
   @override
   Widget build(BuildContext context) {
@@ -139,9 +146,22 @@ class _EditProfessorState extends State<EditProfessor> {
                         ),
                         const SizedBox(height: 2),
                         Container(height: 1, color: ColorPalette.primary),
-                        const SizedBox(height: 20),
+                        const SizedBox(height: 15),
                         Column(
                           children: [
+                            const Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                "Basic Information:",
+                                style: TextStyle(
+                                  color: ColorPalette.primary,
+                                  fontSize: 20,
+                                  fontFamily: 'Inter',
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 10),
                             TextFormField(
                               enabled: false,
                               controller: _inputControllerProfessorID,
@@ -510,28 +530,289 @@ class _EditProfessorState extends State<EditProfessor> {
                               ),
                             ),
                             const SizedBox(height: 18),
+                            TextFormField(
+                              controller: _inputControllerCfrmPassword,
+                              obscureText: !_cfrmPasswordVisible,
+                              enableSuggestions: false,
+                              autocorrect: false,
+                              validator: (value) {
+                                final bool cfrmPasswordValid =
+                                    _inputControllerPassword.text ==
+                                        _inputControllerCfrmPassword.text;
+                                if (cfrmPasswordValid) {
+                                  return null;
+                                } else if (value!.isEmpty) {
+                                  return 'Enter input.';
+                                } else {
+                                  return "Password not match";
+                                }
+                              },
+                              keyboardType: TextInputType.visiblePassword,
+                              decoration: InputDecoration(
+                                enabledBorder: OutlineInputBorder(
+                                  borderSide: const BorderSide(
+                                      color: Colors.transparent),
+                                  borderRadius: BorderRadius.circular(10.0),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderSide: const BorderSide(
+                                      color: Colors.transparent),
+                                  borderRadius: BorderRadius.circular(10.0),
+                                ),
+                                filled: true,
+                                fillColor: ColorPalette.accentDarkWhite,
+                                hintStyle: const TextStyle(
+                                  fontWeight: FontWeight.w300,
+                                  fontStyle: FontStyle.italic,
+                                ),
+                                suffixIcon: IconButton(
+                                  onPressed: () {
+                                    setState(() {
+                                      _cfrmPasswordVisible =
+                                          !_cfrmPasswordVisible;
+                                    });
+                                  },
+                                  icon: Icon(
+                                    _cfrmPasswordVisible
+                                        ? Icons.visibility
+                                        : Icons.visibility_off,
+                                  ),
+                                ),
+                                hintText: "Confirm Password",
+                              ),
+                              style: const TextStyle(
+                                color: ColorPalette.primary,
+                                fontFamily: 'Inter',
+                                fontSize: 14,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                            const SizedBox(height: 18),
+                            Container(height: 1, color: ColorPalette.primary),
+                            const SizedBox(height: 15),
+                            const Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                "Signature Code:",
+                                style: TextStyle(
+                                  color: ColorPalette.primary,
+                                  fontSize: 20,
+                                  fontFamily: 'Inter',
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                            ),
+                            const Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                "This is the key to time out the assigned Faci to you. Do not let anyone know about the Professor's Signature Code",
+                                style: TextStyle(
+                                  color: ColorPalette.primary,
+                                  fontSize: 14,
+                                  fontFamily: 'Inter',
+                                  fontWeight: FontWeight.w300,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 10),
+                            const SizedBox(height: 2),
+                            TextFormField(
+                              controller: _inputControllerSignatureCode,
+                              maxLength: 20,
+                              obscureText: !_signatureCodeVisible,
+                              enableSuggestions: false,
+                              autocorrect: false,
+                              validator: (value) {
+                                if (value!.isNotEmpty) {
+                                  return null;
+                                } else {
+                                  return "Enter an input.";
+                                }
+                              },
+                              keyboardType: TextInputType.text,
+                              decoration: InputDecoration(
+                                suffixIcon: IconButton(
+                                  onPressed: () {
+                                    setState(() {
+                                      _signatureCodeVisible =
+                                          !_signatureCodeVisible;
+                                    });
+                                  },
+                                  icon: Icon(
+                                    _signatureCodeVisible
+                                        ? Icons.visibility
+                                        : Icons.visibility_off,
+                                  ),
+                                ),
+                                counterText: "",
+                                enabledBorder: OutlineInputBorder(
+                                  borderSide: const BorderSide(
+                                      color: Colors.transparent),
+                                  borderRadius: BorderRadius.circular(10.0),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderSide: const BorderSide(
+                                      color: Colors.transparent),
+                                  borderRadius: BorderRadius.circular(10.0),
+                                ),
+                                filled: true,
+                                fillColor: ColorPalette.accentDarkWhite,
+                                hintStyle: const TextStyle(
+                                  fontWeight: FontWeight.w300,
+                                  fontStyle: FontStyle.italic,
+                                ),
+                                hintText: "Signature Code",
+                              ),
+                              style: const TextStyle(
+                                color: ColorPalette.primary,
+                                fontFamily: 'Inter',
+                                fontSize: 14,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                            const SizedBox(height: 18),
+                            Container(height: 1, color: ColorPalette.primary),
+                            const SizedBox(height: 15),
+                            const Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                "Schedule Information:",
+                                style: TextStyle(
+                                  color: ColorPalette.primary,
+                                  fontSize: 20,
+                                  fontFamily: 'Inter',
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                            ),
+                            const Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                "This is where if the Faci and Professor's day and time matches and allowed to be assigned. ",
+                                style: TextStyle(
+                                  color: ColorPalette.primary,
+                                  fontSize: 14,
+                                  fontFamily: 'Inter',
+                                  fontWeight: FontWeight.w300,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 10),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 12, vertical: 4),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10),
+                                    color: ColorPalette.accentDarkWhite,
+                                  ),
+                                  child: DropdownButtonHideUnderline(
+                                    child: DropdownButton(
+                                      hint: const Text(
+                                        "Enter Day",
+                                        style: TextStyle(
+                                          fontFamily: 'Inter',
+                                          fontSize: 14,
+                                          fontStyle: FontStyle.italic,
+                                          fontWeight: FontWeight.w300,
+                                        ),
+                                      ),
+                                      value: dayValue,
+                                      isExpanded: true,
+                                      iconSize: 32,
+                                      icon: const Icon(
+                                        Icons.arrow_drop_down,
+                                        color: ColorPalette.primary,
+                                      ),
+                                      items: HKSAStrings.vacantday
+                                          .map(buildMenuItemDay)
+                                          .toList(),
+                                      onChanged: ((dayValue) => setState(() {
+                                            this.dayValue = dayValue ?? "";
+                                          })),
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(height: 2),
+                                Text(
+                                  "Day was ${snapshot.data!.first.day}",
+                                  style: const TextStyle(
+                                    fontFamily: 'Inter',
+                                    fontSize: 11,
+                                    fontStyle: FontStyle.italic,
+                                    fontWeight: FontWeight.w300,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 10),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 12, vertical: 4),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10),
+                                    color: ColorPalette.accentDarkWhite,
+                                  ),
+                                  child: DropdownButtonHideUnderline(
+                                    child: DropdownButton(
+                                      hint: const Text(
+                                        "Enter Time",
+                                        style: TextStyle(
+                                          fontFamily: 'Inter',
+                                          fontSize: 14,
+                                          fontStyle: FontStyle.italic,
+                                          fontWeight: FontWeight.w300,
+                                        ),
+                                      ),
+                                      value: timeValue,
+                                      isExpanded: true,
+                                      iconSize: 32,
+                                      icon: const Icon(
+                                        Icons.arrow_drop_down,
+                                        color: ColorPalette.primary,
+                                      ),
+                                      items: HKSAStrings.vacanttime
+                                          .map(buildMenuItemTime)
+                                          .toList(),
+                                      onChanged: ((timeValue) => setState(() {
+                                            this.timeValue = timeValue ?? "";
+                                          })),
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(height: 2),
+                                Text(
+                                  "Vacant Time was ${snapshot.data!.first.time}",
+                                  style: const TextStyle(
+                                    fontFamily: 'Inter',
+                                    fontSize: 11,
+                                    fontStyle: FontStyle.italic,
+                                    fontWeight: FontWeight.w300,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 18),
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 TextFormField(
-                                  controller: _inputControllerCfrmPassword,
-                                  obscureText: !_cfrmPasswordVisible,
-                                  enableSuggestions: false,
-                                  autocorrect: false,
+                                  controller: _inputControllerSubject,
                                   validator: (value) {
-                                    final bool cfrmPasswordValid =
-                                        _inputControllerPassword.text ==
-                                            _inputControllerCfrmPassword.text;
-                                    if (cfrmPasswordValid) {
+                                    if (value!.isNotEmpty) {
                                       return null;
-                                    } else if (value!.isEmpty) {
-                                      return 'Enter input.';
                                     } else {
-                                      return "Password not match";
+                                      return "Invalid input.";
                                     }
                                   },
-                                  keyboardType: TextInputType.visiblePassword,
+                                  keyboardType: TextInputType.text,
                                   decoration: InputDecoration(
+                                    counterText: "",
                                     enabledBorder: OutlineInputBorder(
                                       borderSide: const BorderSide(
                                           color: Colors.transparent),
@@ -548,21 +829,9 @@ class _EditProfessorState extends State<EditProfessor> {
                                       fontWeight: FontWeight.w300,
                                       fontStyle: FontStyle.italic,
                                     ),
-                                    suffixIcon: IconButton(
-                                      onPressed: () {
-                                        setState(() {
-                                          _cfrmPasswordVisible =
-                                              !_cfrmPasswordVisible;
-                                        });
-                                      },
-                                      icon: Icon(
-                                        _cfrmPasswordVisible
-                                            ? Icons.visibility
-                                            : Icons.visibility_off,
-                                      ),
-                                    ),
-                                    hintText: "Confirm Password",
+                                    hintText: "Enter Subject Code",
                                   ),
+                                  maxLength: 15,
                                   style: const TextStyle(
                                     color: ColorPalette.primary,
                                     fontFamily: 'Inter',
@@ -571,8 +840,8 @@ class _EditProfessorState extends State<EditProfessor> {
                                   ),
                                 ),
                                 const SizedBox(height: 2),
-                                SelectableText(
-                                  "Password was ${snapshot.data!.first.password}",
+                                Text(
+                                  "Subject was ${snapshot.data!.first.subject}",
                                   style: const TextStyle(
                                     fontFamily: 'Inter',
                                     fontSize: 11,
@@ -583,78 +852,111 @@ class _EditProfessorState extends State<EditProfessor> {
                               ],
                             ),
                             const SizedBox(height: 18),
-                            Container(height: 1, color: ColorPalette.primary),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                TextFormField(
+                                  controller: _inputControllerSection,
+                                  validator: (value) {
+                                    if (value!.isNotEmpty) {
+                                      return null;
+                                    } else {
+                                      return "Invalid input.";
+                                    }
+                                  },
+                                  keyboardType: TextInputType.text,
+                                  decoration: InputDecoration(
+                                    counterText: "",
+                                    enabledBorder: OutlineInputBorder(
+                                      borderSide: const BorderSide(
+                                          color: Colors.transparent),
+                                      borderRadius: BorderRadius.circular(10.0),
+                                    ),
+                                    focusedBorder: OutlineInputBorder(
+                                      borderSide: const BorderSide(
+                                          color: Colors.transparent),
+                                      borderRadius: BorderRadius.circular(10.0),
+                                    ),
+                                    filled: true,
+                                    fillColor: ColorPalette.accentDarkWhite,
+                                    hintStyle: const TextStyle(
+                                      fontWeight: FontWeight.w300,
+                                      fontStyle: FontStyle.italic,
+                                    ),
+                                    hintText: "Enter Section",
+                                  ),
+                                  maxLength: 20,
+                                  style: const TextStyle(
+                                    color: ColorPalette.primary,
+                                    fontFamily: 'Inter',
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                                const SizedBox(height: 2),
+                                Text(
+                                  "Section was ${snapshot.data!.first.section}",
+                                  style: const TextStyle(
+                                    fontFamily: 'Inter',
+                                    fontSize: 11,
+                                    fontStyle: FontStyle.italic,
+                                    fontWeight: FontWeight.w300,
+                                  ),
+                                ),
+                              ],
+                            ),
                             const SizedBox(height: 18),
                             Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: [
-                                    const SizedBox(height: 2),
-                                    TextFormField(
-                                      controller: _inputControllerSignatureCode,
-                                      maxLength: 20,
-                                      validator: (value) {
-                                        if (value!.isNotEmpty) {
-                                          return null;
-                                        } else {
-                                          return "Enter an input.";
-                                        }
-                                      },
-                                      keyboardType: TextInputType.text,
-                                      decoration: InputDecoration(
-                                        suffixIcon: IconButton(
-                                          onPressed: () {
-                                            setState(() {
-                                              _inputControllerSignatureCode
-                                                      .text =
-                                                  snapshot.data!.first
-                                                      .signaturecode;
-                                            });
-                                          },
-                                          icon: const Icon(Icons.paste_rounded),
-                                        ),
-                                        counterText: "",
-                                        enabledBorder: OutlineInputBorder(
-                                          borderSide: const BorderSide(
-                                              color: Colors.transparent),
-                                          borderRadius:
-                                              BorderRadius.circular(10.0),
-                                        ),
-                                        focusedBorder: OutlineInputBorder(
-                                          borderSide: const BorderSide(
-                                              color: Colors.transparent),
-                                          borderRadius:
-                                              BorderRadius.circular(10.0),
-                                        ),
-                                        filled: true,
-                                        fillColor: ColorPalette.accentDarkWhite,
-                                        hintStyle: const TextStyle(
-                                          fontWeight: FontWeight.w300,
-                                          fontStyle: FontStyle.italic,
-                                        ),
-                                        hintText: "Signature Code",
-                                      ),
-                                      style: const TextStyle(
-                                        color: ColorPalette.primary,
-                                        fontFamily: 'Inter',
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w700,
-                                      ),
+                                TextFormField(
+                                  controller: _inputControllerRoom,
+                                  validator: (value) {
+                                    if (value!.isNotEmpty) {
+                                      return null;
+                                    } else {
+                                      return "Invalid input.";
+                                    }
+                                  },
+                                  keyboardType: TextInputType.text,
+                                  decoration: InputDecoration(
+                                    counterText: "",
+                                    enabledBorder: OutlineInputBorder(
+                                      borderSide: const BorderSide(
+                                          color: Colors.transparent),
+                                      borderRadius: BorderRadius.circular(10.0),
                                     ),
-                                    const SizedBox(height: 2),
-                                    SelectableText(
-                                      "Signature Code was ${snapshot.data!.first.signaturecode}",
-                                      style: const TextStyle(
-                                        fontFamily: 'Inter',
-                                        fontSize: 11,
-                                        fontStyle: FontStyle.italic,
-                                        fontWeight: FontWeight.w300,
-                                      ),
+                                    focusedBorder: OutlineInputBorder(
+                                      borderSide: const BorderSide(
+                                          color: Colors.transparent),
+                                      borderRadius: BorderRadius.circular(10.0),
                                     ),
-                                  ],
-                                )
+                                    filled: true,
+                                    fillColor: ColorPalette.accentDarkWhite,
+                                    hintStyle: const TextStyle(
+                                      fontWeight: FontWeight.w300,
+                                      fontStyle: FontStyle.italic,
+                                    ),
+                                    hintText: "Enter Room",
+                                  ),
+                                  maxLength: 20,
+                                  style: const TextStyle(
+                                    color: ColorPalette.primary,
+                                    fontFamily: 'Inter',
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                                const SizedBox(height: 2),
+                                Text(
+                                  "Room was ${snapshot.data!.first.room}",
+                                  style: const TextStyle(
+                                    fontFamily: 'Inter',
+                                    fontSize: 11,
+                                    fontStyle: FontStyle.italic,
+                                    fontWeight: FontWeight.w300,
+                                  ),
+                                ),
                               ],
                             ),
                             const SizedBox(height: 18),
@@ -696,6 +998,21 @@ class _EditProfessorState extends State<EditProfessor> {
                                               _inputControllerSignatureCode.text
                                                   .trim();
 
+                                          String subject =
+                                              _inputControllerSubject.text
+                                                  .trim()
+                                                  .toUpperCase();
+                                          String section =
+                                              _inputControllerSection.text
+                                                  .trim()
+                                                  .toUpperCase();
+                                          String room = _inputControllerRoom
+                                              .text
+                                              .trim()
+                                              .toUpperCase();
+                                          String? day = dayValue.toString();
+                                          String? time = timeValue.toString();
+
                                           Future.delayed(
                                               const Duration(seconds: 2),
                                               () async {
@@ -710,11 +1027,11 @@ class _EditProfessorState extends State<EditProfessor> {
                                                 signaturecode: signature,
                                                 profilePicture: snapshot
                                                     .data!.first.profilePicture,
-                                                day: '',
-                                                room: '',
-                                                section: '',
-                                                subject: '',
-                                                time: '');
+                                                day: day,
+                                                room: room,
+                                                section: section,
+                                                subject: subject,
+                                                time: time);
 
                                             await _dbReference
                                                 .child(professorID)
@@ -786,8 +1103,24 @@ class _EditProfessorState extends State<EditProfessor> {
       await _userReference.get().then((snapshot) {
         Map<String, dynamic> myObj = jsonDecode(jsonEncode(snapshot.value));
         Professor myProf = Professor.fromJson(myObj);
-        _inputControllerProfessorID.text = myProf.professorId;
+        if (getOnce) {
+          _inputControllerProfessorID.text = myProf.professorId;
+          _inputControllerEmail.text = myProf.email;
+          _inputControllerName.text = myProf.name;
+          _inputControllerPhoneNumber.text = myProf.phonenumber;
+          _inputControllerPassword.text = myProf.password;
+          _inputControllerCfrmPassword.text = myProf.password;
+          _inputControllerSignatureCode.text = myProf.signaturecode;
+          _inputControllerRoom.text = myProf.room;
+          _inputControllerSection.text = myProf.section;
+          _inputControllerSubject.text = myProf.subject;
+
+          departmentValue = myProf.department;
+          dayValue = myProf.day;
+          timeValue = myProf.time;
+        }
         myUser.add(myProf);
+        getOnce = false;
       });
       return myUser;
     } catch (error) {
@@ -808,4 +1141,86 @@ class _EditProfessorState extends State<EditProfessor> {
           ),
         ),
       );
+
+  DropdownMenuItem<String> buildMenuItemDay(String item) => DropdownMenuItem(
+        value: item,
+        child: Text(
+          item,
+          style: const TextStyle(
+            fontFamily: 'Inter',
+            fontWeight: FontWeight.w300,
+            fontSize: 12,
+            color: ColorPalette.primary,
+          ),
+        ),
+      );
+
+  DropdownMenuItem<String> buildMenuItemTime(String item) => DropdownMenuItem(
+        value: item,
+        child: Text(
+          item,
+          style: const TextStyle(
+            fontFamily: 'Inter',
+            fontWeight: FontWeight.w300,
+            fontSize: 12,
+            color: ColorPalette.primary,
+          ),
+        ),
+      );
+
+  DropdownMenuItem<String> buildMenuItemRoom(String item) => DropdownMenuItem(
+        value: item,
+        child: Text(
+          item,
+          style: const TextStyle(
+            fontFamily: 'Inter',
+            fontWeight: FontWeight.w300,
+            fontSize: 12,
+            color: ColorPalette.primary,
+          ),
+        ),
+      );
+
+  DropdownMenuItem<String> buildMenuItemSection(String item) =>
+      DropdownMenuItem(
+        value: item,
+        child: Text(
+          item,
+          style: const TextStyle(
+            fontFamily: 'Inter',
+            fontWeight: FontWeight.w300,
+            fontSize: 12,
+            color: ColorPalette.primary,
+          ),
+        ),
+      );
+
+  DropdownMenuItem<String> buildMenuItemSubject(String item) =>
+      DropdownMenuItem(
+        value: item,
+        child: Text(
+          item,
+          style: const TextStyle(
+            fontFamily: 'Inter',
+            fontWeight: FontWeight.w300,
+            fontSize: 12,
+            color: ColorPalette.primary,
+          ),
+        ),
+      );
+
+  @override
+  void dispose() {
+    _inputControllerCfrmPassword.dispose();
+    _inputControllerEmail.dispose();
+    _inputControllerName.dispose();
+    _inputControllerPassword.dispose();
+    _inputControllerPhoneNumber.dispose();
+    _inputControllerProfessorID.dispose();
+    _inputControllerRoom.dispose();
+    _inputControllerSection.dispose();
+    _inputControllerSignatureCode.dispose();
+    _inputControllerSubject.dispose();
+    super.dispose();
+  }
 }

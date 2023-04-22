@@ -353,6 +353,151 @@ class _ProfProfileState extends State<ProfProfile> {
                           ),
                         ],
                       ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'Day:',
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontFamily: 'Inter',
+                              fontWeight: FontWeight.w600,
+                              color: Colors.black,
+                            ),
+                          ),
+                          const SizedBox(
+                            height: 5,
+                          ),
+                          Text(
+                            snapshot.data!.first.day,
+                            style: const TextStyle(
+                              fontSize: 13,
+                              fontFamily: 'Inter',
+                              fontWeight: FontWeight.w300,
+                              color: Colors.black,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'Time:',
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontFamily: 'Inter',
+                              fontWeight: FontWeight.w600,
+                              color: Colors.black,
+                            ),
+                          ),
+                          const SizedBox(
+                            height: 5,
+                          ),
+                          Text(
+                            snapshot.data!.first.time,
+                            style: const TextStyle(
+                              fontSize: 13,
+                              fontFamily: 'Inter',
+                              fontWeight: FontWeight.w300,
+                              color: Colors.black,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'Room:',
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontFamily: 'Inter',
+                              fontWeight: FontWeight.w600,
+                              color: Colors.black,
+                            ),
+                          ),
+                          const SizedBox(
+                            height: 5,
+                          ),
+                          Text(
+                            snapshot.data!.first.room,
+                            style: const TextStyle(
+                              fontSize: 13,
+                              fontFamily: 'Inter',
+                              fontWeight: FontWeight.w300,
+                              color: Colors.black,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'Section:',
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontFamily: 'Inter',
+                              fontWeight: FontWeight.w600,
+                              color: Colors.black,
+                            ),
+                          ),
+                          const SizedBox(
+                            height: 5,
+                          ),
+                          Text(
+                            snapshot.data!.first.section,
+                            style: const TextStyle(
+                              fontSize: 13,
+                              fontFamily: 'Inter',
+                              fontWeight: FontWeight.w300,
+                              color: Colors.black,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'Subject:',
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontFamily: 'Inter',
+                              fontWeight: FontWeight.w600,
+                              color: Colors.black,
+                            ),
+                          ),
+                          const SizedBox(
+                            height: 5,
+                          ),
+                          Text(
+                            snapshot.data!.first.subject,
+                            style: const TextStyle(
+                              fontSize: 13,
+                              fontFamily: 'Inter',
+                              fontWeight: FontWeight.w300,
+                              color: Colors.black,
+                            ),
+                          ),
+                        ],
+                      ),
                     ],
                   ),
                   const SizedBox(height: 10),
