@@ -48,6 +48,10 @@ class _ProfProfileState extends State<ProfProfile> {
           DialogLoading(subtext: "Logging out...").buildLoadingScreen(context);
         })).whenComplete(() {
           Future.delayed(const Duration(seconds: 3), () {
+            _firebaseMessaging.unsubscribeFromTopic('all_users');
+
+            _firebaseMessaging.unsubscribeFromTopic('professors');
+
             logInBox.put("isLoggedIn", false);
             logInBox.put("hasTimedIn", false);
             logInBox.put("userType", "");
@@ -535,6 +539,8 @@ class _ProfProfileState extends State<ProfProfile> {
                                       logInBox.put("dateTimedIn", "");
                                       _firebaseMessaging
                                           .unsubscribeFromTopic('user_all');
+                                      _firebaseMessaging
+                                          .unsubscribeFromTopic('professors');
                                       Navigator.of(context).pushAndRemoveUntil(
                                           MaterialPageRoute(
                                               builder: (context) =>

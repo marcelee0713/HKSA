@@ -135,4 +135,11 @@ class HKSAStrings {
   ];
   static const statuses = ['active', 'inactive'];
   static const hoursStatus = ['true', 'false'];
+  static const announcementUserType = [
+    'All',
+    'Scholars',
+    'Scholars (Faci)',
+    'Scholars (Non-Faci)',
+    'Professors'
+  ];
 }

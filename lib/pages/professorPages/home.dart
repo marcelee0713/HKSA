@@ -23,6 +23,7 @@ class _HomeProfessorState extends State<HomeProfessor> {
   @override
   void initState() {
     _firebaseMessaging.subscribeToTopic('user_all');
+    _firebaseMessaging.subscribeToTopic('professors');
     super.initState();
   }
 

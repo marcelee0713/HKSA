@@ -1,4 +1,5 @@
 import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:hksa/constant/colors.dart';
@@ -26,6 +27,7 @@ class _ProfLandingPageState extends State<ProfLandingPage> {
     late var userID = logInBox.get("userID");
     DatabaseReference userRef =
         FirebaseDatabase.instance.ref().child('Users/Professors/$userID');
+    final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
 
     userRef.get().then((user) {
       if (!user.exists) {
@@ -33,6 +35,8 @@ class _ProfLandingPageState extends State<ProfLandingPage> {
           DialogLoading(subtext: "Logging out...").buildLoadingScreen(context);
         })).whenComplete(() {
           Future.delayed(const Duration(seconds: 3), () {
+            _firebaseMessaging.unsubscribeFromTopic('user_all');
+            _firebaseMessaging.unsubscribeFromTopic('professors');
             logInBox.put("isLoggedIn", false);
             logInBox.put("hasTimedIn", false);
             logInBox.put("userType", "");

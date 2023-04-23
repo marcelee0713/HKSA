@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:hksa/api/send_message.dart';
 import 'package:hksa/constant/colors.dart';
+import 'package:hksa/constant/string.dart';
 import 'package:hksa/widgets/dialogs/dialog_confirm.dart';
 import 'package:hksa/widgets/dialogs/dialog_loading.dart';
 import 'package:hksa/widgets/dialogs/dialog_success.dart';
@@ -20,7 +21,9 @@ class Announce extends StatefulWidget {
 }
 
 class _AnnounceState extends State<Announce> {
-  final _inputController = TextEditingController();
+  final _inputControllerHeader = TextEditingController();
+  final _inputControllerBody = TextEditingController();
+
   // For Firebase
   final DatabaseReference _scholarReference =
       FirebaseDatabase.instance.ref().child("Users/Scholars/");
@@ -28,6 +31,8 @@ class _AnnounceState extends State<Announce> {
       FirebaseDatabase.instance.ref().child("Users/Professors/");
 
   final logInBox = Hive.box("myLoginBox");
+
+  String userTypeValue = "All";
 
   late var userID = logInBox.get("userID");
   late var userType = logInBox.get("userType");
@@ -51,30 +56,158 @@ class _AnnounceState extends State<Announce> {
                     Text(
                       "Announcement",
                       style: TextStyle(
-                        color: ColorPalette.accentBlack,
+                        color: ColorPalette.primary,
                         fontFamily: 'Inter',
-                        fontSize: 16,
+                        fontSize: 20,
                         fontWeight: FontWeight.w700,
                       ),
                     ),
                     Text(
-                      "This will send to all Scholars and Professors",
+                      "This is where you want to notify or announce on either a specific or all user.",
                       textAlign: TextAlign.start,
                       style: TextStyle(
-                        color: ColorPalette.accentBlack,
+                        color: ColorPalette.primary,
                         fontFamily: 'Inter',
                         fontSize: 14,
-                        fontWeight: FontWeight.w400,
+                        fontWeight: FontWeight.w300,
                       ),
                     ),
                   ],
+                ),
+                const SizedBox(height: 8),
+                Container(height: 1, color: ColorPalette.primary),
+                const SizedBox(height: 8),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: const [
+                    Text(
+                      "Select a specific user",
+                      style: TextStyle(
+                        color: ColorPalette.primary,
+                        fontFamily: 'Inter',
+                        fontSize: 20,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    Text(
+                      "You can select either you want to send this notification to all or a specific users!",
+                      textAlign: TextAlign.start,
+                      style: TextStyle(
+                        color: ColorPalette.primary,
+                        fontFamily: 'Inter',
+                        fontSize: 14,
+                        fontWeight: FontWeight.w300,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    color: ColorPalette.accentDarkWhite,
+                  ),
+                  child: DropdownButtonHideUnderline(
+                    child: DropdownButton(
+                      hint: const Text(
+                        "Enter User Type",
+                        style: TextStyle(
+                          fontFamily: 'Inter',
+                          fontSize: 14,
+                          fontStyle: FontStyle.italic,
+                          fontWeight: FontWeight.w300,
+                        ),
+                      ),
+                      value: userTypeValue,
+                      isExpanded: true,
+                      iconSize: 32,
+                      icon: const Icon(
+                        Icons.arrow_drop_down,
+                        color: ColorPalette.primary,
+                      ),
+                      items: HKSAStrings.announcementUserType
+                          .map(buildMenuItemUserType)
+                          .toList(),
+                      onChanged: ((userTypeValue) => setState(() {
+                            this.userTypeValue = userTypeValue ?? "";
+                          })),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Container(height: 1, color: ColorPalette.primary),
+                const SizedBox(height: 8),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: const [
+                    Text(
+                      "Send an annoucement!",
+                      style: TextStyle(
+                        color: ColorPalette.primary,
+                        fontFamily: 'Inter',
+                        fontSize: 20,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    Text(
+                      "Enter the required text input. We need a header and body in order to send a notification.",
+                      textAlign: TextAlign.start,
+                      style: TextStyle(
+                        color: ColorPalette.primary,
+                        fontFamily: 'Inter',
+                        fontSize: 14,
+                        fontWeight: FontWeight.w300,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                TextFormField(
+                  textAlignVertical: TextAlignVertical.top,
+                  controller: _inputControllerHeader,
+                  maxLength: 30,
+                  validator: (value) {
+                    if (value!.isNotEmpty) {
+                      return null;
+                    } else {
+                      return "Enter an input.";
+                    }
+                  },
+                  keyboardType: TextInputType.text,
+                  decoration: InputDecoration(
+                      counterText: "",
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: const BorderSide(color: Colors.transparent),
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: const BorderSide(color: Colors.transparent),
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                      filled: true,
+                      fillColor: ColorPalette.accentDarkWhite,
+                      hintStyle: const TextStyle(
+                        fontWeight: FontWeight.w300,
+                        fontStyle: FontStyle.italic,
+                      ),
+                      hintText: "Enter a header!",
+                      contentPadding: const EdgeInsets.symmetric(
+                          vertical: 10.0, horizontal: 10)),
+                  style: const TextStyle(
+                    color: ColorPalette.primary,
+                    fontFamily: 'Inter',
+                    fontSize: 14,
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
                 const SizedBox(height: 8),
                 SizedBox(
                   height: 200,
                   child: TextFormField(
                     textAlignVertical: TextAlignVertical.top,
-                    controller: _inputController,
+                    controller: _inputControllerBody,
                     expands: true,
                     maxLines: null,
                     minLines: null,
@@ -104,7 +237,7 @@ class _AnnounceState extends State<Announce> {
                           fontWeight: FontWeight.w300,
                           fontStyle: FontStyle.italic,
                         ),
-                        hintText: "Post an announcement!",
+                        hintText: "Enter a body of your announcement!",
                         contentPadding: const EdgeInsets.symmetric(
                             vertical: 10.0, horizontal: 10)),
                     style: const TextStyle(
@@ -151,10 +284,22 @@ class _AnnounceState extends State<Announce> {
                             Navigator.of(context, rootNavigator: true).pop();
                             DialogLoading(subtext: "Sending...")
                                 .buildLoadingScreen(context);
+                            String userType = 'All';
+                            if (userTypeValue == 'All') {
+                              userType = 'user_all';
+                            } else if (userTypeValue == "Scholars") {
+                              userType = 'scholars';
+                            } else if (userTypeValue == "Scholars (Faci)") {
+                              userType = 'scholars_faci';
+                            } else if (userTypeValue == "Scholars (Non-Faci)") {
+                              userType = 'scholars_non_faci';
+                            } else if (userTypeValue == "Professors") {
+                              userType = 'professors';
+                            }
                             String res = await sendNotificationToTopic(
-                                'user_all',
-                                "Announcement!",
-                                _inputController.text.trim());
+                                userType,
+                                _inputControllerHeader.text.trim(),
+                                _inputControllerBody.text.trim());
                             Future.delayed(const Duration(seconds: 2), () {
                               _scholarReference.get().then((snapshot) {
                                 for (final scholarsId in snapshot.children) {
@@ -162,7 +307,7 @@ class _AnnounceState extends State<Announce> {
                                   String recieverUserType = "scholars";
                                   checkInbox(recieverUserType, scholarID);
                                   sendMessage(
-                                      message: _inputController.text.trim(),
+                                      message: _inputControllerBody.text.trim(),
                                       receiverID: scholarID,
                                       receiverUserType: recieverUserType);
                                 }
@@ -175,7 +320,8 @@ class _AnnounceState extends State<Announce> {
                                     String recieverUserType = "professors";
                                     checkInbox(recieverUserType, professorID);
                                     sendMessage(
-                                        message: _inputController.text.trim(),
+                                        message:
+                                            _inputControllerBody.text.trim(),
                                         receiverID: professorID,
                                         receiverUserType: recieverUserType);
                                   }
@@ -193,7 +339,7 @@ class _AnnounceState extends State<Announce> {
                                     callback: () {
                                       Navigator.of(context, rootNavigator: true)
                                           .pop();
-                                      _inputController.text = "";
+                                      _inputControllerBody.text = "";
                                     }).buildSuccessScreen(context);
                               } else {
                                 Navigator.of(context, rootNavigator: true)
@@ -206,7 +352,7 @@ class _AnnounceState extends State<Announce> {
                                     callback: () {
                                       Navigator.of(context, rootNavigator: true)
                                           .pop();
-                                      _inputController.text = "";
+                                      _inputControllerBody.text = "";
                                     }).buildUnsuccessfulScreen(context);
                               }
                             });
@@ -286,10 +432,24 @@ class _AnnounceState extends State<Announce> {
     await sendInboxToReceiver.set(json);
   }
 
+  DropdownMenuItem<String> buildMenuItemUserType(String item) =>
+      DropdownMenuItem(
+        value: item,
+        child: Text(
+          item,
+          style: const TextStyle(
+            fontFamily: 'Inter',
+            fontWeight: FontWeight.w300,
+            fontSize: 12,
+            color: ColorPalette.primary,
+          ),
+        ),
+      );
+
   @override
   void dispose() {
-    // TODO: implement dispose
-    _inputController.dispose();
+    _inputControllerHeader.dispose();
+    _inputControllerBody.dispose();
     super.dispose();
   }
 }

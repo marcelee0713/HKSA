@@ -46,6 +46,7 @@ class _ProfileState extends State<Profile> {
         FirebaseDatabase.instance.ref().child('Users/Scholars/$userID');
     DatabaseReference userRefStatus =
         FirebaseDatabase.instance.ref().child('Users/Scholars/$userID/status');
+    final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
 
     oldDTRRef.get().then((link) => {
           if (link.exists) {oldDTRURl = link.value.toString()}
@@ -57,6 +58,10 @@ class _ProfileState extends State<Profile> {
           DialogLoading(subtext: "Logging out...").buildLoadingScreen(context);
         })).whenComplete(() {
           Future.delayed(const Duration(seconds: 3), () {
+            _firebaseMessaging.unsubscribeFromTopic('user_all');
+            _firebaseMessaging.unsubscribeFromTopic('scholars');
+            _firebaseMessaging.unsubscribeFromTopic('scholars_faci');
+            _firebaseMessaging.unsubscribeFromTopic('scholars_non_faci');
             logInBox.put("isLoggedIn", false);
             logInBox.put("hasTimedIn", false);
             logInBox.put("userType", "");
@@ -166,6 +171,10 @@ class _ProfileState extends State<Profile> {
           Future.delayed(
             const Duration(seconds: 3),
             () {
+              _firebaseMessaging.unsubscribeFromTopic('user_all');
+              _firebaseMessaging.unsubscribeFromTopic('scholars');
+              _firebaseMessaging.unsubscribeFromTopic('scholars_faci');
+              _firebaseMessaging.unsubscribeFromTopic('scholars_non_faci');
               logInBox.put("isLoggedIn", false);
               logInBox.put("hasTimedIn", false);
               logInBox.put("userType", "");
@@ -626,6 +635,12 @@ class _ProfileState extends State<Profile> {
                                       logInBox.put("dateTimedIn", "");
                                       _firebaseMessaging
                                           .unsubscribeFromTopic('user_all');
+                                      _firebaseMessaging
+                                          .unsubscribeFromTopic('scholars');
+                                      _firebaseMessaging.unsubscribeFromTopic(
+                                          'scholars_faci');
+                                      _firebaseMessaging.unsubscribeFromTopic(
+                                          'scholars_non_faci');
                                       Navigator.of(context).pushAndRemoveUntil(
                                           MaterialPageRoute(
                                               builder: (context) =>

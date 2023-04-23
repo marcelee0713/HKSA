@@ -1,4 +1,5 @@
 import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:hksa/pages/login.dart';
@@ -29,6 +30,7 @@ class _DTRState extends State<DTR> {
         FirebaseDatabase.instance.ref().child('Users/Scholars/$userID');
     DatabaseReference userRefStatus =
         FirebaseDatabase.instance.ref().child('Users/Scholars/$userID/status');
+    final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
 
     userRef.get().then((user) {
       if (!user.exists) {
@@ -36,6 +38,10 @@ class _DTRState extends State<DTR> {
           DialogLoading(subtext: "Logging out...").buildLoadingScreen(context);
         })).whenComplete(() {
           Future.delayed(const Duration(seconds: 3), () {
+            _firebaseMessaging.unsubscribeFromTopic('user_all');
+            _firebaseMessaging.unsubscribeFromTopic('scholars');
+            _firebaseMessaging.unsubscribeFromTopic('scholars_faci');
+            _firebaseMessaging.unsubscribeFromTopic('scholars_non_faci');
             logInBox.put("isLoggedIn", false);
             logInBox.put("hasTimedIn", false);
             logInBox.put("userType", "");
@@ -145,6 +151,10 @@ class _DTRState extends State<DTR> {
           Future.delayed(
             const Duration(seconds: 3),
             () {
+              _firebaseMessaging.unsubscribeFromTopic('user_all');
+              _firebaseMessaging.unsubscribeFromTopic('scholars');
+              _firebaseMessaging.unsubscribeFromTopic('scholars_faci');
+              _firebaseMessaging.unsubscribeFromTopic('scholars_non_faci');
               logInBox.put("isLoggedIn", false);
               logInBox.put("hasTimedIn", false);
               logInBox.put("userType", "");

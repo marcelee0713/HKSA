@@ -44,6 +44,12 @@ class _HomeScholarState extends State<HomeScholar> {
   @override
   void initState() {
     _firebaseMessaging.subscribeToTopic('user_all');
+    _firebaseMessaging.subscribeToTopic('scholars');
+    if (scholarType == "Faci") {
+      _firebaseMessaging.subscribeToTopic('scholars_faci');
+    } else {
+      _firebaseMessaging.subscribeToTopic('scholars_non_faci');
+    }
     super.initState();
     showOldDTR ??= true;
     if (showOldDTR) {
