@@ -615,7 +615,6 @@ class _EditProfessorState extends State<EditProfessor> {
                               ),
                             ),
                             const SizedBox(height: 10),
-                            const SizedBox(height: 2),
                             TextFormField(
                               controller: _inputControllerSignatureCode,
                               maxLength: 20,

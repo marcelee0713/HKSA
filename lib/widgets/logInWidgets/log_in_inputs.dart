@@ -251,298 +251,264 @@ class _LogInInputsState extends State<LogInInputs> {
                         ColorPalette.accentDarkWhite),
                   ),
                   onPressed: (() async {
-                    setState(() {
-                      if (!_formKey.currentState!.validate()) {
-                        return;
-                      }
-                      DialogLoading(subtext: "Logging in...")
-                          .buildLoadingScreen(context);
-                      // This is where it finds the user in the firebase database
-                      // And if it did find it will log in depends on the user type
-                      // if not. It will pop up a modal that it will show
-                      // NO USER FOUND
-                      String userType = value!.toLowerCase();
-                      String userID = _inputControllerUserID.text.trim();
-                      String userPassword = _inputControllerPassword.text;
-                      bool userExist = false;
-                      bool doneCheckingUsers = false;
-                      bool userActive = true;
+                    if (!_formKey.currentState!.validate()) {
+                      return;
+                    }
+                    DialogLoading(subtext: "Logging in...")
+                        .buildLoadingScreen(context);
+                    // This is where it finds the user in the firebase database
+                    // And if it did find it will log in depends on the user type
+                    // if not. It will pop up a modal that it will show
+                    // NO USER FOUND
+                    String userType = value!.toLowerCase();
+                    String userID = _inputControllerUserID.text.trim();
+                    String userPassword = _inputControllerPassword.text;
+                    bool userExist = false;
+                    bool doneCheckingUsers = false;
+                    bool userActive = true;
 
-                      Future.delayed(
-                        const Duration(seconds: 2),
-                        (() => {
-                              if (userType == "scholar")
-                                {
-                                  dbReference
-                                      .child('Users/Scholars/')
-                                      .get()
-                                      .then((snapshot) {
-                                    for (final test in snapshot.children) {
-                                      if (test.key == userID) {
-                                        Map<String, dynamic> myObj =
-                                            jsonDecode(jsonEncode(test.value));
+                    Future.delayed(
+                      const Duration(seconds: 2),
+                      (() async {
+                        if (userType == "scholar") {
+                          await dbReference
+                              .child('Users/Scholars/')
+                              .get()
+                              .then((snapshot) {
+                            for (final test in snapshot.children) {
+                              if (test.key == userID) {
+                                Map<String, dynamic> myObj =
+                                    jsonDecode(jsonEncode(test.value));
 
-                                        Scholar myScholarObj =
-                                            Scholar.fromJson(myObj);
+                                Scholar myScholarObj = Scholar.fromJson(myObj);
 
-                                        if (myScholarObj.status == "inactive") {
-                                          Navigator.of(context,
-                                                  rootNavigator: true)
-                                              .pop();
-                                          userActive = false;
-                                          DialogUnsuccessful(
-                                            headertext:
-                                                "Your Status is Inactive! ",
-                                            subtext:
-                                                "Please proceed to CSDL for this concern",
-                                            textButton: "Close",
-                                            callback: () {
-                                              Navigator.of(context,
-                                                      rootNavigator: true)
-                                                  .pop();
-                                            },
-                                          ).buildUnsuccessfulScreen(context);
-                                          userExist = false;
-                                          break;
-                                        }
-                                        // Dito ka gumawa Monce
-
-                                        if (myScholarObj.password ==
-                                            userPassword) {
-                                          debugPrint("IT MATCHES");
-                                          Navigator.of(context,
-                                                  rootNavigator: true)
-                                              .pop();
-
-                                          // Put it in our LocalStorage
-                                          // Para ma save yung login state niya.
-                                          // And also some other stuff that need
-                                          // to be stored.
-                                          _myLoginBox.put("isLoggedIn", true);
-                                          _myLoginBox.put("hasTimedIn", false);
-                                          _myLoginBox.put(
-                                              "userType", "scholar");
-                                          _myLoginBox.put("userID", userID);
-                                          _myLoginBox.put(
-                                              "userName", myScholarObj.name);
-                                          _myLoginBox.put("getTimeInLS", "");
-                                          _myLoginBox.put("scholarType",
-                                              myScholarObj.scholarType);
-
-                                          // Will now go to the ScholarPage
-                                          // And literally replace any pages.
-                                          Navigator.of(
-                                                  context)
-                                              .pushAndRemoveUntil(
-                                                  MaterialPageRoute(
-                                                      builder: (context) =>
-                                                          const HomeScholar()),
-                                                  (Route<dynamic> route) =>
-                                                      false);
-                                          userExist = true;
-                                          doneCheckingUsers = false;
-                                          break;
-                                        } else {
-                                          Navigator.of(context,
-                                                  rootNavigator: true)
-                                              .pop();
-                                          DialogUnsuccessful(
-                                            headertext: "Wrong Password.",
-                                            subtext:
-                                                "Seems like you entered the wrong password.",
-                                            textButton: "Close",
-                                            callback: (() => Navigator.of(
-                                                    context,
-                                                    rootNavigator: true)
-                                                .pop()),
-                                          ).buildUnsuccessfulScreen(context);
-                                          userExist = true;
-                                          break;
-                                        }
-                                      }
-                                    }
-                                  })
-                                },
-                              if (userType == "professor")
-                                {
-                                  dbReference
-                                      .child('Users/Professors/')
-                                      .get()
-                                      .then((snapshot) {
-                                    for (final test in snapshot.children) {
-                                      if (test.key == userID) {
-                                        Map<String, dynamic> myObj =
-                                            jsonDecode(jsonEncode(test.value));
-
-                                        Professor myProfObj =
-                                            Professor.fromJson(myObj);
-                                        // Dito ka gumawa Monce
-
-                                        if (myProfObj.password ==
-                                            userPassword) {
-                                          debugPrint("IT MATCHES");
-                                          Navigator.of(context,
-                                                  rootNavigator: true)
-                                              .pop();
-
-                                          // Put it in our LocalStorage
-                                          // Para ma save yung login state niya.
-                                          // And also some other stuff that need
-                                          // to be stored.
-                                          _myLoginBox.put("isLoggedIn", true);
-                                          _myLoginBox.put("hasTimedIn", false);
-                                          _myLoginBox.put(
-                                              "userType", "professor");
-                                          _myLoginBox.put("userID", userID);
-                                          _myLoginBox.put(
-                                              "userName", myProfObj.name);
-                                          _myLoginBox.put("getTimeInLS", "");
-
-                                          // Will now go to the ProfPage
-                                          // And literally replace any pages.
-                                          Navigator.of(
-                                                  context)
-                                              .pushAndRemoveUntil(
-                                                  MaterialPageRoute(
-                                                      builder: (context) =>
-                                                          const HomeProfessor()),
-                                                  (Route<dynamic> route) =>
-                                                      false);
-                                          userExist = true;
-                                          doneCheckingUsers = false;
-                                          break;
-                                        } else {
-                                          Navigator.of(context,
-                                                  rootNavigator: true)
-                                              .pop();
-                                          DialogUnsuccessful(
-                                            headertext: "Wrong Password.",
-                                            subtext:
-                                                "Seems like you entered the wrong password.",
-                                            textButton: "Close",
-                                            callback: (() => Navigator.of(
-                                                    context,
-                                                    rootNavigator: true)
-                                                .pop()),
-                                          ).buildUnsuccessfulScreen(context);
-                                          userExist = true;
-                                          break;
-                                        }
-                                      }
-                                    }
-                                    doneCheckingUsers = true;
-                                  })
-                                },
-                              if (userType == "head")
-                                {
-                                  dbReference
-                                      .child('Users/Head/')
-                                      .get()
-                                      .then((snapshot) {
-                                    for (final test in snapshot.children) {
-                                      if (test.key == userID) {
-                                        Map<String, dynamic> myObj =
-                                            jsonDecode(jsonEncode(test.value));
-
-                                        Head myHeadObj = Head.fromJson(myObj);
-                                        // Dito ka gumawa Monce
-
-                                        if (myHeadObj.password ==
-                                            userPassword) {
-                                          debugPrint("IT MATCHES");
-                                          Navigator.of(context,
-                                                  rootNavigator: true)
-                                              .pop();
-
-                                          // Put it in our LocalStorage
-                                          // Para ma save yung login state niya.
-                                          // And also some other stuff that need
-                                          // to be stored.
-                                          _myLoginBox.put("isLoggedIn", true);
-                                          _myLoginBox.put("hasTimedIn", false);
-                                          _myLoginBox.put("userType", "head");
-                                          _myLoginBox.put("userID", userID);
-                                          _myLoginBox.put(
-                                              "userName", myHeadObj.name);
-                                          _myLoginBox.put("getTimeInLS", "");
-
-                                          // Will now go to the Admin page
-                                          // And literally replace any pages.
-                                          Navigator.of(
-                                                  context)
-                                              .pushAndRemoveUntil(
-                                                  MaterialPageRoute(
-                                                      builder: (context) =>
-                                                          const HomeAdmin()),
-                                                  (Route<dynamic> route) =>
-                                                      false);
-                                          userExist = true;
-                                          doneCheckingUsers = false;
-                                          break;
-                                        } else {
-                                          Navigator.of(context,
-                                                  rootNavigator: true)
-                                              .pop();
-                                          DialogUnsuccessful(
-                                            headertext: "Wrong Password.",
-                                            subtext:
-                                                "Seems like you entered the wrong password.",
-                                            textButton: "Close",
-                                            callback: (() => Navigator.of(
-                                                    context,
-                                                    rootNavigator: true)
-                                                .pop()),
-                                          ).buildUnsuccessfulScreen(context);
-                                          userExist = true;
-                                          break;
-                                        }
-                                      }
-                                    }
-                                    doneCheckingUsers = true;
-                                  })
+                                if (myScholarObj.status == "inactive") {
+                                  Navigator.of(context, rootNavigator: true)
+                                      .pop();
+                                  userActive = false;
+                                  DialogUnsuccessful(
+                                    headertext: "Your Status is Inactive! ",
+                                    subtext:
+                                        "Please proceed to CSDL for this concern",
+                                    textButton: "Close",
+                                    callback: () {
+                                      Navigator.of(context, rootNavigator: true)
+                                          .pop();
+                                    },
+                                  ).buildUnsuccessfulScreen(context);
+                                  userExist = false;
+                                  break;
                                 }
-                            }),
-                      ).whenComplete(() => {
-                            Future.delayed(const Duration(milliseconds: 2500),
-                                () async {
-                              userExist
-                                  ? doneCheckingUsers = false
-                                  : doneCheckingUsers = true;
-                              if (userType == "scholar") {
-                                if (!userExist &&
-                                    doneCheckingUsers &&
-                                    userActive) {
+                                // Dito ka gumawa Monce
+
+                                if (myScholarObj.password == userPassword) {
+                                  debugPrint("IT MATCHES");
+                                  Navigator.of(context, rootNavigator: true)
+                                      .pop();
+
+                                  // Put it in our LocalStorage
+                                  // Para ma save yung login state niya.
+                                  // And also some other stuff that need
+                                  // to be stored.
+                                  _myLoginBox.put("isLoggedIn", true);
+                                  _myLoginBox.put("hasTimedIn", false);
+                                  _myLoginBox.put("userType", "scholar");
+                                  _myLoginBox.put("userID", userID);
+                                  _myLoginBox.put(
+                                      "userName", myScholarObj.name);
+                                  _myLoginBox.put("getTimeInLS", "");
+                                  _myLoginBox.put(
+                                      "scholarType", myScholarObj.scholarType);
+
+                                  // Will now go to the ScholarPage
+                                  // And literally replace any pages.
+                                  Navigator.of(context).pushAndRemoveUntil(
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              const HomeScholar()),
+                                      (Route<dynamic> route) => false);
+                                  userExist = true;
+                                  doneCheckingUsers = false;
+                                  break;
+                                } else {
                                   Navigator.of(context, rootNavigator: true)
                                       .pop();
                                   DialogUnsuccessful(
-                                    headertext: "USER NOT FOUND",
+                                    headertext: "Wrong Password.",
                                     subtext:
-                                        "Sorry, we can't find that user in our database or maybe you're not connected to the internet.",
+                                        "Seems like you entered the wrong password.",
                                     textButton: "Close",
                                     callback: (() => Navigator.of(context,
                                             rootNavigator: true)
                                         .pop()),
                                   ).buildUnsuccessfulScreen(context);
-                                }
-                              } else if (userType == "professor" ||
-                                  userType == "head") {
-                                if (!userExist && doneCheckingUsers) {
-                                  Navigator.of(context, rootNavigator: true)
-                                      .pop();
-                                  DialogUnsuccessful(
-                                    headertext: "USER NOT FOUND",
-                                    subtext:
-                                        "Sorry, we can't find that user in our database or maybe you're not connected to the internet.",
-                                    textButton: "Close",
-                                    callback: (() => Navigator.of(context,
-                                            rootNavigator: true)
-                                        .pop()),
-                                  ).buildUnsuccessfulScreen(context);
+                                  userExist = true;
+                                  break;
                                 }
                               }
-                            })
+                            }
                           });
-                    });
+                          doneCheckingUsers = true;
+                        }
+                        if (userType == "professor") {
+                          await dbReference
+                              .child('Users/Professors/')
+                              .get()
+                              .then((snapshot) {
+                            for (final test in snapshot.children) {
+                              if (test.key == userID) {
+                                Map<String, dynamic> myObj =
+                                    jsonDecode(jsonEncode(test.value));
+
+                                Professor myProfObj = Professor.fromJson(myObj);
+                                // Dito ka gumawa Monce
+
+                                if (myProfObj.password == userPassword) {
+                                  debugPrint("IT MATCHES");
+                                  Navigator.of(context, rootNavigator: true)
+                                      .pop();
+
+                                  // Put it in our LocalStorage
+                                  // Para ma save yung login state niya.
+                                  // And also some other stuff that need
+                                  // to be stored.
+                                  _myLoginBox.put("isLoggedIn", true);
+                                  _myLoginBox.put("hasTimedIn", false);
+                                  _myLoginBox.put("userType", "professor");
+                                  _myLoginBox.put("userID", userID);
+                                  _myLoginBox.put("userName", myProfObj.name);
+                                  _myLoginBox.put("getTimeInLS", "");
+
+                                  // Will now go to the ProfPage
+                                  // And literally replace any pages.
+                                  Navigator.of(context).pushAndRemoveUntil(
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              const HomeProfessor()),
+                                      (Route<dynamic> route) => false);
+                                  userExist = true;
+                                  doneCheckingUsers = false;
+                                  break;
+                                } else {
+                                  Navigator.of(context, rootNavigator: true)
+                                      .pop();
+                                  DialogUnsuccessful(
+                                    headertext: "Wrong Password.",
+                                    subtext:
+                                        "Seems like you entered the wrong password.",
+                                    textButton: "Close",
+                                    callback: (() => Navigator.of(context,
+                                            rootNavigator: true)
+                                        .pop()),
+                                  ).buildUnsuccessfulScreen(context);
+                                  userExist = true;
+                                  break;
+                                }
+                              }
+                            }
+                          });
+                          doneCheckingUsers = true;
+                        }
+                        if (userType == "head") {
+                          await dbReference
+                              .child('Users/Head/')
+                              .get()
+                              .then((snapshot) {
+                            for (final test in snapshot.children) {
+                              if (test.key == userID) {
+                                Map<String, dynamic> myObj =
+                                    jsonDecode(jsonEncode(test.value));
+
+                                Head myHeadObj = Head.fromJson(myObj);
+                                // Dito ka gumawa Monce
+
+                                if (myHeadObj.password == userPassword) {
+                                  debugPrint("IT MATCHES");
+                                  Navigator.of(context, rootNavigator: true)
+                                      .pop();
+
+                                  // Put it in our LocalStorage
+                                  // Para ma save yung login state niya.
+                                  // And also some other stuff that need
+                                  // to be stored.
+                                  _myLoginBox.put("isLoggedIn", true);
+                                  _myLoginBox.put("hasTimedIn", false);
+                                  _myLoginBox.put("userType", "head");
+                                  _myLoginBox.put("userID", userID);
+                                  _myLoginBox.put("userName", myHeadObj.name);
+                                  _myLoginBox.put("getTimeInLS", "");
+
+                                  // Will now go to the Admin page
+                                  // And literally replace any pages.
+                                  Navigator.of(context).pushAndRemoveUntil(
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              const HomeAdmin()),
+                                      (Route<dynamic> route) => false);
+                                  userExist = true;
+                                  doneCheckingUsers = false;
+                                  break;
+                                } else {
+                                  Navigator.of(context, rootNavigator: true)
+                                      .pop();
+                                  DialogUnsuccessful(
+                                    headertext: "Wrong Password.",
+                                    subtext:
+                                        "Seems like you entered the wrong password.",
+                                    textButton: "Close",
+                                    callback: (() => Navigator.of(context,
+                                            rootNavigator: true)
+                                        .pop()),
+                                  ).buildUnsuccessfulScreen(context);
+                                  userExist = true;
+                                  break;
+                                }
+                              }
+                            }
+                          });
+                          doneCheckingUsers = true;
+                        }
+                      }),
+                    ).whenComplete(() => {
+                          Future.delayed(const Duration(milliseconds: 2500),
+                              () async {
+                            userExist
+                                ? doneCheckingUsers = false
+                                : doneCheckingUsers = true;
+                            if (userType == "scholar") {
+                              if (!userExist &&
+                                  doneCheckingUsers &&
+                                  userActive) {
+                                Navigator.of(context, rootNavigator: true)
+                                    .pop();
+                                DialogUnsuccessful(
+                                  headertext: "USER NOT FOUND",
+                                  subtext:
+                                      "Sorry, we can't find that user in our database or maybe you're not connected to the internet.",
+                                  textButton: "Close",
+                                  callback: (() =>
+                                      Navigator.of(context, rootNavigator: true)
+                                          .pop()),
+                                ).buildUnsuccessfulScreen(context);
+                              }
+                            } else if (userType == "professor" ||
+                                userType == "head") {
+                              if (!userExist && doneCheckingUsers) {
+                                Navigator.of(context, rootNavigator: true)
+                                    .pop();
+                                DialogUnsuccessful(
+                                  headertext: "USER NOT FOUND",
+                                  subtext:
+                                      "Sorry, we can't find that user in our database or maybe you're not connected to the internet.",
+                                  textButton: "Close",
+                                  callback: (() =>
+                                      Navigator.of(context, rootNavigator: true)
+                                          .pop()),
+                                ).buildUnsuccessfulScreen(context);
+                              }
+                            }
+                          })
+                        });
                   }),
                   child: const Text(
                     "Log in",
