@@ -9,9 +9,6 @@ import 'package:hksa/constant/colors.dart';
 import 'package:hksa/models/logs.dart';
 import 'package:hksa/widgets/scholarWidgets/chart/log_box.dart';
 
-final logInBox = Hive.box("myLoginBox");
-var userID = logInBox.get("userID");
-
 class LogsListView extends StatefulWidget {
   const LogsListView({super.key});
 
@@ -150,6 +147,8 @@ class _LogsListViewState extends State<LogsListView> {
   }
 
   Future<List<Logs>> createLogsCollection() async {
+    final logInBox = Hive.box("myLoginBox");
+    var userID = logInBox.get("userID");
     List<Logs> dataList = [];
     DatabaseReference dbReference =
         FirebaseDatabase.instance.ref().child('dtrlogs/$userID');

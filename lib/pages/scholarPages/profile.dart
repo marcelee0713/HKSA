@@ -1,7 +1,5 @@
 import 'dart:convert';
-
 import 'package:another_flushbar/flushbar.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -13,6 +11,7 @@ import 'package:hksa/pages/login.dart';
 import 'package:hksa/widgets/dialogs/dialog_confirm.dart';
 import 'package:hksa/widgets/dialogs/dialog_loading.dart';
 import 'package:hksa/widgets/dialogs/dialog_success.dart';
+import 'package:hksa/widgets/dialogs/dialog_unsuccessful.dart';
 import 'package:hksa/widgets/dialogs/dialog_upload_dtr.dart';
 import 'package:hksa/widgets/universal/change_password.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -742,8 +741,22 @@ class _ProfileState extends State<Profile> {
                         return;
                       }
 
-                      DialogUploadDTR(() => launchUrl(Uri.parse(oldDTRURl)))
-                          .buildUploadDTr(context);
+                      DialogUploadDTR(() async {
+                        Navigator.of(context, rootNavigator: true).pop();
+                        String res = await uploadURL();
+                        if (res == "error") {
+                          // ignore: use_build_context_synchronously
+                          DialogUnsuccessful(
+                            headertext: "Error",
+                            subtext:
+                                "Seems like the link for google drive doesn't exist",
+                            textButton: "Close",
+                            callback: () => {
+                              Navigator.of(context, rootNavigator: true).pop()
+                            },
+                          ).buildUnsuccessfulScreen(context);
+                        }
+                      }).buildUploadDTr(context);
                     },
                     child: const Text(
                       "Upload OLD DTR",
@@ -800,6 +813,25 @@ class _ProfileState extends State<Profile> {
         },
       ),
     );
+  }
+
+  Future<String> uploadURL() async {
+    String res = "error";
+    try {
+      if (await canLaunchUrl(Uri.parse(oldDTRURl))) {
+        launchUrl(
+          Uri.parse(oldDTRURl),
+          mode: LaunchMode.externalApplication,
+        );
+        res = "success";
+      } else {
+        res = "error";
+      }
+    } catch (error) {
+      res = error.toString();
+    }
+
+    return res;
   }
 
   Future<List<Scholar>> getScholar() async {

@@ -135,8 +135,8 @@ class _NavDrawState extends State<NavDraw> {
             ),
             const SizedBox(height: 16),
             _createDrawerItem(
-                icon: Icons.refresh,
-                text: "Reset",
+                icon: Icons.settings,
+                text: "Settings",
                 onTap: () {
                   setState(() {
                     selectedIndex = 4;

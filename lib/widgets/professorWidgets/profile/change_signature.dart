@@ -152,10 +152,6 @@ class _ChangeProfessorSignatureState extends State<ChangeProfessorSignature> {
     });
   }
 
-  DatabaseReference dbReference = FirebaseDatabase.instance
-      .ref()
-      .child("Users/Professors/$userID/signaturecode");
-
   @override
   Widget build(BuildContext context) {
     String result = "";
@@ -424,6 +420,11 @@ class _ChangeProfessorSignatureState extends State<ChangeProfessorSignature> {
   }
 
   Future getSignature() async {
+    final logInBox = Hive.box("myLoginBox");
+    var userID = logInBox.get("userID");
+    DatabaseReference dbReference = FirebaseDatabase.instance
+        .ref()
+        .child("Users/Professors/$userID/signaturecode");
     final snapshot = await dbReference.get();
     if (snapshot.exists) {
       setState(() {

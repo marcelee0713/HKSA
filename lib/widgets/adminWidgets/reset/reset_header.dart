@@ -7,13 +7,14 @@ class ResetHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: const [
         Text(
           "Danger Zone",
           style: TextStyle(
             color: ColorPalette.errorColor,
             fontFamily: 'Inter',
-            fontSize: 24,
+            fontSize: 20,
             fontWeight: FontWeight.w700,
           ),
         ),
@@ -23,7 +24,7 @@ class ResetHeader extends StatelessWidget {
           style: TextStyle(
             color: ColorPalette.errorColor,
             fontFamily: 'Inter',
-            fontSize: 13,
+            fontSize: 14,
             fontWeight: FontWeight.w400,
           ),
         ),

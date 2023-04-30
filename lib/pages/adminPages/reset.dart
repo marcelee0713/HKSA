@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hksa/constant/colors.dart';
 import 'package:hksa/widgets/adminWidgets/nav_drawer.dart';
+import 'package:hksa/widgets/adminWidgets/reset/old_dtr_link.dart';
 import 'package:hksa/widgets/adminWidgets/reset/reset_buttons.dart';
 import 'package:hksa/widgets/adminWidgets/reset/reset_header.dart';
 
@@ -41,13 +42,13 @@ class _ResetState extends State<Reset> {
             padding: const EdgeInsets.all(20),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: const [
-                Center(
-                  child: ResetHeader(),
-                ),
-                SizedBox(height: 8),
-                ResetButtons()
+                UploadGoogleDrivePage(),
+                SizedBox(height: 32),
+                ResetHeader(),
+                SizedBox(height: 10),
+                ResetButtons(),
               ],
             ),
           ),
