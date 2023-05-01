@@ -127,6 +127,8 @@ class HKSAStrings {
   static const contactsCategories = [
     'All',
     'Scholars',
+    'Scholars (Faci)',
+    'Scholars (Non-Faci)',
     'Professors',
     'Active',
     'Inactive',
