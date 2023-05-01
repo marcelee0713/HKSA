@@ -12,12 +12,14 @@ class ChatBox extends StatefulWidget {
   final String userId;
   final String pfpUrl;
   final String userType;
+  final String isIncomplete;
   const ChatBox(
       {super.key,
       required this.name,
       required this.userId,
       required this.pfpUrl,
-      required this.userType});
+      required this.userType,
+      required this.isIncomplete});
 
   @override
   State<ChatBox> createState() => _ChatBoxState();
@@ -103,6 +105,17 @@ class _ChatBoxState extends State<ChatBox> {
                               fontWeight: FontWeight.w300,
                             ),
                           ),
+                    widget.isIncomplete == "true"
+                        ? const Text(
+                            "INC",
+                            style: TextStyle(
+                              color: ColorPalette.errorColor,
+                              fontFamily: 'Inter',
+                              fontSize: 10,
+                              fontWeight: FontWeight.w300,
+                            ),
+                          )
+                        : const SizedBox()
                   ],
                 ),
               ],

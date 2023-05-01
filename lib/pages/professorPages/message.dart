@@ -308,6 +308,7 @@ class _MessagesState extends State<Messages> {
                           userId: snapshot.data![index].userId,
                           pfpUrl: snapshot.data![index].pfp,
                           userType: snapshot.data![index].userType,
+                          isIncomplete: snapshot.data![index].isIncomplete,
                         );
                       }
                       return Container();
@@ -335,6 +336,7 @@ class _MessagesState extends State<Messages> {
               userId: myHeadObj.userId,
               pfp: myHeadObj.profilePicture,
               userType: "head",
+              isIncomplete: "false",
             );
             myAppList.add(myChatObj);
           }
@@ -346,10 +348,12 @@ class _MessagesState extends State<Messages> {
             Map<String, dynamic> myObj = jsonDecode(jsonEncode(data.value));
             Scholar myScholarObj = Scholar.fromJson(myObj);
             Chat myChatObj = Chat(
-                name: myScholarObj.name,
-                userId: myScholarObj.studentNumber,
-                pfp: myScholarObj.profilePicture,
-                userType: "scholar");
+              name: myScholarObj.name,
+              userId: myScholarObj.studentNumber,
+              pfp: myScholarObj.profilePicture,
+              userType: "scholar",
+              isIncomplete: "false",
+            );
             myAppList.add(myChatObj);
           }
         },
