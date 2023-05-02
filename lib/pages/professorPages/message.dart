@@ -209,19 +209,6 @@ class _MessagesState extends State<Messages> {
                     ),
                   ),
                 ),
-                /* For the admin soon.
-                const SizedBox(width: 10),
-                InkWell(
-                  onTap: () {
-                    //announcements supposed to be here!
-                  },
-                  child: const Icon(
-                    Icons.campaign,
-                    color: ColorPalette.primary,
-                    size: 40.0,
-                  ),
-                )
-                */
               ],
             ),
             const SizedBox(height: 20),

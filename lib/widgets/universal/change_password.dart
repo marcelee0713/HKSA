@@ -3,11 +3,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:hksa/constant/colors.dart';
 import 'package:hksa/widgets/dialogs/dialog_loading.dart';
-
-final _inputControllerOldPassword = TextEditingController();
-final _inputControllerNewPassword = TextEditingController();
-final _inputControllerCfrmPassword = TextEditingController();
-final _formKey = GlobalKey<FormState>();
+import 'package:hksa/widgets/dialogs/dialog_unsuccessful.dart';
 
 class ChangePassword extends StatefulWidget {
   const ChangePassword(
@@ -20,6 +16,10 @@ class ChangePassword extends StatefulWidget {
 }
 
 class _ChangePasswordState extends State<ChangePassword> {
+  final _inputControllerOldPassword = TextEditingController();
+  final _inputControllerNewPassword = TextEditingController();
+  final _inputControllerCfrmPassword = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
   String userPassword = "";
   bool isFetched = false;
   bool _oldPasswordVisible = false;
@@ -28,8 +28,8 @@ class _ChangePasswordState extends State<ChangePassword> {
 
   @override
   void initState() {
-    super.initState();
     getPassword();
+    super.initState();
   }
 
   @override
@@ -272,16 +272,40 @@ class _ChangePasswordState extends State<ChangePassword> {
                               ),
                               const SizedBox(height: 5),
                               ElevatedButton(
-                                onPressed: () {
+                                onPressed: () async {
                                   if (!_formKey.currentState!.validate()) {
                                     return;
                                   }
-                                  _inputControllerOldPassword.text = "";
-                                  _inputControllerNewPassword.text = "";
-                                  _inputControllerCfrmPassword.text = "";
-                                  Navigator.pop(context, result);
-                                  DialogLoading(subtext: "Changing...")
-                                      .buildLoadingScreen(context);
+
+                                  await createHistory(
+                                          desc:
+                                              "User changed password from ${_inputControllerOldPassword.text} to ${_inputControllerCfrmPassword.text}",
+                                          timeStamp: DateTime.now()
+                                              .microsecondsSinceEpoch
+                                              .toString(),
+                                          userType: widget.userType,
+                                          id: widget.userID)
+                                      .then((value) {
+                                    _inputControllerOldPassword.text = "";
+                                    _inputControllerNewPassword.text = "";
+                                    _inputControllerCfrmPassword.text = "";
+                                    Navigator.pop(context, result);
+                                    DialogLoading(subtext: "Changing...")
+                                        .buildLoadingScreen(context);
+                                  }).catchError(
+                                    // ignore: invalid_return_type_for_catch_error
+                                    (error) => {
+                                      DialogUnsuccessful(
+                                        headertext: "Error",
+                                        subtext:
+                                            "Whoops seems like there's an error. Please try again!",
+                                        textButton: "Close",
+                                        callback: () => Navigator.of(context,
+                                                rootNavigator: true)
+                                            .pop(),
+                                      ),
+                                    },
+                                  );
                                 },
                                 child: const Text(
                                   "CONFIRM",
@@ -320,5 +344,36 @@ class _ChangePasswordState extends State<ChangePassword> {
         isFetched = false;
       });
     }
+  }
+
+  Future createHistory(
+      {required String desc,
+      required String timeStamp,
+      required String userType,
+      required String id}) async {
+    try {
+      DatabaseReference dbReference =
+          FirebaseDatabase.instance.ref().child('historylogs/$id');
+      String? key = dbReference.push().key;
+
+      final json = {
+        'desc': desc,
+        'timeStamp': timeStamp,
+        'userType': userType,
+        'id': id,
+      };
+
+      await dbReference.child(key!).set(json);
+    } catch (error) {
+      rethrow;
+    }
+  }
+
+  @override
+  void dispose() {
+    _inputControllerOldPassword.dispose();
+    _inputControllerNewPassword.dispose();
+    _inputControllerCfrmPassword.dispose();
+    super.dispose();
   }
 }

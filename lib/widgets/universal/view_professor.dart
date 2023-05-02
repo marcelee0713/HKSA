@@ -13,6 +13,7 @@ import 'package:hksa/pages/adminPages/contact.dart';
 import 'package:hksa/widgets/dialogs/dialog_confirm.dart';
 import 'package:hksa/widgets/dialogs/dialog_edit_professor.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
+import 'package:hksa/widgets/universal/view_history_logs.dart';
 import 'package:hksa/widgets/universal/view_inbox.dart';
 
 class ProfessorProfile extends StatefulWidget {
@@ -378,6 +379,7 @@ class _ProfessorProfileState extends State<ProfessorProfile> {
                         ),
                         userType == "head"
                             ? Column(
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
                                 children: [
                                   Row(
                                     children: [
@@ -450,37 +452,51 @@ class _ProfessorProfileState extends State<ProfessorProfile> {
                                       Expanded(
                                         child: ElevatedButton(
                                           onPressed: () {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) =>
+                                                    HistoryLogs(
+                                                        userID: widget.userID),
+                                              ),
+                                            );
+                                          },
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor:
+                                                ColorPalette.primary,
+                                          ),
+                                          child: const Text(
+                                            "View History Logs",
+                                            style: TextStyle(
+                                                fontFamily: 'Inter',
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.w400,
+                                                color:
+                                                    ColorPalette.accentWhite),
+                                          ),
+                                        ),
+                                      ),
+                                      const SizedBox(width: 5),
+                                      Expanded(
+                                        child: ElevatedButton(
+                                          onPressed: () {
                                             DialogConfirm(
                                                 headertext:
-                                                    "Are you sure you want to delete this user?",
+                                                    "Are you sure you reset history logs of this user?",
                                                 callback: () async {
                                                   Navigator.of(context,
                                                           rootNavigator: true)
                                                       .pop();
+
                                                   final DatabaseReference
-                                                      userReference =
+                                                      historyLogsReference =
                                                       FirebaseDatabase.instance
                                                           .ref()
                                                           .child(
-                                                              'Users/Professors/${widget.userID}');
+                                                              'historylogs/${widget.userID}');
 
-                                                  await userReference.remove();
-                                                  if (FirebaseStorage.instance
-                                                          .refFromURL(snapshot
-                                                              .data!
-                                                              .first
-                                                              .profilePicture) !=
-                                                      FirebaseStorage.instance
-                                                          .refFromURL(HKSAStrings
-                                                              .pfpPlaceholder)) {
-                                                    await FirebaseStorage
-                                                        .instance
-                                                        .refFromURL(snapshot
-                                                            .data!
-                                                            .first
-                                                            .profilePicture)
-                                                        .delete();
-                                                  }
+                                                  await historyLogsReference
+                                                      .remove();
 
                                                   // ignore: use_build_context_synchronously
                                                   Navigator.of(context,
@@ -500,18 +516,82 @@ class _ProfessorProfileState extends State<ProfessorProfile> {
                                                 ColorPalette.errorColor,
                                           ),
                                           child: const Text(
-                                            "Delete",
+                                            "Reset History Logs",
                                             style: TextStyle(
                                                 fontFamily: 'Inter',
-                                                fontSize: 16,
+                                                fontSize: 14,
                                                 fontWeight: FontWeight.w400,
                                                 color:
                                                     ColorPalette.accentWhite),
                                           ),
                                         ),
-                                      )
+                                      ),
                                     ],
                                   ),
+                                  ElevatedButton(
+                                    onPressed: () {
+                                      DialogConfirm(
+                                          headertext:
+                                              "Are you sure you want to delete this user?",
+                                          callback: () async {
+                                            Navigator.of(context,
+                                                    rootNavigator: true)
+                                                .pop();
+                                            final DatabaseReference
+                                                userReference = FirebaseDatabase
+                                                    .instance
+                                                    .ref()
+                                                    .child(
+                                                        'Users/Professors/${widget.userID}');
+
+                                            final DatabaseReference
+                                                historyLogsReference =
+                                                FirebaseDatabase.instance
+                                                    .ref()
+                                                    .child(
+                                                        'historylogs/${widget.userID}');
+
+                                            await userReference.remove();
+                                            await historyLogsReference.remove();
+                                            if (FirebaseStorage.instance
+                                                    .refFromURL(snapshot
+                                                        .data!
+                                                        .first
+                                                        .profilePicture) !=
+                                                FirebaseStorage.instance
+                                                    .refFromURL(HKSAStrings
+                                                        .pfpPlaceholder)) {
+                                              await FirebaseStorage.instance
+                                                  .refFromURL(snapshot.data!
+                                                      .first.profilePicture)
+                                                  .delete();
+                                            }
+
+                                            // ignore: use_build_context_synchronously
+                                            Navigator.of(context,
+                                                    rootNavigator: true)
+                                                .pop();
+
+                                            // ignore: use_build_context_synchronously
+                                            Navigator.pushReplacement(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        const AdminContacts()));
+                                          }).buildConfirmScreen(context);
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: ColorPalette.errorColor,
+                                    ),
+                                    child: const Text(
+                                      "Delete",
+                                      style: TextStyle(
+                                          fontFamily: 'Inter',
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w400,
+                                          color: ColorPalette.accentWhite),
+                                    ),
+                                  )
                                 ],
                               )
                             : ElevatedButton(

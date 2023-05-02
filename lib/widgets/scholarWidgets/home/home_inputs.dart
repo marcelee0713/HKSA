@@ -161,24 +161,54 @@ class _ScholarHomeInputsState extends State<ScholarHomeInputs> {
                     ? (() => setState(() {
                           DialogConfirm(
                             headertext: "Are you sure you want to time in?",
-                            callback: () {
+                            callback: () async {
                               Navigator.of(context, rootNavigator: true).pop();
-                              setState(() {
-                                String dateOnly = "";
-                                logInBox.put("hasTimedIn", true);
-                                hasTimedIn = true;
-                                hasTimedOut = false;
+                              DialogLoading(subtext: "Loading...")
+                                  .buildLoadingScreen(context);
+                              await createHistory(
+                                      desc: "Timed In",
+                                      timeStamp: DateTime.now()
+                                          .microsecondsSinceEpoch
+                                          .toString(),
+                                      userType: "scholar",
+                                      id: userID)
+                                  .then((value) {
+                                setState(
+                                  () {
+                                    Navigator.of(context, rootNavigator: true)
+                                        .pop();
+                                    String dateOnly = "";
+                                    logInBox.put("hasTimedIn", true);
+                                    hasTimedIn = true;
+                                    hasTimedOut = false;
 
-                                now = DateTime.now();
-                                formattedTimeInDateForDB =
-                                    DateFormat("E hh:mm:ss aaaaa yyyy-MM-dd")
+                                    now = DateTime.now();
+                                    formattedTimeInDateForDB = DateFormat(
+                                            "E hh:mm:ss aaaaa yyyy-MM-dd")
                                         .format(now);
-                                dateOnly = DateFormat("yyyy-MM-dd").format(now);
-                                logInBox.put(
-                                    "getTimeInLS", formattedTimeInDateForDB);
-                                logInBox.put("dateTimedIn", dateOnly);
-                                timeIn = formattedTimeInDateForDB;
-                              });
+                                    dateOnly =
+                                        DateFormat("yyyy-MM-dd").format(now);
+                                    logInBox.put("getTimeInLS",
+                                        formattedTimeInDateForDB);
+                                    logInBox.put("dateTimedIn", dateOnly);
+                                    timeIn = formattedTimeInDateForDB;
+                                  },
+                                );
+                              }).catchError(
+                                (error) {
+                                  Navigator.of(context, rootNavigator: true)
+                                      .pop();
+                                  DialogUnsuccessful(
+                                    headertext: "Error",
+                                    subtext: "Whoops we got an error!",
+                                    textButton: "Close",
+                                    callback: () => {
+                                      Navigator.of(context, rootNavigator: true)
+                                          .pop()
+                                    },
+                                  ).buildUnsuccessfulScreen(context);
+                                },
+                              );
                             },
                           ).buildConfirmScreen(context);
                         }))
@@ -217,7 +247,9 @@ class _ScholarHomeInputsState extends State<ScholarHomeInputs> {
                         final result = await Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => const DialogSign(),
+                              builder: (context) => DialogSign(
+                                  timeIn: formattedTimeInDateForDB,
+                                  timeOut: formattedTimeOutDateForDB),
                             ));
 
                         if (result == null) {
@@ -353,6 +385,29 @@ class _ScholarHomeInputsState extends State<ScholarHomeInputs> {
     };
 
     await dbReference.child(key!).set(json);
+  }
+}
+
+Future createHistory(
+    {required String desc,
+    required String timeStamp,
+    required String userType,
+    required String id}) async {
+  try {
+    DatabaseReference dbReference =
+        FirebaseDatabase.instance.ref().child('historylogs/$id');
+    String? key = dbReference.push().key;
+
+    final json = {
+      'desc': desc,
+      'timeStamp': timeStamp,
+      'userType': userType,
+      'id': id,
+    };
+
+    await dbReference.child(key!).set(json);
+  } catch (error) {
+    rethrow;
   }
 }
 

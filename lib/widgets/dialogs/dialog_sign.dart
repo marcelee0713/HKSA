@@ -10,22 +10,29 @@ import 'package:hksa/models/professor.dart';
 import 'package:hksa/pages/login.dart';
 import 'package:hksa/widgets/dialogs/dialog_loading.dart';
 import 'package:hksa/widgets/dialogs/dialog_unsuccessful.dart';
+import 'package:intl/intl.dart';
 
 final _formKey = GlobalKey<FormState>();
 
 class DialogSign extends StatefulWidget {
-  const DialogSign({super.key});
+  final String timeIn;
+  final String timeOut;
+
+  const DialogSign({super.key, required this.timeIn, required this.timeOut});
 
   @override
   State<DialogSign> createState() => _DialogSignState();
 }
 
 class _DialogSignState extends State<DialogSign> {
+  final logInBox = Hive.box("myLoginBox");
+  late var userID = logInBox.get("userID");
+
   final _inputControllerSignature = TextEditingController();
   String? multiplierValue;
   bool _signatureVisible = false;
   @override
-  void initState() {
+  void initState() async {
     super.initState();
     // Basically what this does is.
     // It checks if this User still exist or inactive in the database
@@ -37,7 +44,7 @@ class _DialogSignState extends State<DialogSign> {
     DatabaseReference userRefStatus =
         FirebaseDatabase.instance.ref().child('Users/Scholars/$userID/status');
 
-    userRef.get().then((user) {
+    await userRef.get().then((user) {
       if (!user.exists) {
         Future.delayed(const Duration(), (() {
           DialogLoading(subtext: "Logging out...").buildLoadingScreen(context);
@@ -144,18 +151,17 @@ class _DialogSignState extends State<DialogSign> {
       }
     });
 
-    userRefStatus.get().then((snapshot) {
+    await userRefStatus.get().then((snapshot) {
       if (snapshot.value.toString() == "inactive") {
         Future.delayed(const Duration(), (() {
           DialogLoading(subtext: "Logging out...").buildLoadingScreen(context);
         })).whenComplete(() {
           Future.delayed(
             const Duration(seconds: 3),
-            () {
+            () async {
               logInBox.put("isLoggedIn", false);
               logInBox.put("hasTimedIn", false);
               logInBox.put("userType", "");
-              logInBox.put("userID", "");
               logInBox.put("userName", "");
               logInBox.put("getTimeInLS", "");
               logInBox.put("dateTimedIn", "");
@@ -248,6 +254,13 @@ class _DialogSignState extends State<DialogSign> {
                   );
                 },
               );
+              logInBox.put("userID", "");
+              await createHistory(
+                desc: "User logged out due to its status being inactive",
+                timeStamp: DateTime.now().microsecondsSinceEpoch.toString(),
+                userType: "scholar",
+                id: userID,
+              );
             },
           );
         });
@@ -287,16 +300,23 @@ class _DialogSignState extends State<DialogSign> {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 8),
-                  const Center(
-                    child: Text(
-                      "Authorize the scholar to time out?",
-                      style: TextStyle(
-                        color: ColorPalette.accentWhite,
-                        fontFamily: 'Inter',
-                        fontWeight: FontWeight.w700,
-                        fontSize: 14,
-                      ),
+                  const SizedBox(height: 10),
+                  const Text(
+                    "Authorize the scholar to time out?",
+                    style: TextStyle(
+                      color: ColorPalette.accentWhite,
+                      fontFamily: 'Inter',
+                      fontWeight: FontWeight.w700,
+                      fontSize: 20,
+                    ),
+                  ),
+                  const Text(
+                    "Professors should only be in this page, because this is where the scholar can time out.",
+                    style: TextStyle(
+                      color: ColorPalette.accentWhite,
+                      fontFamily: 'Inter',
+                      fontWeight: FontWeight.w300,
+                      fontSize: 14,
                     ),
                   ),
                   const SizedBox(height: 10),
@@ -418,12 +438,93 @@ class _DialogSignState extends State<DialogSign> {
                   ),
                   const SizedBox(height: 8),
                   const Text(
-                    HKSAStrings.signatureInfo,
+                    "CHECK BEFORE PRESSING CONFIRM",
                     style: TextStyle(
-                      color: ColorPalette.accentWhite,
+                      color: ColorPalette.secondary,
                       fontFamily: 'Inter',
                       fontSize: 12,
+                      fontWeight: FontWeight.w700,
                     ),
+                  ),
+                  Row(
+                    children: [
+                      const Text(
+                        "User Timed in: ",
+                        style: TextStyle(
+                          color: ColorPalette.secondary,
+                          fontFamily: 'Inter',
+                          fontSize: 12,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      Flexible(
+                        child: Text(
+                          widget.timeIn,
+                          style: const TextStyle(
+                            color: ColorPalette.accentWhite,
+                            fontFamily: 'Inter',
+                            fontSize: 12,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                  const SizedBox(height: 2),
+                  Row(
+                    children: [
+                      const Text(
+                        "Timing out in: ",
+                        style: TextStyle(
+                          color: ColorPalette.secondary,
+                          fontFamily: 'Inter',
+                          fontSize: 12,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      Flexible(
+                        child: Text(
+                          widget.timeOut,
+                          style: const TextStyle(
+                            color: ColorPalette.accentWhite,
+                            fontFamily: 'Inter',
+                            fontSize: 12,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                  const SizedBox(height: 2),
+                  Row(
+                    children: [
+                      const Text(
+                        "Hours will be: ",
+                        style: TextStyle(
+                          color: ColorPalette.secondary,
+                          fontFamily: 'Inter',
+                          fontSize: 12,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      Flexible(
+                        child: Text(
+                          totalHoursThisDay(
+                            widget.timeIn,
+                            widget.timeOut,
+                            int.parse(multiplierValue == null
+                                ? "1"
+                                : multiplierValue!),
+                          ).substring(0, 8).replaceAll('.', ''),
+                          style: const TextStyle(
+                            color: ColorPalette.accentWhite,
+                            fontFamily: 'Inter',
+                            fontSize: 12,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      )
+                    ],
                   ),
                   const SizedBox(height: 10),
                   ElevatedButton(
@@ -457,11 +558,15 @@ class _DialogSignState extends State<DialogSign> {
                             bool userExist = false;
                             bool doneCheckingUsers = false;
 
+                            String professorID = "";
+                            String professorName = "";
+
                             DialogLoading(subtext: "Checking...")
                                 .buildLoadingScreen(context);
 
-                            Future.delayed(const Duration(seconds: 2), () {
-                              _testReference.get().then((snapshot) {
+                            Future.delayed(const Duration(seconds: 2),
+                                () async {
+                              await _testReference.get().then((snapshot) {
                                 for (final test in snapshot.children) {
                                   Map<String, dynamic> myObj =
                                       jsonDecode(jsonEncode(test.value));
@@ -477,6 +582,8 @@ class _DialogSignState extends State<DialogSign> {
                                     doneCheckingUsers = false;
                                     result =
                                         multiplierValue! + myProfessorObj.name;
+                                    professorID = myProfessorObj.professorId;
+                                    professorName = myProfessorObj.name;
                                     Navigator.pop(context, result);
                                     break;
                                   } else {
@@ -488,7 +595,8 @@ class _DialogSignState extends State<DialogSign> {
                               });
                             }).whenComplete(() => {
                                   Future.delayed(
-                                      const Duration(milliseconds: 2500), () {
+                                      const Duration(milliseconds: 2500),
+                                      () async {
                                     if (!userExist && doneCheckingUsers) {
                                       Navigator.of(context, rootNavigator: true)
                                           .pop();
@@ -502,7 +610,18 @@ class _DialogSignState extends State<DialogSign> {
                                                         rootNavigator: true)
                                                     .pop()
                                               }).buildUnsuccessfulScreen(
-                                          context);
+                                        context,
+                                      );
+                                    } else {
+                                      await createHistory(
+                                        desc:
+                                            "Timed out by $professorName and the ID is $professorID.",
+                                        timeStamp: DateTime.now()
+                                            .microsecondsSinceEpoch
+                                            .toString(),
+                                        userType: "scholar",
+                                        id: userID,
+                                      );
                                     }
                                   }),
                                   _inputControllerSignature.text = "",
@@ -526,7 +645,18 @@ class _DialogSignState extends State<DialogSign> {
                         fontSize: 13,
                       ),
                     ),
-                  )
+                  ),
+                  const Center(
+                    child: Text(
+                      HKSAStrings.signatureInfo,
+                      style: TextStyle(
+                        color: ColorPalette.accentWhite,
+                        fontFamily: 'Inter',
+                        fontSize: 12,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
                 ],
               ),
             ),
@@ -551,8 +681,42 @@ class _DialogSignState extends State<DialogSign> {
 
   @override
   void dispose() {
-    // TODO: implement dispose
-    super.dispose();
     _inputControllerSignature.dispose();
+    super.dispose();
+  }
+
+  Future createHistory(
+      {required String desc,
+      required String timeStamp,
+      required String userType,
+      required String id}) async {
+    try {
+      DatabaseReference dbReference =
+          FirebaseDatabase.instance.ref().child('historylogs/$id');
+      String? key = dbReference.push().key;
+
+      final json = {
+        'desc': desc,
+        'timeStamp': timeStamp,
+        'userType': userType,
+        'id': id,
+      };
+
+      await dbReference.child(key!).set(json);
+    } catch (error) {
+      rethrow;
+    }
+  }
+
+  String totalHoursThisDay(timeIn, timeOut, multiplier) {
+    multiplier ??= 1;
+    DateTime parsedDateIn =
+        DateFormat("E hh:mm:ss aaaaa yyyy-MM-dd").parse(timeIn);
+    DateTime parsedDateOut =
+        DateFormat("E hh:mm:ss aaaaa yyyy-MM-dd").parse(timeOut);
+
+    Duration workingHours = parsedDateOut.difference(parsedDateIn);
+
+    return (workingHours * multiplier).toString();
   }
 }

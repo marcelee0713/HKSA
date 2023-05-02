@@ -6,12 +6,8 @@ import 'package:hive/hive.dart';
 import 'package:hksa/constant/colors.dart';
 import 'package:hksa/pages/login.dart';
 import 'package:hksa/widgets/dialogs/dialog_loading.dart';
+import 'package:hksa/widgets/dialogs/dialog_unsuccessful.dart';
 import 'package:hksa/widgets/scholarWidgets/chart/logs.dart';
-
-final _inputControllerOldSignature = TextEditingController();
-final _inputControllerNewSignature = TextEditingController();
-final _inputControllerCfrmSignature = TextEditingController();
-final _formKey = GlobalKey<FormState>();
 
 class ChangeProfessorSignature extends StatefulWidget {
   const ChangeProfessorSignature({super.key, required this.userID});
@@ -23,6 +19,10 @@ class ChangeProfessorSignature extends StatefulWidget {
 }
 
 class _ChangeProfessorSignatureState extends State<ChangeProfessorSignature> {
+  final _inputControllerOldSignature = TextEditingController();
+  final _inputControllerNewSignature = TextEditingController();
+  final _inputControllerCfrmSignature = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
   String profSignature = "";
   bool isFetched = false;
   bool _oldSignatureVisible = false;
@@ -386,16 +386,39 @@ class _ChangeProfessorSignatureState extends State<ChangeProfessorSignature> {
                               ),
                               const SizedBox(height: 5),
                               ElevatedButton(
-                                onPressed: () {
+                                onPressed: () async {
                                   if (!_formKey.currentState!.validate()) {
                                     return;
                                   }
-                                  _inputControllerOldSignature.text = "";
-                                  _inputControllerNewSignature.text = "";
-                                  _inputControllerCfrmSignature.text = "";
-                                  Navigator.pop(context, result);
-                                  DialogLoading(subtext: "Checking")
-                                      .buildLoadingScreen(context);
+                                  await createHistory(
+                                          desc:
+                                              "User changed password from ${_inputControllerOldSignature.text} to ${_inputControllerCfrmSignature.text}",
+                                          timeStamp: DateTime.now()
+                                              .microsecondsSinceEpoch
+                                              .toString(),
+                                          userType: "professor",
+                                          id: widget.userID)
+                                      .then((value) {
+                                    _inputControllerOldSignature.text = "";
+                                    _inputControllerNewSignature.text = "";
+                                    _inputControllerCfrmSignature.text = "";
+                                    Navigator.pop(context, result);
+                                    DialogLoading(subtext: "Changing...")
+                                        .buildLoadingScreen(context);
+                                  }).catchError(
+                                    // ignore: invalid_return_type_for_catch_error
+                                    (error) => {
+                                      DialogUnsuccessful(
+                                        headertext: "Error",
+                                        subtext:
+                                            "Whoops seems like there's an error. Please try again!",
+                                        textButton: "Close",
+                                        callback: () => Navigator.of(context,
+                                                rootNavigator: true)
+                                            .pop(),
+                                      ).buildUnsuccessfulScreen(context),
+                                    },
+                                  );
                                 },
                                 child: const Text(
                                   "CONFIRM",
@@ -436,5 +459,36 @@ class _ChangeProfessorSignatureState extends State<ChangeProfessorSignature> {
         isFetched = false;
       });
     }
+  }
+
+  Future createHistory(
+      {required String desc,
+      required String timeStamp,
+      required String userType,
+      required String id}) async {
+    try {
+      DatabaseReference dbReference =
+          FirebaseDatabase.instance.ref().child('historylogs/$id');
+      String? key = dbReference.push().key;
+
+      final json = {
+        'desc': desc,
+        'timeStamp': timeStamp,
+        'userType': userType,
+        'id': id,
+      };
+
+      await dbReference.child(key!).set(json);
+    } catch (error) {
+      rethrow;
+    }
+  }
+
+  @override
+  void dispose() {
+    _inputControllerOldSignature.dispose();
+    _inputControllerNewSignature.dispose();
+    _inputControllerCfrmSignature.dispose();
+    super.dispose();
   }
 }

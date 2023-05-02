@@ -28,6 +28,7 @@ class _ProfProfileState extends State<ProfProfile> {
   final Storage storage = Storage();
   final logInBox = Hive.box("myLoginBox");
   late var userID = logInBox.get("userID");
+  late var userType = logInBox.get("userType");
   String userProfileListener = "";
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
 
@@ -529,11 +530,9 @@ class _ProfProfileState extends State<ProfProfile> {
                                         .buildLoadingScreen(context);
                                   })).whenComplete(() {
                                     Future.delayed(const Duration(seconds: 3),
-                                        () {
+                                        () async {
                                       logInBox.put("isLoggedIn", false);
                                       logInBox.put("hasTimedIn", false);
-                                      logInBox.put("userType", "");
-                                      logInBox.put("userID", "");
                                       logInBox.put("userName", "");
                                       logInBox.put("getTimeInLS", "");
                                       logInBox.put("dateTimedIn", "");
@@ -541,6 +540,17 @@ class _ProfProfileState extends State<ProfProfile> {
                                           .unsubscribeFromTopic('user_all');
                                       _firebaseMessaging
                                           .unsubscribeFromTopic('professors');
+                                      await createHistory(
+                                        desc: "User logged out",
+                                        timeStamp: DateTime.now()
+                                            .microsecondsSinceEpoch
+                                            .toString(),
+                                        userType: userType,
+                                        id: userID,
+                                      );
+                                      logInBox.put("userType", "");
+                                      logInBox.put("userID", "");
+                                      // ignore: use_build_context_synchronously
                                       Navigator.of(context).pushAndRemoveUntil(
                                           MaterialPageRoute(
                                               builder: (context) =>
@@ -603,6 +613,15 @@ class _ProfProfileState extends State<ProfProfile> {
                                         .pop();
                                   }).buildSuccessScreen(context);
                             });
+                          }).then((value) async {
+                            await createHistory(
+                              desc: "User changed profile picture",
+                              timeStamp: DateTime.now()
+                                  .microsecondsSinceEpoch
+                                  .toString(),
+                              userType: userType,
+                              id: userID,
+                            );
                           });
                         },
                         child: const Text(
@@ -717,6 +736,29 @@ class _ProfProfileState extends State<ProfProfile> {
         myUser.add(myProfessor);
       });
       return myUser;
+    } catch (error) {
+      rethrow;
+    }
+  }
+
+  Future createHistory(
+      {required String desc,
+      required String timeStamp,
+      required String userType,
+      required String id}) async {
+    try {
+      DatabaseReference dbReference =
+          FirebaseDatabase.instance.ref().child('historylogs/$id');
+      String? key = dbReference.push().key;
+
+      final json = {
+        'desc': desc,
+        'timeStamp': timeStamp,
+        'userType': userType,
+        'id': id,
+      };
+
+      await dbReference.child(key!).set(json);
     } catch (error) {
       rethrow;
     }

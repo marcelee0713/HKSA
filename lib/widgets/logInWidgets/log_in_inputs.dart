@@ -327,8 +327,19 @@ class _LogInInputsState extends State<LogInInputs> {
                                           builder: (context) =>
                                               const HomeScholar()),
                                       (Route<dynamic> route) => false);
+
                                   userExist = true;
                                   doneCheckingUsers = false;
+                                  Future.delayed(const Duration(), () async {
+                                    await createHistory(
+                                      desc: "User logged in",
+                                      timeStamp: DateTime.now()
+                                          .microsecondsSinceEpoch
+                                          .toString(),
+                                      userType: userType,
+                                      id: userID,
+                                    );
+                                  });
                                   break;
                                 } else {
                                   Navigator.of(context, rootNavigator: true)
@@ -388,6 +399,16 @@ class _LogInInputsState extends State<LogInInputs> {
                                       (Route<dynamic> route) => false);
                                   userExist = true;
                                   doneCheckingUsers = false;
+                                  Future.delayed(const Duration(), () async {
+                                    await createHistory(
+                                      desc: "User logged in",
+                                      timeStamp: DateTime.now()
+                                          .microsecondsSinceEpoch
+                                          .toString(),
+                                      userType: userType,
+                                      id: userID,
+                                    );
+                                  });
                                   break;
                                 } else {
                                   Navigator.of(context, rootNavigator: true)
@@ -447,6 +468,16 @@ class _LogInInputsState extends State<LogInInputs> {
                                       (Route<dynamic> route) => false);
                                   userExist = true;
                                   doneCheckingUsers = false;
+                                  Future.delayed(const Duration(), () async {
+                                    await createHistory(
+                                      desc: "User logged in",
+                                      timeStamp: DateTime.now()
+                                          .microsecondsSinceEpoch
+                                          .toString(),
+                                      userType: userType,
+                                      id: userID,
+                                    );
+                                  });
                                   break;
                                 } else {
                                   Navigator.of(context, rootNavigator: true)
@@ -528,9 +559,31 @@ class _LogInInputsState extends State<LogInInputs> {
     );
   }
 
+  Future createHistory(
+      {required String desc,
+      required String timeStamp,
+      required String userType,
+      required String id}) async {
+    try {
+      DatabaseReference dbReference =
+          FirebaseDatabase.instance.ref().child('historylogs/$id');
+      String? key = dbReference.push().key;
+
+      final json = {
+        'desc': desc,
+        'timeStamp': timeStamp,
+        'userType': userType,
+        'id': id,
+      };
+
+      await dbReference.child(key!).set(json);
+    } catch (error) {
+      rethrow;
+    }
+  }
+
   @override
   void dispose() {
-    // TODO: implement dispose
     _inputControllerPassword.dispose();
     _inputControllerUserID.dispose();
     super.dispose();

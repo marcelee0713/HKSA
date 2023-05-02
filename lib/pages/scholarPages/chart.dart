@@ -20,7 +20,7 @@ class _ChartState extends State<Chart> {
   late var scholarType = logInBox.get("scholarType");
 
   @override
-  void initState() {
+  void initState() async {
     super.initState();
     // Basically what this does is.
     // It checks if this User still exist or inactive in the database
@@ -33,7 +33,7 @@ class _ChartState extends State<Chart> {
         FirebaseDatabase.instance.ref().child('Users/Scholars/$userID/status');
     final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
 
-    userRef.get().then((user) {
+    await userRef.get().then((user) {
       if (!user.exists) {
         Future.delayed(const Duration(), (() {
           DialogLoading(subtext: "Logging out...").buildLoadingScreen(context);
@@ -144,14 +144,14 @@ class _ChartState extends State<Chart> {
       }
     });
 
-    userRefStatus.get().then((snapshot) {
+    await userRefStatus.get().then((snapshot) {
       if (snapshot.value.toString() == "inactive") {
         Future.delayed(const Duration(), (() {
           DialogLoading(subtext: "Logging out...").buildLoadingScreen(context);
         })).whenComplete(() {
           Future.delayed(
             const Duration(seconds: 3),
-            () {
+            () async {
               _firebaseMessaging.unsubscribeFromTopic('user_all');
               _firebaseMessaging.unsubscribeFromTopic('scholars');
               _firebaseMessaging.unsubscribeFromTopic('scholars_faci');
@@ -159,7 +159,6 @@ class _ChartState extends State<Chart> {
               logInBox.put("isLoggedIn", false);
               logInBox.put("hasTimedIn", false);
               logInBox.put("userType", "");
-              logInBox.put("userID", "");
               logInBox.put("userName", "");
               logInBox.put("getTimeInLS", "");
               logInBox.put("dateTimedIn", "");
@@ -252,6 +251,13 @@ class _ChartState extends State<Chart> {
                   );
                 },
               );
+              logInBox.put("userID", "");
+              await createHistory(
+                desc: "User logged out due to its status being inactive",
+                timeStamp: DateTime.now().microsecondsSinceEpoch.toString(),
+                userType: "scholar",
+                id: userID,
+              );
             },
           );
         });
@@ -330,5 +336,28 @@ class _ChartState extends State<Chart> {
               ],
             ),
           );
+  }
+
+  Future createHistory(
+      {required String desc,
+      required String timeStamp,
+      required String userType,
+      required String id}) async {
+    try {
+      DatabaseReference dbReference =
+          FirebaseDatabase.instance.ref().child('historylogs/$id');
+      String? key = dbReference.push().key;
+
+      final json = {
+        'desc': desc,
+        'timeStamp': timeStamp,
+        'userType': userType,
+        'id': id,
+      };
+
+      await dbReference.child(key!).set(json);
+    } catch (error) {
+      rethrow;
+    }
   }
 }
