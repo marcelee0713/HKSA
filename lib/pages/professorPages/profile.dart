@@ -16,6 +16,7 @@ import 'package:hksa/widgets/dialogs/dialog_loading.dart';
 import 'package:hksa/widgets/dialogs/dialog_success.dart';
 import 'package:hksa/widgets/professorWidgets/profile/change_signature.dart';
 import 'package:hksa/widgets/universal/change_password.dart';
+import 'package:image_picker/image_picker.dart';
 
 class ProfProfile extends StatefulWidget {
   const ProfProfile({super.key});
@@ -575,25 +576,23 @@ class _ProfProfileState extends State<ProfProfile> {
                       const SizedBox(height: 8),
                       InkWell(
                         onTap: () async {
-                          final results = await FilePicker.platform.pickFiles(
-                            allowMultiple: false,
-                            type: FileType.custom,
-                            allowedExtensions: ['png', 'jpg'],
-                            allowCompression: true,
+                          PickedFile? results =
+                              await ImagePicker.platform.pickImage(
+                            source: ImageSource.gallery,
+                            imageQuality: 50,
+                            maxHeight: 800,
+                            maxWidth: 800,
                           );
 
                           if (results == null) {
                             return;
                           }
+
                           // ignore: use_build_context_synchronously
                           DialogLoading(subtext: "Changing...")
                               .buildLoadingScreen(context);
-
-                          final path = results.files.single.path!;
-                          final fileName = results.files.single.name;
-
-                          debugPrint(path);
-                          debugPrint(fileName);
+                          final path = results.path;
+                          final fileName = results.path.split('/').last;
 
                           await storage.changeProfPfp(path, fileName, userID,
                               snapshot.data!.first.profilePicture, () {

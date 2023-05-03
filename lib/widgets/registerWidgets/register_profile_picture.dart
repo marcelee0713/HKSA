@@ -15,6 +15,7 @@ import 'package:hksa/widgets/dialogs/dialog_register_success.dart';
 import 'package:hksa/widgets/dialogs/dialog_success.dart';
 import 'package:hksa/widgets/dialogs/dialog_unsuccessful.dart';
 import 'package:hksa/widgets/registerWidgets/register_header.dart';
+import 'package:image_picker/image_picker.dart';
 
 class RegisterInputsProfilePicture extends StatefulWidget {
   const RegisterInputsProfilePicture({super.key});
@@ -155,20 +156,20 @@ class _RegisterInputsProfilePictureState
                 const SizedBox(height: 10),
                 ElevatedButton(
                   onPressed: () async {
-                    final results = await FilePicker.platform.pickFiles(
-                      allowMultiple: false,
-                      type: FileType.custom,
-                      allowedExtensions: ['png', 'jpg'],
-                      allowCompression: true,
+                    PickedFile? results = await ImagePicker.platform.pickImage(
+                      source: ImageSource.gallery,
+                      imageQuality: 50,
+                      maxHeight: 800,
+                      maxWidth: 800,
                     );
 
                     if (results == null) {
                       return;
                     }
 
-                    final pathForImage = results.files.single.path!;
-                    path = results.files.single.path!;
-                    fileName = results.files.single.name;
+                    final pathForImage = results.path;
+                    path = results.path;
+                    fileName = results.path.split('/').last;
 
                     setState(() {
                       image = File(pathForImage);

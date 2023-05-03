@@ -24,6 +24,7 @@ import 'package:hksa/widgets/scholarWidgets/chart/logs.dart';
 import 'package:hksa/widgets/universal/view_history_logs.dart';
 import 'package:hksa/widgets/universal/view_inbox.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
+import 'package:image_picker/image_picker.dart';
 
 class ScholarProfile extends StatefulWidget {
   final String userID;
@@ -1045,27 +1046,27 @@ class _ScholarProfileState extends State<ScholarProfile> {
                                             Navigator.of(context,
                                                     rootNavigator: true)
                                                 .pop();
-                                            final results = await FilePicker
-                                                .platform
-                                                .pickFiles(
-                                              allowMultiple: false,
-                                              type: FileType.custom,
-                                              allowedExtensions: ['png', 'jpg'],
-                                              allowCompression: true,
+                                            PickedFile? results =
+                                                await ImagePicker.platform
+                                                    .pickImage(
+                                              source: ImageSource.gallery,
+                                              imageQuality: 50,
+                                              maxHeight: 800,
+                                              maxWidth: 800,
                                             );
 
                                             if (results == null) {
                                               return;
                                             }
+
                                             // ignore: use_build_context_synchronously
                                             DialogLoading(
                                                     subtext: "Changing...")
                                                 .buildLoadingScreen(context);
 
-                                            final path =
-                                                results.files.single.path!;
+                                            final path = results.path;
                                             final fileName =
-                                                results.files.single.name;
+                                                results.path.split('/').last;
 
                                             debugPrint(path);
                                             debugPrint(fileName);
