@@ -796,19 +796,21 @@ class _AdminRegisterProfessorInputsState
                             ).buildUnsuccessfulScreen(context);
                           } else {
                             Professor scholarObj = Professor(
-                                department: department.toString(),
-                                email: email,
-                                name: fullName,
-                                password: password,
-                                phonenumber: phoneNumber,
-                                professorId: professorID,
-                                signaturecode: signature,
-                                profilePicture: HKSAStrings.pfpPlaceholder,
-                                day: day.toString(),
-                                room: room,
-                                section: section,
-                                subject: subject,
-                                time: time.toString());
+                              department: department.toString(),
+                              email: email,
+                              name: fullName,
+                              password: password,
+                              phonenumber: phoneNumber,
+                              professorId: professorID,
+                              signaturecode: signature,
+                              profilePicture: HKSAStrings.pfpPlaceholder,
+                              day: day.toString(),
+                              room: room,
+                              section: section,
+                              subject: subject,
+                              time: time.toString(),
+                              listeningTo: "",
+                            );
 
                             await _dbReference
                                 .child(professorID)

@@ -1796,7 +1796,9 @@ class _EditScholarState extends State<EditScholar> {
                                                   assignedProfDay2.toString(),
                                               assignedProfWd:
                                                   assignedProfWholeDay
-                                                      .toString());
+                                                      .toString(),
+                                              listeningTo: snapshot
+                                                  .data!.first.listeningTo);
 
                                           await _dbReference
                                               .child(studentNumber)
@@ -1910,6 +1912,7 @@ class _EditScholarState extends State<EditScholar> {
             String signaturecode = myObj[key]['signaturecode'];
             String subject = myObj[key]['subject'];
             String time = myObj[key]['time'];
+            String listeningTo = myObj[key]['listeningTo'];
 
             Professor myProf = Professor(
                 department: department,
@@ -1924,7 +1927,8 @@ class _EditScholarState extends State<EditScholar> {
                 subject: subject,
                 day: day,
                 time: time,
-                room: room);
+                room: room,
+                listeningTo: listeningTo);
 
             if (myProf.day == scholarOnSiteDay1 &&
                 myProf.time == scholarVacantTimeDay1) {

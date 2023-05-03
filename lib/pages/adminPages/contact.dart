@@ -460,7 +460,6 @@ class _AdminContactsState extends State<AdminContacts> {
               isIncomplete = false;
             }
 
-            debugPrint("${myScholarObj.name} is incomplete? : $isIncomplete");
             if (timeValue != null && dayValue != null) {
               final timeArray = <String, String>{
                 'time1': myScholarObj.vacantTimeDay1,
@@ -1498,41 +1497,52 @@ class _AdminContactsState extends State<AdminContacts> {
           for (final data in snapshot.children) {
             Map<String, dynamic> myObj = jsonDecode(jsonEncode(data.value));
             Scholar myScholarObj = Scholar.fromJson(myObj);
-            final essentialInfos = [
-              myScholarObj.assignedProfD1,
-              myScholarObj.assignedProfD2,
-              myScholarObj.assignedProfWd,
-              myScholarObj.onSiteDay1,
-              myScholarObj.onSiteDay2,
-              myScholarObj.vacantTimeDay1,
-              myScholarObj.vacantTimeDay2,
-              myScholarObj.wholeDayVacantTime
-            ];
+            if (myScholarObj.scholarType == "Faci") {
+              final essentialInfos = [
+                myScholarObj.assignedProfD1,
+                myScholarObj.assignedProfD2,
+                myScholarObj.assignedProfWd,
+                myScholarObj.onSiteDay1,
+                myScholarObj.onSiteDay2,
+                myScholarObj.vacantTimeDay1,
+                myScholarObj.vacantTimeDay2,
+                myScholarObj.wholeDayVacantTime
+              ];
 
-            var isIncomplete =
-                essentialInfos.contains("") || essentialInfos.contains("NONE");
+              var isIncomplete = essentialInfos.contains("") ||
+                  essentialInfos.contains("NONE");
 
-            if (myScholarObj.scholarType == "Non-Faci") {
-              isIncomplete = false;
-            }
-            if (myScholarObj.isFinished == "true") {
-              if (timeValue != null && dayValue != null) {
-                final timeArray = <String, String>{
-                  'time1': myScholarObj.vacantTimeDay1,
-                  'time2': myScholarObj.vacantTimeDay2
-                };
-                final dayArray = <String, String>{
-                  'day1': myScholarObj.onSiteDay1,
-                  'day2': myScholarObj.onSiteDay2,
-                  'wd': myScholarObj.wholeDayVacantTime
-                };
+              if (myScholarObj.scholarType == "Non-Faci") {
+                isIncomplete = false;
+              }
+              if (myScholarObj.isFinished == "true") {
+                if (timeValue != null && dayValue != null) {
+                  final timeArray = <String, String>{
+                    'time1': myScholarObj.vacantTimeDay1,
+                    'time2': myScholarObj.vacantTimeDay2
+                  };
+                  final dayArray = <String, String>{
+                    'day1': myScholarObj.onSiteDay1,
+                    'day2': myScholarObj.onSiteDay2,
+                    'wd': myScholarObj.wholeDayVacantTime
+                  };
 
-                if (timeArray.containsValue(timeValue) &&
-                    dayArray.containsValue(dayValue)) {
-                  String scholarTown = myScholarObj.town;
+                  if (timeArray.containsValue(timeValue) &&
+                      dayArray.containsValue(dayValue)) {
+                    String scholarTown = myScholarObj.town;
 
-                  if (townValue != null) {
-                    if (townValue == scholarTown) {
+                    if (townValue != null) {
+                      if (townValue == scholarTown) {
+                        Chat myChatObj = Chat(
+                          name: myScholarObj.name,
+                          userId: myScholarObj.studentNumber,
+                          pfp: myScholarObj.profilePicture,
+                          userType: "scholar",
+                          isIncomplete: isIncomplete.toString(),
+                        );
+                        myAppList.add(myChatObj);
+                      }
+                    } else {
                       Chat myChatObj = Chat(
                         name: myScholarObj.name,
                         userId: myScholarObj.studentNumber,
@@ -1542,28 +1552,28 @@ class _AdminContactsState extends State<AdminContacts> {
                       );
                       myAppList.add(myChatObj);
                     }
-                  } else {
-                    Chat myChatObj = Chat(
-                      name: myScholarObj.name,
-                      userId: myScholarObj.studentNumber,
-                      pfp: myScholarObj.profilePicture,
-                      userType: "scholar",
-                      isIncomplete: isIncomplete.toString(),
-                    );
-                    myAppList.add(myChatObj);
                   }
-                }
-              } else if (timeValue != null) {
-                final array = <String, String>{
-                  'time1': myScholarObj.vacantTimeDay1,
-                  'time2': myScholarObj.vacantTimeDay2
-                };
+                } else if (timeValue != null) {
+                  final array = <String, String>{
+                    'time1': myScholarObj.vacantTimeDay1,
+                    'time2': myScholarObj.vacantTimeDay2
+                  };
 
-                if (array.containsValue(timeValue)) {
-                  String scholarTown = myScholarObj.town;
+                  if (array.containsValue(timeValue)) {
+                    String scholarTown = myScholarObj.town;
 
-                  if (townValue != null) {
-                    if (townValue == scholarTown) {
+                    if (townValue != null) {
+                      if (townValue == scholarTown) {
+                        Chat myChatObj = Chat(
+                          name: myScholarObj.name,
+                          userId: myScholarObj.studentNumber,
+                          pfp: myScholarObj.profilePicture,
+                          userType: "scholar",
+                          isIncomplete: isIncomplete.toString(),
+                        );
+                        myAppList.add(myChatObj);
+                      }
+                    } else {
                       Chat myChatObj = Chat(
                         name: myScholarObj.name,
                         userId: myScholarObj.studentNumber,
@@ -1573,29 +1583,29 @@ class _AdminContactsState extends State<AdminContacts> {
                       );
                       myAppList.add(myChatObj);
                     }
-                  } else {
-                    Chat myChatObj = Chat(
-                      name: myScholarObj.name,
-                      userId: myScholarObj.studentNumber,
-                      pfp: myScholarObj.profilePicture,
-                      userType: "scholar",
-                      isIncomplete: isIncomplete.toString(),
-                    );
-                    myAppList.add(myChatObj);
                   }
-                }
-              } else if (dayValue != null) {
-                final array = <String, String>{
-                  'day1': myScholarObj.onSiteDay1,
-                  'day2': myScholarObj.onSiteDay2,
-                  'wd': myScholarObj.wholeDayVacantTime
-                };
+                } else if (dayValue != null) {
+                  final array = <String, String>{
+                    'day1': myScholarObj.onSiteDay1,
+                    'day2': myScholarObj.onSiteDay2,
+                    'wd': myScholarObj.wholeDayVacantTime
+                  };
 
-                if (array.containsValue(dayValue)) {
-                  String scholarTown = myScholarObj.town;
+                  if (array.containsValue(dayValue)) {
+                    String scholarTown = myScholarObj.town;
 
-                  if (townValue != null) {
-                    if (townValue == scholarTown) {
+                    if (townValue != null) {
+                      if (townValue == scholarTown) {
+                        Chat myChatObj = Chat(
+                          name: myScholarObj.name,
+                          userId: myScholarObj.studentNumber,
+                          pfp: myScholarObj.profilePicture,
+                          userType: "scholar",
+                          isIncomplete: isIncomplete.toString(),
+                        );
+                        myAppList.add(myChatObj);
+                      }
+                    } else {
                       Chat myChatObj = Chat(
                         name: myScholarObj.name,
                         userId: myScholarObj.studentNumber,
@@ -1605,39 +1615,30 @@ class _AdminContactsState extends State<AdminContacts> {
                       );
                       myAppList.add(myChatObj);
                     }
-                  } else {
-                    Chat myChatObj = Chat(
-                      name: myScholarObj.name,
-                      userId: myScholarObj.studentNumber,
-                      pfp: myScholarObj.profilePicture,
-                      userType: "scholar",
-                      isIncomplete: isIncomplete.toString(),
-                    );
-                    myAppList.add(myChatObj);
-                  }
-                }
-              } else {
-                if (townValue != null) {
-                  String scholarTown = myScholarObj.town;
-                  if (townValue == scholarTown) {
-                    Chat myChatObj = Chat(
-                      name: myScholarObj.name,
-                      userId: myScholarObj.studentNumber,
-                      pfp: myScholarObj.profilePicture,
-                      userType: "scholar",
-                      isIncomplete: isIncomplete.toString(),
-                    );
-                    myAppList.add(myChatObj);
                   }
                 } else {
-                  Chat myChatObj = Chat(
-                    name: myScholarObj.name,
-                    userId: myScholarObj.studentNumber,
-                    pfp: myScholarObj.profilePicture,
-                    userType: "scholar",
-                    isIncomplete: isIncomplete.toString(),
-                  );
-                  myAppList.add(myChatObj);
+                  if (townValue != null) {
+                    String scholarTown = myScholarObj.town;
+                    if (townValue == scholarTown) {
+                      Chat myChatObj = Chat(
+                        name: myScholarObj.name,
+                        userId: myScholarObj.studentNumber,
+                        pfp: myScholarObj.profilePicture,
+                        userType: "scholar",
+                        isIncomplete: isIncomplete.toString(),
+                      );
+                      myAppList.add(myChatObj);
+                    }
+                  } else {
+                    Chat myChatObj = Chat(
+                      name: myScholarObj.name,
+                      userId: myScholarObj.studentNumber,
+                      pfp: myScholarObj.profilePicture,
+                      userType: "scholar",
+                      isIncomplete: isIncomplete.toString(),
+                    );
+                    myAppList.add(myChatObj);
+                  }
                 }
               }
             }
@@ -1658,40 +1659,51 @@ class _AdminContactsState extends State<AdminContacts> {
           for (final data in snapshot.children) {
             Map<String, dynamic> myObj = jsonDecode(jsonEncode(data.value));
             Scholar myScholarObj = Scholar.fromJson(myObj);
-            final essentialInfos = [
-              myScholarObj.assignedProfD1,
-              myScholarObj.assignedProfD2,
-              myScholarObj.assignedProfWd,
-              myScholarObj.onSiteDay1,
-              myScholarObj.onSiteDay2,
-              myScholarObj.vacantTimeDay1,
-              myScholarObj.vacantTimeDay2,
-              myScholarObj.wholeDayVacantTime
-            ];
-            var isIncomplete =
-                essentialInfos.contains("") || essentialInfos.contains("NONE");
+            if (myScholarObj.scholarType == "Faci") {
+              final essentialInfos = [
+                myScholarObj.assignedProfD1,
+                myScholarObj.assignedProfD2,
+                myScholarObj.assignedProfWd,
+                myScholarObj.onSiteDay1,
+                myScholarObj.onSiteDay2,
+                myScholarObj.vacantTimeDay1,
+                myScholarObj.vacantTimeDay2,
+                myScholarObj.wholeDayVacantTime
+              ];
+              var isIncomplete = essentialInfos.contains("") ||
+                  essentialInfos.contains("NONE");
 
-            if (myScholarObj.scholarType == "Non-Faci") {
-              isIncomplete = false;
-            }
-            if (myScholarObj.isFinished == "false") {
-              if (timeValue != null && dayValue != null) {
-                final timeArray = <String, String>{
-                  'time1': myScholarObj.vacantTimeDay1,
-                  'time2': myScholarObj.vacantTimeDay2
-                };
-                final dayArray = <String, String>{
-                  'day1': myScholarObj.onSiteDay1,
-                  'day2': myScholarObj.onSiteDay2,
-                  'wd': myScholarObj.wholeDayVacantTime
-                };
+              if (myScholarObj.scholarType == "Non-Faci") {
+                isIncomplete = false;
+              }
+              if (myScholarObj.isFinished == "false") {
+                if (timeValue != null && dayValue != null) {
+                  final timeArray = <String, String>{
+                    'time1': myScholarObj.vacantTimeDay1,
+                    'time2': myScholarObj.vacantTimeDay2
+                  };
+                  final dayArray = <String, String>{
+                    'day1': myScholarObj.onSiteDay1,
+                    'day2': myScholarObj.onSiteDay2,
+                    'wd': myScholarObj.wholeDayVacantTime
+                  };
 
-                if (timeArray.containsValue(timeValue) &&
-                    dayArray.containsValue(dayValue)) {
-                  String scholarTown = myScholarObj.town;
+                  if (timeArray.containsValue(timeValue) &&
+                      dayArray.containsValue(dayValue)) {
+                    String scholarTown = myScholarObj.town;
 
-                  if (townValue != null) {
-                    if (townValue == scholarTown) {
+                    if (townValue != null) {
+                      if (townValue == scholarTown) {
+                        Chat myChatObj = Chat(
+                          name: myScholarObj.name,
+                          userId: myScholarObj.studentNumber,
+                          pfp: myScholarObj.profilePicture,
+                          userType: "scholar",
+                          isIncomplete: isIncomplete.toString(),
+                        );
+                        myAppList.add(myChatObj);
+                      }
+                    } else {
                       Chat myChatObj = Chat(
                         name: myScholarObj.name,
                         userId: myScholarObj.studentNumber,
@@ -1701,28 +1713,28 @@ class _AdminContactsState extends State<AdminContacts> {
                       );
                       myAppList.add(myChatObj);
                     }
-                  } else {
-                    Chat myChatObj = Chat(
-                      name: myScholarObj.name,
-                      userId: myScholarObj.studentNumber,
-                      pfp: myScholarObj.profilePicture,
-                      userType: "scholar",
-                      isIncomplete: isIncomplete.toString(),
-                    );
-                    myAppList.add(myChatObj);
                   }
-                }
-              } else if (timeValue != null) {
-                final array = <String, String>{
-                  'time1': myScholarObj.vacantTimeDay1,
-                  'time2': myScholarObj.vacantTimeDay2
-                };
+                } else if (timeValue != null) {
+                  final array = <String, String>{
+                    'time1': myScholarObj.vacantTimeDay1,
+                    'time2': myScholarObj.vacantTimeDay2
+                  };
 
-                if (array.containsValue(timeValue)) {
-                  String scholarTown = myScholarObj.town;
+                  if (array.containsValue(timeValue)) {
+                    String scholarTown = myScholarObj.town;
 
-                  if (townValue != null) {
-                    if (townValue == scholarTown) {
+                    if (townValue != null) {
+                      if (townValue == scholarTown) {
+                        Chat myChatObj = Chat(
+                          name: myScholarObj.name,
+                          userId: myScholarObj.studentNumber,
+                          pfp: myScholarObj.profilePicture,
+                          userType: "scholar",
+                          isIncomplete: isIncomplete.toString(),
+                        );
+                        myAppList.add(myChatObj);
+                      }
+                    } else {
                       Chat myChatObj = Chat(
                         name: myScholarObj.name,
                         userId: myScholarObj.studentNumber,
@@ -1732,29 +1744,29 @@ class _AdminContactsState extends State<AdminContacts> {
                       );
                       myAppList.add(myChatObj);
                     }
-                  } else {
-                    Chat myChatObj = Chat(
-                      name: myScholarObj.name,
-                      userId: myScholarObj.studentNumber,
-                      pfp: myScholarObj.profilePicture,
-                      userType: "scholar",
-                      isIncomplete: isIncomplete.toString(),
-                    );
-                    myAppList.add(myChatObj);
                   }
-                }
-              } else if (dayValue != null) {
-                final array = <String, String>{
-                  'day1': myScholarObj.onSiteDay1,
-                  'day2': myScholarObj.onSiteDay2,
-                  'wd': myScholarObj.wholeDayVacantTime
-                };
+                } else if (dayValue != null) {
+                  final array = <String, String>{
+                    'day1': myScholarObj.onSiteDay1,
+                    'day2': myScholarObj.onSiteDay2,
+                    'wd': myScholarObj.wholeDayVacantTime
+                  };
 
-                if (array.containsValue(dayValue)) {
-                  String scholarTown = myScholarObj.town;
+                  if (array.containsValue(dayValue)) {
+                    String scholarTown = myScholarObj.town;
 
-                  if (townValue != null) {
-                    if (townValue == scholarTown) {
+                    if (townValue != null) {
+                      if (townValue == scholarTown) {
+                        Chat myChatObj = Chat(
+                          name: myScholarObj.name,
+                          userId: myScholarObj.studentNumber,
+                          pfp: myScholarObj.profilePicture,
+                          userType: "scholar",
+                          isIncomplete: isIncomplete.toString(),
+                        );
+                        myAppList.add(myChatObj);
+                      }
+                    } else {
                       Chat myChatObj = Chat(
                         name: myScholarObj.name,
                         userId: myScholarObj.studentNumber,
@@ -1764,39 +1776,30 @@ class _AdminContactsState extends State<AdminContacts> {
                       );
                       myAppList.add(myChatObj);
                     }
-                  } else {
-                    Chat myChatObj = Chat(
-                      name: myScholarObj.name,
-                      userId: myScholarObj.studentNumber,
-                      pfp: myScholarObj.profilePicture,
-                      userType: "scholar",
-                      isIncomplete: isIncomplete.toString(),
-                    );
-                    myAppList.add(myChatObj);
-                  }
-                }
-              } else {
-                if (townValue != null) {
-                  String scholarTown = myScholarObj.town;
-                  if (townValue == scholarTown) {
-                    Chat myChatObj = Chat(
-                      name: myScholarObj.name,
-                      userId: myScholarObj.studentNumber,
-                      pfp: myScholarObj.profilePicture,
-                      userType: "scholar",
-                      isIncomplete: isIncomplete.toString(),
-                    );
-                    myAppList.add(myChatObj);
                   }
                 } else {
-                  Chat myChatObj = Chat(
-                    name: myScholarObj.name,
-                    userId: myScholarObj.studentNumber,
-                    pfp: myScholarObj.profilePicture,
-                    userType: "scholar",
-                    isIncomplete: isIncomplete.toString(),
-                  );
-                  myAppList.add(myChatObj);
+                  if (townValue != null) {
+                    String scholarTown = myScholarObj.town;
+                    if (townValue == scholarTown) {
+                      Chat myChatObj = Chat(
+                        name: myScholarObj.name,
+                        userId: myScholarObj.studentNumber,
+                        pfp: myScholarObj.profilePicture,
+                        userType: "scholar",
+                        isIncomplete: isIncomplete.toString(),
+                      );
+                      myAppList.add(myChatObj);
+                    }
+                  } else {
+                    Chat myChatObj = Chat(
+                      name: myScholarObj.name,
+                      userId: myScholarObj.studentNumber,
+                      pfp: myScholarObj.profilePicture,
+                      userType: "scholar",
+                      isIncomplete: isIncomplete.toString(),
+                    );
+                    myAppList.add(myChatObj);
+                  }
                 }
               }
             }

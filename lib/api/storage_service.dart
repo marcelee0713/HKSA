@@ -75,6 +75,7 @@ class Storage {
           assignedProfD1: '',
           assignedProfD2: '',
           assignedProfWd: '',
+          listeningTo: '',
         );
 
         await dbReference.child(studentNumber).set(scholarObj.toJson());

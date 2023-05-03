@@ -32,7 +32,7 @@ class _DialogSignState extends State<DialogSign> {
   String? multiplierValue;
   bool _signatureVisible = false;
   @override
-  void initState() async {
+  void initState() {
     super.initState();
     // Basically what this does is.
     // It checks if this User still exist or inactive in the database
@@ -44,7 +44,7 @@ class _DialogSignState extends State<DialogSign> {
     DatabaseReference userRefStatus =
         FirebaseDatabase.instance.ref().child('Users/Scholars/$userID/status');
 
-    await userRef.get().then((user) {
+    userRef.get().then((user) {
       if (!user.exists) {
         Future.delayed(const Duration(), (() {
           DialogLoading(subtext: "Logging out...").buildLoadingScreen(context);
@@ -151,7 +151,7 @@ class _DialogSignState extends State<DialogSign> {
       }
     });
 
-    await userRefStatus.get().then((snapshot) {
+    userRefStatus.get().then((snapshot) {
       if (snapshot.value.toString() == "inactive") {
         Future.delayed(const Duration(), (() {
           DialogLoading(subtext: "Logging out...").buildLoadingScreen(context);

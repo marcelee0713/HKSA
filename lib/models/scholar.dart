@@ -5,6 +5,32 @@ Scholar scholarFromJson(String str) => Scholar.fromJson(json.decode(str));
 String scholarToJson(Scholar data) => json.encode(data.toJson());
 
 class Scholar {
+  String studentNumber;
+  String name;
+  String course;
+  String email;
+  String phonenumber;
+  String password;
+  String hours;
+  String hkType;
+  String status;
+  String totalHoursInDisplay;
+  String totalHoursInDuration;
+  String totalHoursRequired;
+  String isFinished;
+  String profilePicture;
+  String onSiteDay1;
+  String onSiteDay2;
+  String vacantTimeDay1;
+  String vacantTimeDay2;
+  String wholeDayVacantTime;
+  String scholarType;
+  String town;
+  String assignedProfD1;
+  String assignedProfD2;
+  String assignedProfWd;
+  String listeningTo;
+
   Scholar({
     required this.studentNumber,
     required this.name,
@@ -30,32 +56,8 @@ class Scholar {
     required this.assignedProfD1,
     required this.assignedProfD2,
     required this.assignedProfWd,
+    required this.listeningTo,
   });
-
-  String studentNumber;
-  String name;
-  String course;
-  String email;
-  String phonenumber;
-  String password;
-  String hours;
-  String hkType;
-  String status;
-  String totalHoursInDisplay;
-  String totalHoursInDuration;
-  String totalHoursRequired;
-  String isFinished;
-  String profilePicture;
-  String onSiteDay1;
-  String onSiteDay2;
-  String vacantTimeDay1;
-  String vacantTimeDay2;
-  String wholeDayVacantTime;
-  String scholarType;
-  String town;
-  String assignedProfD1;
-  String assignedProfD2;
-  String assignedProfWd;
 
   factory Scholar.fromJson(Map<String, dynamic> json) => Scholar(
         studentNumber: json["studentNumber"],
@@ -82,6 +84,7 @@ class Scholar {
         assignedProfD1: json["assignedProfD1"],
         assignedProfD2: json["assignedProfD2"],
         assignedProfWd: json["assignedProfWD"],
+        listeningTo: json["listeningTo"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -109,5 +112,6 @@ class Scholar {
         "assignedProfD1": assignedProfD1,
         "assignedProfD2": assignedProfD2,
         "assignedProfWD": assignedProfWd,
+        "listeningTo": listeningTo,
       };
 }

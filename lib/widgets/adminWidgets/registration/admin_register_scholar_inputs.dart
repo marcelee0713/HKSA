@@ -565,6 +565,7 @@ class _AdminRegisterScholarInputsState
                               assignedProfD1: '',
                               assignedProfD2: '',
                               assignedProfWd: '',
+                              listeningTo: '',
                             );
 
                             await _testReference

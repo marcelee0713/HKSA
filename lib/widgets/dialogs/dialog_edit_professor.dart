@@ -1030,7 +1030,9 @@ class _EditProfessorState extends State<EditProfessor> {
                                                 room: room,
                                                 section: section,
                                                 subject: subject,
-                                                time: time);
+                                                time: time,
+                                                listeningTo: snapshot
+                                                    .data!.first.listeningTo);
 
                                             await _dbReference
                                                 .child(professorID)

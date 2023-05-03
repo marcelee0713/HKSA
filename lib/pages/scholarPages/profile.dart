@@ -33,7 +33,7 @@ class _ProfileState extends State<Profile> {
   String oldDTRURl = "";
 
   @override
-  void initState() async {
+  void initState() {
     super.initState();
     // Basically what this does is.
     // It checks if this User still exist or inactive in the database
@@ -48,11 +48,11 @@ class _ProfileState extends State<Profile> {
         FirebaseDatabase.instance.ref().child('Users/Scholars/$userID/status');
     final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
 
-    await oldDTRRef.get().then((link) => {
+    oldDTRRef.get().then((link) => {
           if (link.exists) {oldDTRURl = link.value.toString()}
         });
 
-    await userRef.get().then((user) {
+    userRef.get().then((user) {
       if (!user.exists) {
         Future.delayed(const Duration(), (() {
           DialogLoading(subtext: "Logging out...").buildLoadingScreen(context);

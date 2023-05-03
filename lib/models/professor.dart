@@ -5,6 +5,21 @@ Professor professorFromJson(String str) => Professor.fromJson(json.decode(str));
 String professorToJson(Professor data) => json.encode(data.toJson());
 
 class Professor {
+  String department;
+  String email;
+  String name;
+  String password;
+  String phonenumber;
+  String professorId;
+  String signaturecode;
+  String profilePicture;
+  String section;
+  String subject;
+  String day;
+  String time;
+  String room;
+  String listeningTo;
+
   Professor({
     required this.department,
     required this.email,
@@ -19,21 +34,8 @@ class Professor {
     required this.day,
     required this.time,
     required this.room,
+    required this.listeningTo,
   });
-
-  String department;
-  String email;
-  String name;
-  String password;
-  String phonenumber;
-  String professorId;
-  String signaturecode;
-  String profilePicture;
-  String section;
-  String subject;
-  String day;
-  String time;
-  String room;
 
   factory Professor.fromJson(Map<String, dynamic> json) => Professor(
         department: json["department"],
@@ -49,6 +51,7 @@ class Professor {
         day: json["day"],
         time: json["time"],
         room: json["room"],
+        listeningTo: json["listeningTo"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -65,5 +68,6 @@ class Professor {
         "day": day,
         "time": time,
         "room": room,
+        "listeningTo": listeningTo,
       };
 }

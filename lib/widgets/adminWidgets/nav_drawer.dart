@@ -1,3 +1,4 @@
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:hksa/constant/colors.dart';
@@ -177,11 +178,10 @@ class _NavDrawState extends State<NavDraw> {
                         DialogLoading(subtext: "Logging out...")
                             .buildLoadingScreen(context);
                       })).whenComplete(() {
-                        Future.delayed(const Duration(seconds: 3), () {
+                        Future.delayed(const Duration(seconds: 3), () async {
                           logInBox.put("isLoggedIn", false);
                           logInBox.put("hasTimedIn", false);
-                          logInBox.put("userType", "");
-                          logInBox.put("userID", "");
+
                           logInBox.put("userName", "");
                           logInBox.put("getTimeInLS", "");
                           logInBox.put("dateTimedIn", "");
@@ -190,6 +190,17 @@ class _NavDrawState extends State<NavDraw> {
                               MaterialPageRoute(
                                   builder: (context) => const Login()),
                               (Route<dynamic> route) => false);
+
+                          logInBox.put("userID", "");
+                          logInBox.put("userType", "");
+                          await createHistory(
+                            desc: "User logged out",
+                            timeStamp: DateTime.now()
+                                .microsecondsSinceEpoch
+                                .toString(),
+                            userType: "head",
+                            id: userID,
+                          );
                         });
                       });
                     }).buildConfirmScreen(context);
@@ -237,5 +248,28 @@ class _NavDrawState extends State<NavDraw> {
         ),
       ),
     );
+  }
+
+  Future createHistory(
+      {required String desc,
+      required String timeStamp,
+      required String userType,
+      required String id}) async {
+    try {
+      DatabaseReference dbReference =
+          FirebaseDatabase.instance.ref().child('historylogs/$id');
+      String? key = dbReference.push().key;
+
+      final json = {
+        'desc': desc,
+        'timeStamp': timeStamp,
+        'userType': userType,
+        'id': id,
+      };
+
+      await dbReference.child(key!).set(json);
+    } catch (error) {
+      rethrow;
+    }
   }
 }

@@ -49,7 +49,7 @@ class _MessageBoxState extends State<MessageBox> {
                 ),
                 child: Column(
                   children: [
-                    Text(
+                    SelectableText(
                       widget.message,
                       textAlign: TextAlign.start,
                     ),
