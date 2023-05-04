@@ -1215,6 +1215,7 @@ class _ScholarProfileState extends State<ScholarProfile> {
                                       ),
                                       child: const Text(
                                         "Reset Total Hours",
+                                        textAlign: TextAlign.center,
                                         style: TextStyle(
                                             fontFamily: 'Inter',
                                             fontSize: 16,
@@ -1393,6 +1394,7 @@ class _ScholarProfileState extends State<ScholarProfile> {
                                       ),
                                       child: const Text(
                                         "Reset History Logs",
+                                        textAlign: TextAlign.center,
                                         style: TextStyle(
                                             fontFamily: 'Inter',
                                             fontSize: 14,

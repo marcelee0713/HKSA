@@ -467,6 +467,7 @@ class _ProfessorProfileState extends State<ProfessorProfile> {
                                           ),
                                           child: const Text(
                                             "View History Logs",
+                                            textAlign: TextAlign.center,
                                             style: TextStyle(
                                                 fontFamily: 'Inter',
                                                 fontSize: 16,
@@ -517,6 +518,7 @@ class _ProfessorProfileState extends State<ProfessorProfile> {
                                           ),
                                           child: const Text(
                                             "Reset History Logs",
+                                            textAlign: TextAlign.center,
                                             style: TextStyle(
                                                 fontFamily: 'Inter',
                                                 fontSize: 14,
