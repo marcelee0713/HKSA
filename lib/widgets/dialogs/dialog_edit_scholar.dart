@@ -3,6 +3,7 @@ import 'dart:ffi';
 
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:hksa/constant/colors.dart';
 import 'package:hksa/constant/string.dart';
@@ -13,11 +14,33 @@ import 'package:hksa/pages/adminPages/contact.dart';
 import 'package:hksa/widgets/adminWidgets/nav_drawer.dart';
 import 'package:hksa/widgets/dialogs/dialog_confirm.dart';
 import 'package:hksa/widgets/dialogs/dialog_loading.dart';
+import 'package:hksa/widgets/dialogs/dialog_show_conflict.dart';
 import 'package:hksa/widgets/dialogs/dialog_success.dart';
 
 class EditScholar extends StatefulWidget {
   final String userID;
-  const EditScholar({super.key, required this.userID});
+  final String day1ProfID;
+  final String day2ProfID;
+  final String wdProfID;
+  final String scholarType;
+
+  final String studentDay1;
+  final String studentDay2;
+  final String studentWholeDay;
+  final String studentTime1;
+  final String studentTime2;
+  const EditScholar(
+      {super.key,
+      required this.userID,
+      required this.day1ProfID,
+      required this.day2ProfID,
+      required this.wdProfID,
+      required this.scholarType,
+      required this.studentDay1,
+      required this.studentDay2,
+      required this.studentWholeDay,
+      required this.studentTime1,
+      required this.studentTime2});
 
   @override
   State<EditScholar> createState() => _EditScholarState();
@@ -52,7 +75,6 @@ class _EditScholarState extends State<EditScholar> {
   String? assignedProfDay1;
   String? assignedProfDay2;
   String? assignedProfWholeDay;
-  // TODO: Error in the wholeDayVacantTime
 
   bool _passwordVisible = false;
   bool _cfrmPasswordVisible = false;
@@ -61,6 +83,71 @@ class _EditScholarState extends State<EditScholar> {
   Map<String, String> professorNameForDay1 = {};
   Map<String, String> professorNameForDay2 = {};
   Map<String, String> professorNameForWholeDay = {};
+
+  @override
+  void initState() {
+    if (widget.scholarType == "Faci") {
+      final DatabaseReference scholarRef = FirebaseDatabase.instance
+          .ref()
+          .child("Users/Scholars/${widget.userID}");
+      final DatabaseReference profRef =
+          FirebaseDatabase.instance.ref().child("Users/Professors/");
+      List<String> conflicts = [];
+      Future.delayed(const Duration(), () async {
+        if (widget.day1ProfID != "") {
+          await profRef.child(widget.day1ProfID).get().then((snapshot) {
+            Map<String, dynamic> myObj = jsonDecode(jsonEncode(snapshot.value));
+            Professor myProf = Professor.fromJson(myObj);
+
+            if (myProf.day != widget.studentDay1) {
+              conflicts.add("Scholar's Day 1");
+            } else if (myProf.time != widget.studentTime1) {
+              conflicts.add("Scholar's Day 1 Vacant Time");
+            }
+          });
+        }
+
+        if (widget.day2ProfID != "") {
+          await profRef.child(widget.day2ProfID).get().then((snapshot) {
+            Map<String, dynamic> myObj = jsonDecode(jsonEncode(snapshot.value));
+            Professor myProf = Professor.fromJson(myObj);
+
+            if (myProf.day != widget.studentDay2) {
+              conflicts.add("Scholar's Day 2");
+            } else if (myProf.time != widget.studentTime2) {
+              conflicts.add("Scholar's Day 2 Vacant Time");
+            }
+          });
+        }
+
+        if (widget.wdProfID != "") {
+          await profRef.child(widget.wdProfID).get().then((snapshot) {
+            Map<String, dynamic> myObj = jsonDecode(jsonEncode(snapshot.value));
+            Professor myProf = Professor.fromJson(myObj);
+
+            if (myProf.day != widget.studentWholeDay) {
+              conflicts.add("Scholar's Whole Day");
+            }
+          });
+        }
+      }).whenComplete(() {
+        if (conflicts.isNotEmpty) {
+          SchedulerBinding.instance.addPostFrameCallback((_) {
+            DialogConflict(
+              "Found Conflicts!",
+              "Resolve it now because this will create issues to the scholar!\n\nThese usually happen when someone modifies the data of the assigned Professor of this Scholar!",
+              "Close",
+              () {
+                Navigator.of(context, rootNavigator: true).pop();
+              },
+              conflicts: conflicts,
+            ).build(context);
+          });
+        }
+      });
+    }
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -123,7 +210,6 @@ class _EditScholarState extends State<EditScholar> {
                       ),
                     );
                   }
-                  if (gotValue) {}
                   return Form(
                     key: _formKey,
                     child: Column(
@@ -1812,7 +1898,6 @@ class _EditScholarState extends State<EditScholar> {
                                                 "Would you like to view the contacts? It's recommended so you can see the changes.",
                                             textButton: "Contacts",
                                             callback: () {
-                                              //TODO: Maybe try setting the values of the error here?
                                               setState(() {
                                                 onSiteDay1Value = null;
                                                 onSiteDay2Value = null;
@@ -1895,7 +1980,6 @@ class _EditScholarState extends State<EditScholar> {
         FirebaseDatabase.instance.ref().child('Users/Professors/');
     try {
       await _userReference.get().then((snapshot) {
-        int loop = 0;
         Map<String, dynamic> myObj = jsonDecode(jsonEncode(snapshot.value));
         myObj.forEach(
           (key, value) {
@@ -1960,8 +2044,6 @@ class _EditScholarState extends State<EditScholar> {
                   ProfScheduleMatch(name: name, id: id, day: day, time: time);
               wholeDayProfessors.add(matchProf);
             }
-
-            loop++;
           },
         );
         matchedProfesssors = {
@@ -1973,8 +2055,6 @@ class _EditScholarState extends State<EditScholar> {
     } catch (error) {
       rethrow;
     }
-
-    debugPrint(matchedProfesssors.toString());
     return matchedProfesssors;
   }
 
@@ -1984,7 +2064,7 @@ class _EditScholarState extends State<EditScholar> {
         .ref()
         .child('Users/Scholars/${widget.userID}');
     try {
-      await _userReference.get().then((snapshot) {
+      await _userReference.get().then((snapshot) async {
         Map<String, dynamic> myObj = jsonDecode(jsonEncode(snapshot.value));
         Scholar myScholar = Scholar.fromJson(myObj);
 
@@ -2016,12 +2096,22 @@ class _EditScholarState extends State<EditScholar> {
           vacantTimeDay2Value =
               myScholar.vacantTimeDay2 == "" ? null : myScholar.vacantTimeDay2;
 
-          assignedProfDay1 =
-              myScholar.assignedProfD1 == "" ? null : myScholar.assignedProfD1;
-          assignedProfDay2 =
-              myScholar.assignedProfD2 == "" ? null : myScholar.assignedProfD2;
-          assignedProfWholeDay =
-              myScholar.assignedProfWd == "" ? null : myScholar.assignedProfWd;
+          bool prof1Conflict = await profDay1Conflict(myScholar.assignedProfD1);
+          bool prof2Conflict = await profDay2Conflict(myScholar.assignedProfD2);
+          bool profWDConflict =
+              await profWholeDayConflict(myScholar.assignedProfWd);
+
+          if (prof1Conflict) {
+            assignedProfDay1 = null;
+          }
+
+          if (prof2Conflict) {
+            assignedProfDay2 = null;
+          }
+
+          if (profWDConflict) {
+            assignedProfWholeDay = null;
+          }
         }
 
         myUser.add(myScholar);
@@ -2031,6 +2121,71 @@ class _EditScholarState extends State<EditScholar> {
     } catch (error) {
       rethrow;
     }
+  }
+
+  Future<bool> profDay1Conflict(String prof) async {
+    bool hasConflict = false;
+    final DatabaseReference profRef =
+        FirebaseDatabase.instance.ref().child("Users/Professors/");
+
+    if (widget.day1ProfID != "") {
+      await profRef.child(widget.day1ProfID).get().then((snapshot) {
+        Map<String, dynamic> myObj = jsonDecode(jsonEncode(snapshot.value));
+        Professor myProf = Professor.fromJson(myObj);
+
+        if (myProf.day != widget.studentDay1 ||
+            myProf.time != widget.studentTime1) {
+          hasConflict = true;
+        } else {
+          assignedProfDay1 = prof == "" ? null : prof;
+        }
+      });
+    }
+
+    return hasConflict;
+  }
+
+  Future<bool> profDay2Conflict(String prof) async {
+    bool hasConflict = false;
+    final DatabaseReference profRef =
+        FirebaseDatabase.instance.ref().child("Users/Professors/");
+
+    if (widget.day2ProfID != "") {
+      await profRef.child(widget.day2ProfID).get().then((snapshot) {
+        Map<String, dynamic> myObj = jsonDecode(jsonEncode(snapshot.value));
+        Professor myProf = Professor.fromJson(myObj);
+
+        if (myProf.day != widget.studentDay2 ||
+            myProf.time != widget.studentTime2) {
+          hasConflict = true;
+        } else {
+          assignedProfDay2 = prof == "" ? null : prof;
+        }
+      });
+    }
+
+    return hasConflict;
+  }
+
+  Future<bool> profWholeDayConflict(String prof) async {
+    bool hasConflict = false;
+    final DatabaseReference profRef =
+        FirebaseDatabase.instance.ref().child("Users/Professors/");
+
+    if (widget.wdProfID != "") {
+      await profRef.child(widget.wdProfID).get().then((snapshot) {
+        Map<String, dynamic> myObj = jsonDecode(jsonEncode(snapshot.value));
+        Professor myProf = Professor.fromJson(myObj);
+
+        if (myProf.day != widget.studentWholeDay) {
+          hasConflict = true;
+        } else {
+          assignedProfWholeDay = prof == "" ? null : prof;
+        }
+      });
+    }
+
+    return hasConflict;
   }
 
   DropdownMenuItem<String> buildMenuItemCourses(String item) =>

@@ -16,12 +16,12 @@ class UploadGoogleDrivePage extends StatefulWidget {
 }
 
 class _UploadGoogleDrivePageState extends State<UploadGoogleDrivePage> {
+  final formKey = GlobalKey<FormState>();
+  final inputController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     DatabaseReference testReference =
         FirebaseDatabase.instance.ref().child("olddtrlink");
-    final formKey = GlobalKey<FormState>();
-    final inputController = TextEditingController();
 
     return Form(
       key: formKey,
@@ -181,5 +181,11 @@ class _UploadGoogleDrivePageState extends State<UploadGoogleDrivePage> {
         ],
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    inputController.dispose();
+    super.dispose();
   }
 }

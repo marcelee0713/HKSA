@@ -425,10 +425,23 @@ class _ProfessorProfileState extends State<ProfessorProfile> {
                                                 MaterialPageRoute(
                                                     builder: (context) =>
                                                         EditProfessor(
-                                                            userID: snapshot
-                                                                .data!
-                                                                .first
-                                                                .professorId)));
+                                                          userID: snapshot
+                                                              .data!
+                                                              .first
+                                                              .professorId,
+                                                          currentRoom: snapshot
+                                                              .data!.first.room,
+                                                          currentSection:
+                                                              snapshot
+                                                                  .data!
+                                                                  .first
+                                                                  .section,
+                                                          currentSubject:
+                                                              snapshot
+                                                                  .data!
+                                                                  .first
+                                                                  .subject,
+                                                        )));
                                           },
                                           style: ElevatedButton.styleFrom(
                                             backgroundColor:

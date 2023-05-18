@@ -4,6 +4,8 @@ import 'package:hksa/widgets/adminWidgets/nav_drawer.dart';
 import 'package:hksa/widgets/adminWidgets/reset/old_dtr_link.dart';
 import 'package:hksa/widgets/adminWidgets/reset/reset_buttons.dart';
 import 'package:hksa/widgets/adminWidgets/reset/reset_header.dart';
+import 'package:hksa/widgets/adminWidgets/reset/schedule_choices.dart';
+import 'package:hksa/widgets/adminWidgets/reset/settings_header.dart';
 
 class Reset extends StatefulWidget {
   const Reset({super.key});
@@ -18,39 +20,46 @@ class _ResetState extends State<Reset> {
     return Scaffold(
       backgroundColor: ColorPalette.accentWhite,
       drawer: const NavDraw(),
-      body: Stack(
+      body: ListView(
+        shrinkWrap: true,
         children: [
-          Builder(builder: (context) {
-            return SafeArea(
-              child: Align(
-                alignment: Alignment.topLeft,
-                child: IconButton(
-                  onPressed: () {
-                    Scaffold.of(context).openDrawer();
-                  },
-                  icon: const Icon(
-                    Icons.menu_rounded,
-                    size: 40,
-                    color: ColorPalette.primary,
+          Stack(
+            children: [
+              Builder(builder: (context) {
+                return SafeArea(
+                  child: Align(
+                    alignment: Alignment.topLeft,
+                    child: IconButton(
+                      onPressed: () {
+                        Scaffold.of(context).openDrawer();
+                      },
+                      icon: const Icon(
+                        Icons.menu_rounded,
+                        size: 40,
+                        color: ColorPalette.primary,
+                      ),
+                    ),
                   ),
+                );
+              }),
+              Container(
+                padding: const EdgeInsets.fromLTRB(20, 50, 20, 20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: const [
+                    GreetingsHeader(),
+                    SizedBox(height: 10),
+                    UploadGoogleDrivePage(),
+                    SizedBox(height: 32),
+                    ScheduleChoices(),
+                    SizedBox(height: 32),
+                    ResetHeader(),
+                    SizedBox(height: 10),
+                    ResetButtons(),
+                  ],
                 ),
               ),
-            );
-          }),
-          Container(
-            height: MediaQuery.of(context).size.height,
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: const [
-                UploadGoogleDrivePage(),
-                SizedBox(height: 32),
-                ResetHeader(),
-                SizedBox(height: 10),
-                ResetButtons(),
-              ],
-            ),
+            ],
           ),
         ],
       ),

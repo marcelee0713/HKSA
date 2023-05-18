@@ -956,14 +956,32 @@ class _ScholarProfileState extends State<ScholarProfile> {
                                     child: ElevatedButton(
                                       onPressed: () {
                                         Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    EditScholar(
-                                                        userID: snapshot
-                                                            .data!
-                                                            .first
-                                                            .studentNumber)));
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) => EditScholar(
+                                              userID: snapshot
+                                                  .data!.first.studentNumber,
+                                              day1ProfID: snapshot
+                                                  .data!.first.assignedProfD1,
+                                              day2ProfID: snapshot
+                                                  .data!.first.assignedProfD2,
+                                              wdProfID: snapshot
+                                                  .data!.first.assignedProfWd,
+                                              scholarType: snapshot
+                                                  .data!.first.scholarType,
+                                              studentDay1: snapshot
+                                                  .data!.first.onSiteDay1,
+                                              studentDay2: snapshot
+                                                  .data!.first.onSiteDay2,
+                                              studentTime1: snapshot
+                                                  .data!.first.vacantTimeDay1,
+                                              studentTime2: snapshot
+                                                  .data!.first.vacantTimeDay2,
+                                              studentWholeDay: snapshot.data!
+                                                  .first.wholeDayVacantTime,
+                                            ),
+                                          ),
+                                        );
                                       },
                                       style: ElevatedButton.styleFrom(
                                         backgroundColor: ColorPalette.primary,

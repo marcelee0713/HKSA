@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:hksa/constant/colors.dart';
 import 'package:hksa/constant/string.dart';
@@ -10,17 +11,29 @@ import 'package:hksa/pages/adminPages/contact.dart';
 import 'package:hksa/widgets/adminWidgets/nav_drawer.dart';
 import 'package:hksa/widgets/dialogs/dialog_confirm.dart';
 import 'package:hksa/widgets/dialogs/dialog_loading.dart';
+import 'package:hksa/widgets/dialogs/dialog_show_conflict.dart';
 import 'package:hksa/widgets/dialogs/dialog_success.dart';
+import 'package:hksa/widgets/dialogs/dialog_unsuccessful.dart';
 
 class EditProfessor extends StatefulWidget {
   final String userID;
-  const EditProfessor({super.key, required this.userID});
+  final String currentRoom;
+  final String currentSection;
+  final String currentSubject;
+  const EditProfessor(
+      {super.key,
+      required this.userID,
+      required this.currentRoom,
+      required this.currentSection,
+      required this.currentSubject});
 
   @override
   State<EditProfessor> createState() => _EditProfessorState();
 }
 
 class _EditProfessorState extends State<EditProfessor> {
+  final DatabaseReference choicesReference =
+      FirebaseDatabase.instance.ref().child("scheduleChoices/");
   final _inputControllerProfessorID = TextEditingController();
   final _inputControllerName = TextEditingController();
   final _inputControllerEmail = TextEditingController();
@@ -39,11 +52,82 @@ class _EditProfessorState extends State<EditProfessor> {
   String? departmentValue;
   String? dayValue;
   String? timeValue;
+  String? roomValue;
+  String? sectionValue;
+  String? subjectValue;
 
   bool _passwordVisible = false;
   bool _cfrmPasswordVisible = false;
   bool _signatureCodeVisible = false;
   bool getOnce = true;
+
+  @override
+  void initState() {
+    checkSchedules();
+    super.initState();
+  }
+
+  Future<void> checkSchedules() async {
+    List<String> conflicts = [];
+    await choicesReference.child("room").get().then((snapshot) {
+      bool doesNotExist = true;
+      for (final data in snapshot.children) {
+        if (widget.currentRoom == data.value) {
+          roomValue = data.value.toString();
+          doesNotExist = false;
+        }
+      }
+
+      if (doesNotExist) {
+        conflicts.add("Room doesn't exist!");
+        roomValue = null;
+      }
+    });
+
+    await choicesReference.child("section").get().then((snapshot) {
+      bool doesNotExist = true;
+      for (final data in snapshot.children) {
+        if (widget.currentSection == data.value) {
+          sectionValue = data.value.toString();
+          doesNotExist = false;
+        }
+      }
+
+      if (doesNotExist) {
+        conflicts.add("Section doesn't exist!");
+        sectionValue = null;
+      }
+    });
+
+    await choicesReference.child("subjectCode").get().then((snapshot) {
+      bool doesNotExist = true;
+      for (final data in snapshot.children) {
+        if (widget.currentSubject == data.value) {
+          subjectValue = data.value.toString();
+          doesNotExist = false;
+        }
+      }
+
+      if (doesNotExist) {
+        conflicts.add("Subject code doesn't exist!");
+        subjectValue = null;
+      }
+    }).whenComplete(() {
+      if (conflicts.isNotEmpty) {
+        SchedulerBinding.instance.addPostFrameCallback((_) {
+          DialogConflict(
+            "Found Conflicts on this Professor!",
+            "Resolve it now because this will create issues to the professor and scholars!",
+            "Close",
+            () {
+              Navigator.of(context, rootNavigator: true).pop();
+            },
+            conflicts: conflicts,
+          ).build(context);
+        });
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -305,7 +389,7 @@ class _EditProfessorState extends State<EditProfessor> {
                                         color: ColorPalette.primary,
                                       ),
                                       items: HKSAStrings.departments
-                                          .map(buildMenuItemDepartments)
+                                          .map(buildMenuItem)
                                           .toList(),
                                       onChanged: ((departmentValue) =>
                                           setState(() {
@@ -696,6 +780,45 @@ class _EditProfessorState extends State<EditProfessor> {
                                 ),
                               ),
                             ),
+                            const SizedBox(height: 5),
+                            const Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                "Important note:",
+                                style: TextStyle(
+                                  color: ColorPalette.errorColor,
+                                  fontSize: 14,
+                                  fontFamily: 'Inter',
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                            ),
+                            Align(
+                              alignment: Alignment.centerLeft,
+                              child: RichText(
+                                text: const TextSpan(
+                                  text: 'Please be careful modifying ',
+                                  style: TextStyle(
+                                    color: ColorPalette.errorColor,
+                                    fontSize: 14,
+                                    fontFamily: 'Inter',
+                                    fontWeight: FontWeight.w400,
+                                  ),
+                                  children: <TextSpan>[
+                                    TextSpan(
+                                      text: 'DAY and TIME. ',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.w700,
+                                      ),
+                                    ),
+                                    TextSpan(
+                                      text:
+                                          'This can create conflicts to one or more scholars if this professor is assigned to somebody else.',
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
                             const SizedBox(height: 10),
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -726,7 +849,7 @@ class _EditProfessorState extends State<EditProfessor> {
                                         color: ColorPalette.primary,
                                       ),
                                       items: HKSAStrings.vacantday
-                                          .map(buildMenuItemDay)
+                                          .map(buildMenuItem)
                                           .toList(),
                                       onChanged: ((dayValue) => setState(() {
                                             this.dayValue = dayValue ?? "";
@@ -776,7 +899,7 @@ class _EditProfessorState extends State<EditProfessor> {
                                         color: ColorPalette.primary,
                                       ),
                                       items: HKSAStrings.vacanttime
-                                          .map(buildMenuItemTime)
+                                          .map(buildMenuItem)
                                           .toList(),
                                       onChanged: ((timeValue) => setState(() {
                                             this.timeValue = timeValue ?? "";
@@ -800,44 +923,100 @@ class _EditProfessorState extends State<EditProfessor> {
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                TextFormField(
-                                  controller: _inputControllerSubject,
-                                  validator: (value) {
-                                    if (value!.isNotEmpty) {
-                                      return null;
-                                    } else {
-                                      return "Invalid input.";
-                                    }
-                                  },
-                                  keyboardType: TextInputType.text,
-                                  decoration: InputDecoration(
-                                    counterText: "",
-                                    enabledBorder: OutlineInputBorder(
-                                      borderSide: const BorderSide(
-                                          color: Colors.transparent),
-                                      borderRadius: BorderRadius.circular(10.0),
-                                    ),
-                                    focusedBorder: OutlineInputBorder(
-                                      borderSide: const BorderSide(
-                                          color: Colors.transparent),
-                                      borderRadius: BorderRadius.circular(10.0),
-                                    ),
-                                    filled: true,
-                                    fillColor: ColorPalette.accentDarkWhite,
-                                    hintStyle: const TextStyle(
-                                      fontWeight: FontWeight.w300,
-                                      fontStyle: FontStyle.italic,
-                                    ),
-                                    hintText: "Enter Subject Code",
-                                  ),
-                                  maxLength: 15,
-                                  style: const TextStyle(
-                                    color: ColorPalette.primary,
-                                    fontFamily: 'Inter',
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w700,
-                                  ),
-                                ),
+                                FutureBuilder(
+                                    future: getSubjectCodes(),
+                                    builder: (context, snapshot) {
+                                      if (!snapshot.hasData) {
+                                        return Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          children: const [
+                                            Text(
+                                              'Fetching subject codes...',
+                                              style: TextStyle(
+                                                color: ColorPalette.primary,
+                                                fontSize: 12,
+                                                fontFamily: 'Inter',
+                                                fontWeight: FontWeight.w300,
+                                              ),
+                                            ),
+                                            SpinKitThreeBounce(
+                                              color: ColorPalette.secondary,
+                                              size: 15,
+                                            ),
+                                          ],
+                                        );
+                                      }
+
+                                      if (snapshot.hasError) {
+                                        return Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          children: const [
+                                            Icon(
+                                              Icons.warning_rounded,
+                                              color: ColorPalette.errorColor,
+                                              size: 15,
+                                            ),
+                                            SizedBox(width: 2),
+                                            Text(
+                                              'Error fetching subject codes.',
+                                              style: TextStyle(
+                                                color: ColorPalette.errorColor,
+                                                fontSize: 12,
+                                                fontFamily: 'Inter',
+                                                fontWeight: FontWeight.w300,
+                                              ),
+                                            ),
+                                          ],
+                                        );
+                                      }
+
+                                      return Container(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 12, vertical: 4),
+                                        decoration: const BoxDecoration(
+                                          color: ColorPalette.accentDarkWhite,
+                                          borderRadius: BorderRadius.all(
+                                            Radius.circular(10),
+                                          ),
+                                        ),
+                                        child: DropdownButtonHideUnderline(
+                                          child: DropdownButton(
+                                            hint: Text(
+                                              snapshot.data!.isNotEmpty
+                                                  ? "Enter Subject codes"
+                                                  : "No Subject codes Currently",
+                                              style: const TextStyle(
+                                                fontFamily: 'Inter',
+                                                fontSize: 14,
+                                                fontStyle: FontStyle.italic,
+                                                fontWeight: FontWeight.w300,
+                                              ),
+                                            ),
+                                            isExpanded: true,
+                                            iconSize: 32,
+                                            icon: const Icon(
+                                              Icons.arrow_drop_down,
+                                              color: ColorPalette.primary,
+                                            ),
+                                            value: subjectValue,
+                                            items: snapshot.data!
+                                                .map(buildMenuItem)
+                                                .toList(),
+                                            onChanged: ((subjectValue) =>
+                                                setState(() {
+                                                  this.subjectValue =
+                                                      subjectValue ?? "";
+                                                })),
+                                          ),
+                                        ),
+                                      );
+                                    }),
                                 const SizedBox(height: 2),
                                 Text(
                                   "Subject was ${snapshot.data!.first.subject}",
@@ -854,44 +1033,100 @@ class _EditProfessorState extends State<EditProfessor> {
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                TextFormField(
-                                  controller: _inputControllerSection,
-                                  validator: (value) {
-                                    if (value!.isNotEmpty) {
-                                      return null;
-                                    } else {
-                                      return "Invalid input.";
-                                    }
-                                  },
-                                  keyboardType: TextInputType.text,
-                                  decoration: InputDecoration(
-                                    counterText: "",
-                                    enabledBorder: OutlineInputBorder(
-                                      borderSide: const BorderSide(
-                                          color: Colors.transparent),
-                                      borderRadius: BorderRadius.circular(10.0),
-                                    ),
-                                    focusedBorder: OutlineInputBorder(
-                                      borderSide: const BorderSide(
-                                          color: Colors.transparent),
-                                      borderRadius: BorderRadius.circular(10.0),
-                                    ),
-                                    filled: true,
-                                    fillColor: ColorPalette.accentDarkWhite,
-                                    hintStyle: const TextStyle(
-                                      fontWeight: FontWeight.w300,
-                                      fontStyle: FontStyle.italic,
-                                    ),
-                                    hintText: "Enter Section",
-                                  ),
-                                  maxLength: 20,
-                                  style: const TextStyle(
-                                    color: ColorPalette.primary,
-                                    fontFamily: 'Inter',
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w700,
-                                  ),
-                                ),
+                                FutureBuilder(
+                                    future: getSections(),
+                                    builder: (context, snapshot) {
+                                      if (!snapshot.hasData) {
+                                        return Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          children: const [
+                                            Text(
+                                              'Fetching sections...',
+                                              style: TextStyle(
+                                                color: ColorPalette.primary,
+                                                fontSize: 12,
+                                                fontFamily: 'Inter',
+                                                fontWeight: FontWeight.w300,
+                                              ),
+                                            ),
+                                            SpinKitThreeBounce(
+                                              color: ColorPalette.secondary,
+                                              size: 15,
+                                            ),
+                                          ],
+                                        );
+                                      }
+
+                                      if (snapshot.hasError) {
+                                        return Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          children: const [
+                                            Icon(
+                                              Icons.warning_rounded,
+                                              color: ColorPalette.errorColor,
+                                              size: 15,
+                                            ),
+                                            SizedBox(width: 2),
+                                            Text(
+                                              'Error fetching sections.',
+                                              style: TextStyle(
+                                                color: ColorPalette.errorColor,
+                                                fontSize: 12,
+                                                fontFamily: 'Inter',
+                                                fontWeight: FontWeight.w300,
+                                              ),
+                                            ),
+                                          ],
+                                        );
+                                      }
+
+                                      return Container(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 12, vertical: 4),
+                                        decoration: const BoxDecoration(
+                                          color: ColorPalette.accentDarkWhite,
+                                          borderRadius: BorderRadius.all(
+                                            Radius.circular(10),
+                                          ),
+                                        ),
+                                        child: DropdownButtonHideUnderline(
+                                          child: DropdownButton(
+                                            hint: Text(
+                                              snapshot.data!.isNotEmpty
+                                                  ? "Enter Sections"
+                                                  : "No Sections Currently",
+                                              style: const TextStyle(
+                                                fontFamily: 'Inter',
+                                                fontSize: 14,
+                                                fontStyle: FontStyle.italic,
+                                                fontWeight: FontWeight.w300,
+                                              ),
+                                            ),
+                                            isExpanded: true,
+                                            iconSize: 32,
+                                            icon: const Icon(
+                                              Icons.arrow_drop_down,
+                                              color: ColorPalette.primary,
+                                            ),
+                                            value: sectionValue,
+                                            items: snapshot.data!
+                                                .map(buildMenuItem)
+                                                .toList(),
+                                            onChanged: ((sectionValue) =>
+                                                setState(() {
+                                                  this.sectionValue =
+                                                      sectionValue ?? "";
+                                                })),
+                                          ),
+                                        ),
+                                      );
+                                    }),
                                 const SizedBox(height: 2),
                                 Text(
                                   "Section was ${snapshot.data!.first.section}",
@@ -908,44 +1143,100 @@ class _EditProfessorState extends State<EditProfessor> {
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                TextFormField(
-                                  controller: _inputControllerRoom,
-                                  validator: (value) {
-                                    if (value!.isNotEmpty) {
-                                      return null;
-                                    } else {
-                                      return "Invalid input.";
-                                    }
-                                  },
-                                  keyboardType: TextInputType.text,
-                                  decoration: InputDecoration(
-                                    counterText: "",
-                                    enabledBorder: OutlineInputBorder(
-                                      borderSide: const BorderSide(
-                                          color: Colors.transparent),
-                                      borderRadius: BorderRadius.circular(10.0),
-                                    ),
-                                    focusedBorder: OutlineInputBorder(
-                                      borderSide: const BorderSide(
-                                          color: Colors.transparent),
-                                      borderRadius: BorderRadius.circular(10.0),
-                                    ),
-                                    filled: true,
-                                    fillColor: ColorPalette.accentDarkWhite,
-                                    hintStyle: const TextStyle(
-                                      fontWeight: FontWeight.w300,
-                                      fontStyle: FontStyle.italic,
-                                    ),
-                                    hintText: "Enter Room",
-                                  ),
-                                  maxLength: 20,
-                                  style: const TextStyle(
-                                    color: ColorPalette.primary,
-                                    fontFamily: 'Inter',
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w700,
-                                  ),
-                                ),
+                                FutureBuilder(
+                                    future: getRooms(),
+                                    builder: (context, snapshot) {
+                                      if (!snapshot.hasData) {
+                                        return Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          children: const [
+                                            Text(
+                                              'Fetching rooms...',
+                                              style: TextStyle(
+                                                color: ColorPalette.primary,
+                                                fontSize: 12,
+                                                fontFamily: 'Inter',
+                                                fontWeight: FontWeight.w300,
+                                              ),
+                                            ),
+                                            SpinKitThreeBounce(
+                                              color: ColorPalette.secondary,
+                                              size: 15,
+                                            ),
+                                          ],
+                                        );
+                                      }
+
+                                      if (snapshot.hasError) {
+                                        return Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          children: const [
+                                            Icon(
+                                              Icons.warning_rounded,
+                                              color: ColorPalette.errorColor,
+                                              size: 15,
+                                            ),
+                                            SizedBox(width: 2),
+                                            Text(
+                                              'Error fetching rooms.',
+                                              style: TextStyle(
+                                                color: ColorPalette.errorColor,
+                                                fontSize: 12,
+                                                fontFamily: 'Inter',
+                                                fontWeight: FontWeight.w300,
+                                              ),
+                                            ),
+                                          ],
+                                        );
+                                      }
+
+                                      return Container(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 12, vertical: 4),
+                                        decoration: const BoxDecoration(
+                                          color: ColorPalette.accentDarkWhite,
+                                          borderRadius: BorderRadius.all(
+                                            Radius.circular(10),
+                                          ),
+                                        ),
+                                        child: DropdownButtonHideUnderline(
+                                          child: DropdownButton(
+                                            hint: Text(
+                                              snapshot.data!.isNotEmpty
+                                                  ? "Enter Rooms"
+                                                  : "No Rooms Currently",
+                                              style: const TextStyle(
+                                                fontFamily: 'Inter',
+                                                fontSize: 14,
+                                                fontStyle: FontStyle.italic,
+                                                fontWeight: FontWeight.w300,
+                                              ),
+                                            ),
+                                            isExpanded: true,
+                                            iconSize: 32,
+                                            icon: const Icon(
+                                              Icons.arrow_drop_down,
+                                              color: ColorPalette.primary,
+                                            ),
+                                            value: roomValue,
+                                            items: snapshot.data!
+                                                .map(buildMenuItem)
+                                                .toList(),
+                                            onChanged: ((roomValue) =>
+                                                setState(() {
+                                                  this.roomValue =
+                                                      roomValue ?? "";
+                                                })),
+                                          ),
+                                        ),
+                                      );
+                                    }),
                                 const SizedBox(height: 2),
                                 Text(
                                   "Room was ${snapshot.data!.first.room}",
@@ -965,8 +1256,25 @@ class _EditProfessorState extends State<EditProfessor> {
                               child: ElevatedButton(
                                 onPressed: (() {
                                   setState(() {
-                                    if (!_formKey.currentState!.validate() ||
-                                        departmentValue == null) {
+                                    if (!_formKey.currentState!.validate()) {
+                                      return;
+                                    }
+
+                                    if (departmentValue == null ||
+                                        dayValue == null ||
+                                        timeValue == null ||
+                                        sectionValue == null ||
+                                        subjectValue == null ||
+                                        roomValue == null) {
+                                      DialogUnsuccessful(
+                                        headertext: "Missing inputs!",
+                                        subtext:
+                                            "Please enter the missing dropdown inputs!",
+                                        textButton: "Close",
+                                        callback: () => Navigator.of(context,
+                                                rootNavigator: true)
+                                            .pop(),
+                                      ).buildUnsuccessfulScreen(context);
                                       return;
                                     }
 
@@ -1129,8 +1437,7 @@ class _EditProfessorState extends State<EditProfessor> {
     }
   }
 
-  DropdownMenuItem<String> buildMenuItemDepartments(String item) =>
-      DropdownMenuItem(
+  DropdownMenuItem<String> buildMenuItem(String item) => DropdownMenuItem(
         value: item,
         child: Text(
           item,
@@ -1143,72 +1450,44 @@ class _EditProfessorState extends State<EditProfessor> {
         ),
       );
 
-  DropdownMenuItem<String> buildMenuItemDay(String item) => DropdownMenuItem(
-        value: item,
-        child: Text(
-          item,
-          style: const TextStyle(
-            fontFamily: 'Inter',
-            fontWeight: FontWeight.w300,
-            fontSize: 12,
-            color: ColorPalette.primary,
-          ),
-        ),
-      );
+  Future<List<String>> getRooms() async {
+    List<String> rooms = [];
+    await choicesReference.child("room").get().then((snapshot) {
+      for (final data in snapshot.children) {
+        rooms.add(data.value.toString());
+      }
+    });
 
-  DropdownMenuItem<String> buildMenuItemTime(String item) => DropdownMenuItem(
-        value: item,
-        child: Text(
-          item,
-          style: const TextStyle(
-            fontFamily: 'Inter',
-            fontWeight: FontWeight.w300,
-            fontSize: 12,
-            color: ColorPalette.primary,
-          ),
-        ),
-      );
+    rooms.sort();
+    return rooms;
+  }
 
-  DropdownMenuItem<String> buildMenuItemRoom(String item) => DropdownMenuItem(
-        value: item,
-        child: Text(
-          item,
-          style: const TextStyle(
-            fontFamily: 'Inter',
-            fontWeight: FontWeight.w300,
-            fontSize: 12,
-            color: ColorPalette.primary,
-          ),
-        ),
-      );
+  Future<List<String>> getSections() async {
+    List<String> sections = [];
+    await choicesReference.child("section").get().then((snapshot) {
+      for (final data in snapshot.children) {
+        sections.add(data.value.toString());
+      }
+    });
 
-  DropdownMenuItem<String> buildMenuItemSection(String item) =>
-      DropdownMenuItem(
-        value: item,
-        child: Text(
-          item,
-          style: const TextStyle(
-            fontFamily: 'Inter',
-            fontWeight: FontWeight.w300,
-            fontSize: 12,
-            color: ColorPalette.primary,
-          ),
-        ),
-      );
+    sections.sort();
+    return sections;
+  }
 
-  DropdownMenuItem<String> buildMenuItemSubject(String item) =>
-      DropdownMenuItem(
-        value: item,
-        child: Text(
-          item,
-          style: const TextStyle(
-            fontFamily: 'Inter',
-            fontWeight: FontWeight.w300,
-            fontSize: 12,
-            color: ColorPalette.primary,
-          ),
-        ),
-      );
+  Future<List<String>> getSubjectCodes() async {
+    List<String> subjectCodes = [];
+    await choicesReference.child("subjectCode").get().then((snapshot) {
+      for (final data in snapshot.children) {
+        subjectCodes.add(data.value.toString());
+        if (widget.currentSubject == data.value) {
+          subjectValue = data.value.toString();
+        }
+      }
+    });
+
+    subjectCodes.sort();
+    return subjectCodes;
+  }
 
   @override
   void dispose() {

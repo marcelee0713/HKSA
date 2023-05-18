@@ -1,8 +1,12 @@
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:hksa/constant/colors.dart';
-import 'package:hksa/models/head.dart';
+import 'package:hksa/models/professor.dart';
+import 'package:hksa/models/scholar.dart';
 import 'package:hksa/widgets/universal/view_head.dart';
 import 'package:hksa/widgets/universal/view_inbox.dart';
 import 'package:hksa/widgets/universal/view_professor.dart';
@@ -30,6 +34,14 @@ class _ChatBoxState extends State<ChatBox> {
   final logInBox = Hive.box("myLoginBox");
   late var userID = logInBox.get("userID");
   late var userType = logInBox.get("userType");
+  bool hasConflicts = false;
+  bool profHasConflicts = false;
+  @override
+  void initState() {
+    getStatus(); // For Scholars
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return InkWell(
@@ -111,17 +123,17 @@ class _ChatBoxState extends State<ChatBox> {
                                   fontWeight: FontWeight.w300,
                                 ),
                               ),
-                        widget.isIncomplete == "true"
-                            ? const Text(
-                                "INC",
-                                style: TextStyle(
-                                  color: ColorPalette.errorColor,
-                                  fontFamily: 'Inter',
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.w300,
-                                ),
-                              )
-                            : const SizedBox()
+                        FutureBuilder(
+                          future: checkSchedules(),
+                          builder: (context, snapshot) {
+                            return userType == "head"
+                                ? buildProfIdentifier()
+                                : const SizedBox();
+                          },
+                        ),
+                        userType == "head"
+                            ? buildScholarIdentifier()
+                            : const SizedBox(),
                       ],
                     ),
                   ],
@@ -158,10 +170,6 @@ class _ChatBoxState extends State<ChatBox> {
                 .snapshots(),
             builder: (context, snapshot) {
               if (!snapshot.hasData) {
-                debugPrint("${userType}");
-                debugPrint("${userID}");
-                debugPrint("${widget.userId}");
-
                 return const SizedBox();
               }
               int howMany = 0;
@@ -209,5 +217,210 @@ class _ChatBoxState extends State<ChatBox> {
         ],
       ),
     );
+  }
+
+  Widget buildScholarIdentifier() {
+    if (widget.userType == "scholar") {
+      return Row(
+        children: [
+          widget.isIncomplete == "true"
+              ? const Text(
+                  "INC",
+                  style: TextStyle(
+                    color: ColorPalette.errorColor,
+                    fontFamily: 'Inter',
+                    fontSize: 10,
+                    fontWeight: FontWeight.w300,
+                  ),
+                )
+              : const SizedBox(),
+          hasConflicts && widget.isIncomplete == "true"
+              ? const Text(
+                  " | ",
+                  style: TextStyle(
+                    fontFamily: 'Inter',
+                    fontSize: 10,
+                    fontWeight: FontWeight.w300,
+                  ),
+                )
+              : const SizedBox(),
+          hasConflicts
+              ? const Text(
+                  "CONFLICTS",
+                  style: TextStyle(
+                    color: Color.fromARGB(255, 255, 94, 0),
+                    fontFamily: 'Inter',
+                    fontSize: 10,
+                    fontWeight: FontWeight.w300,
+                  ),
+                )
+              : const SizedBox()
+        ],
+      );
+    }
+
+    return const SizedBox();
+  }
+
+  Widget buildProfIdentifier() {
+    if (widget.userType == "professor") {
+      return profHasConflicts
+          ? const Text(
+              "CONFLICTS",
+              style: TextStyle(
+                color: Color.fromARGB(255, 255, 94, 0),
+                fontFamily: 'Inter',
+                fontSize: 10,
+                fontWeight: FontWeight.w300,
+              ),
+            )
+          : const SizedBox();
+    }
+    return const SizedBox();
+  }
+
+  Future<void> checkSchedules() async {
+    if (widget.userType == "professor") {
+      List<String> conflicts = [];
+      final DatabaseReference choicesReference =
+          FirebaseDatabase.instance.ref().child("scheduleChoices/");
+      final DatabaseReference profReference = FirebaseDatabase.instance
+          .ref()
+          .child("Users/Professors/${widget.userId}");
+      await profReference.get().then((snapshot) async {
+        Map<String, dynamic> myObj = jsonDecode(jsonEncode(snapshot.value));
+        Professor myProf = Professor.fromJson(myObj);
+
+        final currentRoom = myProf.room;
+        final currentSection = myProf.section;
+        final currentSubject = myProf.subject;
+
+        await choicesReference.child("room").get().then((snapshot) {
+          bool doesNotExist = true;
+          for (final data in snapshot.children) {
+            if (currentRoom == data.value) {
+              doesNotExist = false;
+            }
+          }
+
+          if (doesNotExist) {
+            conflicts.add("Room doesn't exist!");
+          }
+        });
+
+        await choicesReference.child("section").get().then((snapshot) {
+          bool doesNotExist = true;
+          for (final data in snapshot.children) {
+            if (currentSection == data.value) {
+              doesNotExist = false;
+            }
+          }
+
+          if (doesNotExist) {
+            conflicts.add("Section doesn't exist!");
+          }
+        });
+
+        await choicesReference.child("subjectCode").get().then((snapshot) {
+          bool doesNotExist = true;
+          for (final data in snapshot.children) {
+            if (currentSubject == data.value) {
+              doesNotExist = false;
+            }
+          }
+
+          if (doesNotExist) {
+            conflicts.add("Subject code doesn't exist!");
+          }
+        }).whenComplete(() {
+          if (conflicts.isNotEmpty) {
+            if (mounted) {
+              setState(() {
+                profHasConflicts = true;
+              });
+            }
+          }
+        });
+      });
+    }
+  }
+
+  Future<void> getStatus() async {
+    if (widget.userType == "scholar") {
+      final DatabaseReference scholarRef = FirebaseDatabase.instance
+          .ref()
+          .child("Users/Scholars/${widget.userId}");
+      final DatabaseReference profRef =
+          FirebaseDatabase.instance.ref().child("Users/Professors/");
+      await scholarRef.get().then((snapshot) async {
+        Map<String, dynamic> myObj = jsonDecode(jsonEncode(snapshot.value));
+        Scholar myScholar = Scholar.fromJson(myObj);
+
+        String scholarType = myScholar.scholarType;
+
+        if (scholarType == "Faci") {
+          String day1ProfID = myScholar.assignedProfD1;
+
+          String day2ProfID = myScholar.assignedProfD2;
+          String wdProfID = myScholar.assignedProfWd;
+
+          String studentDay1 = myScholar.onSiteDay1;
+          String studentDay2 = myScholar.onSiteDay2;
+          String studentWholeDay = myScholar.wholeDayVacantTime;
+          String studentTime1 = myScholar.vacantTimeDay1;
+          String studentTime2 = myScholar.vacantTimeDay2;
+
+          if (day1ProfID != "") {
+            await profRef.child(day1ProfID).get().then((snapshot) {
+              Map<String, dynamic> myObj =
+                  jsonDecode(jsonEncode(snapshot.value));
+              Professor myProf = Professor.fromJson(myObj);
+
+              if (myProf.day != studentDay1) {
+                setState(() {
+                  hasConflicts = true;
+                });
+              } else if (myProf.time != studentTime1) {
+                setState(() {
+                  hasConflicts = true;
+                });
+              }
+            });
+          }
+
+          if (day2ProfID != "") {
+            await profRef.child(day2ProfID).get().then((snapshot) {
+              Map<String, dynamic> myObj =
+                  jsonDecode(jsonEncode(snapshot.value));
+              Professor myProf = Professor.fromJson(myObj);
+
+              if (myProf.day != studentDay2) {
+                setState(() {
+                  hasConflicts = true;
+                });
+              } else if (myProf.time != studentTime2) {
+                setState(() {
+                  hasConflicts = true;
+                });
+              }
+            });
+          }
+
+          if (wdProfID != "") {
+            await profRef.child(wdProfID).get().then((snapshot) {
+              Map<String, dynamic> myObj =
+                  jsonDecode(jsonEncode(snapshot.value));
+              Professor myProf = Professor.fromJson(myObj);
+
+              if (myProf.day != studentWholeDay) {
+                setState(() {
+                  hasConflicts = true;
+                });
+              }
+            });
+          }
+        }
+      });
+    }
   }
 }
