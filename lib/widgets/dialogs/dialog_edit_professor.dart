@@ -4,16 +4,19 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:hive/hive.dart';
 import 'package:hksa/constant/colors.dart';
 import 'package:hksa/constant/string.dart';
 import 'package:hksa/models/professor.dart';
 import 'package:hksa/pages/adminPages/contact.dart';
 import 'package:hksa/widgets/adminWidgets/nav_drawer.dart';
 import 'package:hksa/widgets/dialogs/dialog_confirm.dart';
+import 'package:hksa/widgets/dialogs/dialog_confirm_edit.dart';
 import 'package:hksa/widgets/dialogs/dialog_loading.dart';
 import 'package:hksa/widgets/dialogs/dialog_show_conflict.dart';
 import 'package:hksa/widgets/dialogs/dialog_success.dart';
 import 'package:hksa/widgets/dialogs/dialog_unsuccessful.dart';
+import 'package:hksa/widgets/scholarWidgets/home/home_inputs.dart';
 
 class EditProfessor extends StatefulWidget {
   final String userID;
@@ -32,6 +35,9 @@ class EditProfessor extends StatefulWidget {
 }
 
 class _EditProfessorState extends State<EditProfessor> {
+  final logInBox = Hive.box("myLoginBox");
+  late var userType = logInBox.get("userType");
+  late var userID = logInBox.get("userID");
   final DatabaseReference choicesReference =
       FirebaseDatabase.instance.ref().child("scheduleChoices/");
   final _inputControllerProfessorID = TextEditingController();
@@ -59,7 +65,8 @@ class _EditProfessorState extends State<EditProfessor> {
   bool _passwordVisible = false;
   bool _cfrmPasswordVisible = false;
   bool _signatureCodeVisible = false;
-  bool getOnce = true;
+  bool gotValue = false;
+  bool gotValueSubject = false;
 
   @override
   void initState() {
@@ -1278,47 +1285,120 @@ class _EditProfessorState extends State<EditProfessor> {
                                       return;
                                     }
 
-                                    DialogConfirm(
+                                    List<String> changes = [];
+
+                                    String professorID =
+                                        _inputControllerProfessorID.text.trim();
+                                    String fullName =
+                                        _inputControllerName.text.trim();
+                                    String? department = departmentValue;
+                                    String email =
+                                        _inputControllerEmail.text.trim();
+                                    String phoneNumber =
+                                        _inputControllerPhoneNumber.text.trim();
+                                    String password =
+                                        _inputControllerCfrmPassword.text
+                                            .trim();
+                                    String signature =
+                                        _inputControllerSignatureCode.text
+                                            .trim();
+
+                                    String? subject = subjectValue.toString();
+                                    String? section = sectionValue.toString();
+                                    String? room = roomValue.toString();
+                                    String? day = dayValue.toString();
+                                    String? time = timeValue.toString();
+
+                                    String currentName =
+                                        snapshot.data!.first.name;
+                                    String currentEmail =
+                                        snapshot.data!.first.email;
+                                    String currentDepartment =
+                                        snapshot.data!.first.department;
+                                    String currentPhoneNumber =
+                                        snapshot.data!.first.phonenumber;
+                                    String currentPassword =
+                                        snapshot.data!.first.password;
+                                    String currentSignature =
+                                        snapshot.data!.first.signaturecode;
+                                    String currentDay =
+                                        snapshot.data!.first.day;
+                                    String currentTime =
+                                        snapshot.data!.first.time;
+                                    String currentSubject =
+                                        snapshot.data!.first.subject;
+                                    String currentSection =
+                                        snapshot.data!.first.section;
+                                    String currentRoom =
+                                        snapshot.data!.first.room;
+
+                                    if (currentName != fullName) {
+                                      changes.add(
+                                          "Changed name from $currentName to $fullName");
+                                    }
+
+                                    if (currentEmail != email) {
+                                      changes.add(
+                                          "Changed email from $currentEmail to $email");
+                                    }
+
+                                    if (currentDepartment != department) {
+                                      changes.add(
+                                          "Changed department from $currentDepartment to $department");
+                                    }
+
+                                    if (currentPhoneNumber != phoneNumber) {
+                                      changes.add(
+                                          "Changed phone number from $currentPhoneNumber to $phoneNumber");
+                                    }
+
+                                    if (currentPassword != password) {
+                                      changes.add(
+                                          "Changed password from $currentPassword to $password");
+                                    }
+
+                                    if (currentSignature != signature) {
+                                      changes.add(
+                                          "Changed signature code from $currentSignature to $signature");
+                                    }
+
+                                    if (currentDay != day) {
+                                      changes.add(
+                                          "Changed Day from $currentDay to $day");
+                                    }
+
+                                    if (currentTime != time) {
+                                      changes.add(
+                                          "Changed Vacant Time from $currentTime to $time");
+                                    }
+
+                                    if (currentSubject != subject) {
+                                      changes.add(
+                                          "Changed Subject from $currentSubject to $subject");
+                                    }
+
+                                    if (currentSection != section) {
+                                      changes.add(
+                                          "Changed Section from $currentSection to $section");
+                                    }
+
+                                    if (currentRoom != room) {
+                                      changes.add(
+                                          "Changed Room from $currentRoom to $room");
+                                    }
+
+                                    DialogConfirmEdit(
                                         headertext: "Update this professor?",
+                                        changes: changes,
+                                        subtext:
+                                            "Please take a look first before you press confirm!",
                                         callback: () {
                                           Navigator.of(context,
                                                   rootNavigator: true)
                                               .pop();
+
                                           DialogLoading(subtext: "Changing")
                                               .buildLoadingScreen(context);
-
-                                          String professorID =
-                                              _inputControllerProfessorID.text
-                                                  .trim();
-                                          String fullName =
-                                              _inputControllerName.text.trim();
-                                          String? department = departmentValue;
-                                          String email =
-                                              _inputControllerEmail.text.trim();
-                                          String phoneNumber =
-                                              _inputControllerPhoneNumber.text
-                                                  .trim();
-                                          String password =
-                                              _inputControllerCfrmPassword.text
-                                                  .trim();
-                                          String signature =
-                                              _inputControllerSignatureCode.text
-                                                  .trim();
-
-                                          String subject =
-                                              _inputControllerSubject.text
-                                                  .trim()
-                                                  .toUpperCase();
-                                          String section =
-                                              _inputControllerSection.text
-                                                  .trim()
-                                                  .toUpperCase();
-                                          String room = _inputControllerRoom
-                                              .text
-                                              .trim()
-                                              .toUpperCase();
-                                          String? day = dayValue.toString();
-                                          String? time = timeValue.toString();
 
                                           Future.delayed(
                                               const Duration(seconds: 2),
@@ -1344,36 +1424,63 @@ class _EditProfessorState extends State<EditProfessor> {
 
                                             await _dbReference
                                                 .child(professorID)
-                                                .set(scholarObj.toJson());
-
-                                            // ignore: use_build_context_synchronously
-                                            Navigator.of(context,
-                                                    rootNavigator: true)
-                                                .pop();
-
-                                            // ignore: use_build_context_synchronously
-                                            DialogSuccess(
-                                              headertext:
-                                                  "Successfully Modified!",
-                                              subtext:
-                                                  "Would you like to view the contacts?",
-                                              textButton: "Contacts",
-                                              callback: () {
-                                                setState(() {
-                                                  selectedIndex = 1;
-                                                });
-                                                Navigator.of(context)
-                                                    .pushAndRemoveUntil(
-                                                        MaterialPageRoute(
-                                                            builder: (context) =>
-                                                                const AdminContacts()),
-                                                        (Route<dynamic>
-                                                                route) =>
-                                                            false);
+                                                .set(scholarObj.toJson())
+                                                .then(
+                                              (value) {
+                                                Navigator.of(context,
+                                                        rootNavigator: true)
+                                                    .pop();
+                                                String allChanges =
+                                                    changes.join(", ");
+                                                createHistory(
+                                                  desc: changes.isNotEmpty
+                                                      ? "Updated the Professor $fullName($professorID), here are the following changes: $allChanges"
+                                                      : "Just pressed the update without changing anything on the Prof. $fullName($professorID).",
+                                                  timeStamp: DateTime.now()
+                                                      .microsecondsSinceEpoch
+                                                      .toString(),
+                                                  userType: userType,
+                                                  id: userID,
+                                                );
+                                                DialogSuccess(
+                                                  headertext:
+                                                      "Successfully Modified!",
+                                                  subtext:
+                                                      "Would you like to view the contacts?",
+                                                  textButton: "Contacts",
+                                                  callback: () {
+                                                    setState(() {
+                                                      selectedIndex = 1;
+                                                    });
+                                                    Navigator.of(context)
+                                                        .pushAndRemoveUntil(
+                                                            MaterialPageRoute(
+                                                                builder:
+                                                                    (context) =>
+                                                                        const AdminContacts()),
+                                                            (Route<dynamic>
+                                                                    route) =>
+                                                                false);
+                                                  },
+                                                ).buildSuccessScreen(context);
                                               },
-                                            ).buildSuccessScreen(context);
+                                            ).catchError(
+                                              (err) {
+                                                DialogUnsuccessful(
+                                                  headertext: "Unsuccessful",
+                                                  subtext:
+                                                      "Please try again later!",
+                                                  textButton: "Close",
+                                                  callback: () => Navigator.of(
+                                                          context,
+                                                          rootNavigator: true)
+                                                      .pop(),
+                                                ).buildUnsuccessfulScreen(
+                                                    context);
+                                              },
+                                            );
                                           });
-                                        }).buildConfirmScreen(context);
+                                        }).buildConfirmEditScreen(context);
                                   });
                                 }),
                                 child: const Center(
@@ -1412,7 +1519,7 @@ class _EditProfessorState extends State<EditProfessor> {
       await _userReference.get().then((snapshot) {
         Map<String, dynamic> myObj = jsonDecode(jsonEncode(snapshot.value));
         Professor myProf = Professor.fromJson(myObj);
-        if (getOnce) {
+        if (!gotValue) {
           _inputControllerProfessorID.text = myProf.professorId;
           _inputControllerEmail.text = myProf.email;
           _inputControllerName.text = myProf.name;
@@ -1429,8 +1536,8 @@ class _EditProfessorState extends State<EditProfessor> {
           timeValue = myProf.time;
         }
         myUser.add(myProf);
-        getOnce = false;
       });
+      gotValue = true;
       return myUser;
     } catch (error) {
       rethrow;
@@ -1480,12 +1587,13 @@ class _EditProfessorState extends State<EditProfessor> {
       for (final data in snapshot.children) {
         subjectCodes.add(data.value.toString());
         if (widget.currentSubject == data.value) {
-          subjectValue = data.value.toString();
+          if (!gotValueSubject) subjectValue = data.value.toString();
         }
       }
     });
 
     subjectCodes.sort();
+    gotValueSubject = true;
     return subjectCodes;
   }
 

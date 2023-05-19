@@ -289,7 +289,7 @@ class _AdminRegisterScholarInputsState
                   Icons.arrow_drop_down,
                   color: ColorPalette.primary,
                 ),
-                items: HKSAStrings.courses.map(buildMenuItemCourses).toList(),
+                items: HKSAStrings.courses.map(buildMenuItems).toList(),
                 onChanged: ((coursesValue) => setState(() {
                       this.coursesValue = coursesValue ?? "";
                     })),
@@ -321,7 +321,7 @@ class _AdminRegisterScholarInputsState
                   Icons.arrow_drop_down,
                   color: ColorPalette.primary,
                 ),
-                items: HKSAStrings.towns.map(buildMenuItemTowns).toList(),
+                items: HKSAStrings.towns.map(buildMenuItems).toList(),
                 onChanged: ((townValue) => setState(() {
                       this.townValue = townValue ?? "";
                     })),
@@ -380,7 +380,7 @@ class _AdminRegisterScholarInputsState
                   Icons.arrow_drop_down,
                   color: ColorPalette.primary,
                 ),
-                items: HKSAStrings.hkTypes.map(buildMenuItemHKTypes).toList(),
+                items: HKSAStrings.hkTypes.map(buildMenuItems).toList(),
                 onChanged: ((hkTypeValue) => setState(() {
                       this.hkTypeValue = hkTypeValue ?? "";
                     })),
@@ -411,7 +411,7 @@ class _AdminRegisterScholarInputsState
                   Icons.arrow_drop_down,
                   color: ColorPalette.primary,
                 ),
-                items: HKSAStrings.facitype.map(buildMenuItemFaciType).toList(),
+                items: HKSAStrings.facitype.map(buildMenuItems).toList(),
                 onChanged: ((faciTypeValue) => setState(() {
                       this.faciTypeValue = faciTypeValue ?? "";
                       if (faciTypeValue == "Non-Faci") {
@@ -486,9 +486,8 @@ class _AdminRegisterScholarInputsState
                             Icons.arrow_drop_down,
                             color: ColorPalette.primary,
                           ),
-                          items: HKSAStrings.onsite
-                              .map(buildMenuItemOnsite)
-                              .toList(),
+                          items:
+                              HKSAStrings.onsite.map(buildMenuItems).toList(),
                           onChanged: ((onSiteValue) => setState(() {
                                 this.onSiteValue = onSiteValue ?? "";
                               })),
@@ -522,7 +521,7 @@ class _AdminRegisterScholarInputsState
                             color: ColorPalette.primary,
                           ),
                           items: HKSAStrings.vacanttime
-                              .map(buildMenuItemVacantTime)
+                              .map(buildMenuItems)
                               .toList(),
                           onChanged: ((vacantTimeValue) => setState(() {
                                 this.vacantTimeValue = vacantTimeValue ?? "";
@@ -555,9 +554,8 @@ class _AdminRegisterScholarInputsState
                             Icons.arrow_drop_down,
                             color: ColorPalette.primary,
                           ),
-                          items: HKSAStrings.onsite
-                              .map(buildMenuItemOnsiteDay2)
-                              .toList(),
+                          items:
+                              HKSAStrings.onsite.map(buildMenuItems).toList(),
                           onChanged: ((onSite2Value) => setState(() {
                                 this.onSite2Value = onSite2Value ?? "";
                               })),
@@ -591,7 +589,7 @@ class _AdminRegisterScholarInputsState
                             color: ColorPalette.primary,
                           ),
                           items: HKSAStrings.vacanttime
-                              .map(buildMenuItemVacantTimeDay2)
+                              .map(buildMenuItems)
                               .toList(),
                           onChanged: ((vacantTime2Value) => setState(() {
                                 this.vacantTime2Value = vacantTime2Value ?? "";
@@ -626,7 +624,7 @@ class _AdminRegisterScholarInputsState
                             color: ColorPalette.primary,
                           ),
                           items: HKSAStrings.vacantday
-                              .map(buildMenuItemVacantTimeDay2)
+                              .map(buildMenuItems)
                               .toList(),
                           onChanged: ((vacantDayValue) => setState(() {
                                 this.vacantDayValue = vacantDayValue ?? "";
@@ -941,8 +939,7 @@ class _AdminRegisterScholarInputsState
     );
   }
 
-  DropdownMenuItem<String> buildMenuItemCourses(String item) =>
-      DropdownMenuItem(
+  DropdownMenuItem<String> buildMenuItems(String item) => DropdownMenuItem(
         value: item,
         child: Text(
           item,
@@ -954,107 +951,17 @@ class _AdminRegisterScholarInputsState
           ),
         ),
       );
-  DropdownMenuItem<String> buildMenuItemHKTypes(String item) =>
-      DropdownMenuItem(
-        value: item,
-        child: Text(
-          item,
-          style: const TextStyle(
-            fontFamily: 'Inter',
-            fontWeight: FontWeight.w300,
-            fontSize: 12,
-            color: ColorPalette.primary,
-          ),
-        ),
-      );
-  //sakin ulit to pababa
-  DropdownMenuItem<String> buildMenuItemVacantTime(String item) =>
-      DropdownMenuItem(
-        value: item,
-        child: Text(
-          item,
-          style: const TextStyle(
-            fontFamily: 'Inter',
-            fontWeight: FontWeight.w300,
-            fontSize: 12,
-            color: ColorPalette.primary,
-          ),
-        ),
-      );
-  DropdownMenuItem<String> buildMenuItemOnsite(String item) => DropdownMenuItem(
-        value: item,
-        child: Text(
-          item,
-          style: const TextStyle(
-            fontFamily: 'Inter',
-            fontWeight: FontWeight.w300,
-            fontSize: 12,
-            color: ColorPalette.primary,
-          ),
-        ),
-      );
-  DropdownMenuItem<String> buildMenuItemVacantTimeDay2(String item) =>
-      DropdownMenuItem(
-        value: item,
-        child: Text(
-          item,
-          style: const TextStyle(
-            fontFamily: 'Inter',
-            fontWeight: FontWeight.w300,
-            fontSize: 12,
-            color: ColorPalette.primary,
-          ),
-        ),
-      );
-  DropdownMenuItem<String> buildMenuItemOnsiteDay2(String item) =>
-      DropdownMenuItem(
-        value: item,
-        child: Text(
-          item,
-          style: const TextStyle(
-            fontFamily: 'Inter',
-            fontWeight: FontWeight.w300,
-            fontSize: 12,
-            color: ColorPalette.primary,
-          ),
-        ),
-      );
-  DropdownMenuItem<String> buildMenuItemVacantday(String item) =>
-      DropdownMenuItem(
-        value: item,
-        child: Text(
-          item,
-          style: const TextStyle(
-            fontFamily: 'Inter',
-            fontWeight: FontWeight.w300,
-            fontSize: 12,
-            color: ColorPalette.primary,
-          ),
-        ),
-      );
-  DropdownMenuItem<String> buildMenuItemFaciType(String item) =>
-      DropdownMenuItem(
-        value: item,
-        child: Text(
-          item,
-          style: const TextStyle(
-            fontFamily: 'Inter',
-            fontWeight: FontWeight.w300,
-            fontSize: 12,
-            color: ColorPalette.primary,
-          ),
-        ),
-      );
-  DropdownMenuItem<String> buildMenuItemTowns(String item) => DropdownMenuItem(
-        value: item,
-        child: Text(
-          item,
-          style: const TextStyle(
-            fontFamily: 'Inter',
-            fontWeight: FontWeight.w300,
-            fontSize: 12,
-            color: ColorPalette.primary,
-          ),
-        ),
-      );
+
+  @override
+  void dispose() {
+    _inputControllerStudentNumberID.dispose();
+    _inputControllerLastName.dispose();
+    _inputControllerFirstName.dispose();
+    _inputControllerMiddleName.dispose();
+    _inputControllerEmail.dispose();
+    _inputControllerPhoneNumber.dispose();
+    _inputControllerPassword.dispose();
+    _inputControllerCfrmPassword.dispose();
+    super.dispose();
+  }
 }

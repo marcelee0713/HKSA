@@ -9,6 +9,7 @@ import 'package:hksa/widgets/dialogs/dialog_confirm.dart';
 import 'package:hksa/widgets/dialogs/dialog_loading.dart';
 import 'package:hksa/widgets/dialogs/dialog_success.dart';
 import 'package:hksa/widgets/dialogs/dialog_unsuccessful.dart';
+import 'package:hksa/widgets/scholarWidgets/home/home_inputs.dart';
 import 'package:intl/intl.dart';
 
 final _formKey = GlobalKey<FormState>();
@@ -291,21 +292,21 @@ class _AnnounceState extends State<Announce> {
                                     .pop();
                                 DialogLoading(subtext: "Sending...")
                                     .buildLoadingScreen(context);
-                                String userType = 'All';
+                                String userValue = 'All';
                                 if (userTypeValue == 'All') {
-                                  userType = 'user_all';
+                                  userValue = 'user_all';
                                 } else if (userTypeValue == "Scholars") {
-                                  userType = 'scholars';
+                                  userValue = 'scholars';
                                 } else if (userTypeValue == "Scholars (Faci)") {
-                                  userType = 'scholars_faci';
+                                  userValue = 'scholars_faci';
                                 } else if (userTypeValue ==
                                     "Scholars (Non-Faci)") {
-                                  userType = 'scholars_non_faci';
+                                  userValue = 'scholars_non_faci';
                                 } else if (userTypeValue == "Professors") {
-                                  userType = 'professors';
+                                  userValue = 'professors';
                                 }
                                 String res = await sendNotificationToTopic(
-                                    userType,
+                                    userValue,
                                     _inputControllerHeader.text.trim(),
                                     _inputControllerBody.text.trim());
                                 Future.delayed(const Duration(seconds: 2), () {
@@ -339,22 +340,32 @@ class _AnnounceState extends State<Announce> {
                                       }
                                     });
                                   });
-                                }).whenComplete(() {
+                                }).whenComplete(() async {
                                   if (res == "success") {
                                     Navigator.of(context, rootNavigator: true)
                                         .pop();
                                     DialogSuccess(
-                                        headertext: "Successfully posted!",
-                                        subtext:
-                                            "You have succesfully sent to all users, care to share another?",
-                                        textButton: "YES",
-                                        callback: () {
-                                          Navigator.of(context,
-                                                  rootNavigator: true)
-                                              .pop();
-                                          _inputControllerHeader.text = "";
-                                          _inputControllerBody.text = "";
-                                        }).buildSuccessScreen(context);
+                                      headertext: "Successfully posted!",
+                                      subtext:
+                                          "You have succesfully sent to $userTypeValue, care to share another?",
+                                      textButton: "YES",
+                                      callback: () {
+                                        Navigator.of(context,
+                                                rootNavigator: true)
+                                            .pop();
+                                      },
+                                    ).buildSuccessScreen(context);
+                                    await createHistory(
+                                      desc:
+                                          "Posted an announcement to $userTypeValue.",
+                                      timeStamp: DateTime.now()
+                                          .microsecondsSinceEpoch
+                                          .toString(),
+                                      userType: userType,
+                                      id: userID,
+                                    );
+                                    _inputControllerHeader.text = "";
+                                    _inputControllerBody.text = "";
                                   } else {
                                     Navigator.of(context, rootNavigator: true)
                                         .pop();
@@ -367,6 +378,7 @@ class _AnnounceState extends State<Announce> {
                                           Navigator.of(context,
                                                   rootNavigator: true)
                                               .pop();
+                                          _inputControllerHeader.text = "";
                                           _inputControllerBody.text = "";
                                         }).buildUnsuccessfulScreen(context);
                                   }

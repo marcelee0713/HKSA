@@ -20,10 +20,10 @@ import 'package:hksa/widgets/dialogs/dialog_confirm.dart';
 import 'package:hksa/widgets/dialogs/dialog_edit_scholar.dart';
 import 'package:hksa/widgets/dialogs/dialog_loading.dart';
 import 'package:hksa/widgets/dialogs/dialog_success.dart';
-import 'package:hksa/widgets/scholarWidgets/chart/logs.dart';
+import 'package:hksa/widgets/dialogs/dialog_unsuccessful.dart';
+import 'package:hksa/widgets/scholarWidgets/home/home_inputs.dart';
 import 'package:hksa/widgets/universal/view_history_logs.dart';
 import 'package:hksa/widgets/universal/view_inbox.dart';
-import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:image_picker/image_picker.dart';
 
 class ScholarProfile extends StatefulWidget {
@@ -42,6 +42,7 @@ class _ScholarProfileState extends State<ScholarProfile> {
   final Storage storage = Storage();
   final logInBox = Hive.box("myLoginBox");
   late var userType = logInBox.get("userType");
+  late var userID = logInBox.get("userID");
   String userProfileListener = "";
 
   @override
@@ -1109,18 +1110,32 @@ class _ScholarProfileState extends State<ScholarProfile> {
                                                         rootNavigator: true)
                                                     .pop();
                                                 DialogSuccess(
-                                                    headertext:
-                                                        "User's Profile Picture Changed!",
-                                                    subtext:
-                                                        "Didn't showed? Restart or go to a different page and comeback!",
-                                                    textButton: "Close",
-                                                    callback: () {
-                                                      Navigator.of(context,
-                                                              rootNavigator:
-                                                                  true)
-                                                          .pop();
-                                                    }).buildSuccessScreen(context);
+                                                  headertext:
+                                                      "User's Profile Picture Changed!",
+                                                  subtext:
+                                                      "Didn't showed? Restart or go to a different page and comeback!",
+                                                  textButton: "Close",
+                                                  callback: () {
+                                                    Navigator.of(context,
+                                                            rootNavigator: true)
+                                                        .pop();
+                                                  },
+                                                ).buildSuccessScreen(context);
                                               });
+                                            }).then((value) async {
+                                              String scholarName =
+                                                  snapshot.data!.first.name;
+                                              String scholarID = snapshot
+                                                  .data!.first.studentNumber;
+                                              await createHistory(
+                                                desc:
+                                                    "Changed $scholarName's profile picture. Scholar's ID $scholarID",
+                                                timeStamp: DateTime.now()
+                                                    .microsecondsSinceEpoch
+                                                    .toString(),
+                                                userType: userType,
+                                                id: userID,
+                                              );
                                             });
                                           },
                                         ).buildConfirmScreen(context);
@@ -1183,49 +1198,78 @@ class _ScholarProfileState extends State<ScholarProfile> {
                                     child: ElevatedButton(
                                       onPressed: () {
                                         DialogConfirm(
-                                            headertext:
-                                                "Are you sure you want to reset the total hours of this user?",
-                                            callback: () async {
+                                          headertext:
+                                              "Are you sure you want to reset the total hours of this user?",
+                                          callback: () async {
+                                            Navigator.of(context,
+                                                    rootNavigator: true)
+                                                .pop();
+                                            DialogLoading(
+                                                    subtext: "Resetting...")
+                                                .buildLoadingScreen(context);
+                                            final DatabaseReference
+                                                userReference = FirebaseDatabase
+                                                    .instance
+                                                    .ref()
+                                                    .child(
+                                                        'Users/Scholars/${widget.userID}');
+
+                                            await userReference
+                                                .child('hours')
+                                                .set("0");
+                                            await userReference
+                                                .child('totalHoursInDisplay')
+                                                .set("0:00:00");
+                                            await userReference
+                                                .child('totalHoursInDuration')
+                                                .set("0:00:00.000000")
+                                                .then((value) async {
+                                              // ignore: use_build_context_synchronously
                                               Navigator.of(context,
                                                       rootNavigator: true)
                                                   .pop();
-                                              DialogLoading(
-                                                      subtext: "Resetting...")
-                                                  .buildLoadingScreen(context);
-                                              final DatabaseReference
-                                                  userReference =
-                                                  FirebaseDatabase.instance
-                                                      .ref()
-                                                      .child(
-                                                          'Users/Scholars/${widget.userID}');
-
-                                              await userReference
-                                                  .child('hours')
-                                                  .set("0");
-                                              await userReference
-                                                  .child('totalHoursInDisplay')
-                                                  .set("0:00:00");
-                                              await userReference
-                                                  .child('totalHoursInDuration')
-                                                  .set("0:00:00.000000")
-                                                  .then((value) {
-                                                // ignore: use_build_context_synchronously
+                                              DialogSuccess(
+                                                headertext: "Success",
+                                                subtext:
+                                                    "You have successfully reset the total hours of this user! ",
+                                                textButton: "Close",
+                                                callback: () {
+                                                  Navigator.of(context,
+                                                          rootNavigator: true)
+                                                      .pop();
+                                                },
+                                              ).buildSuccessScreen(context);
+                                              await createHistory(
+                                                desc:
+                                                    "Reset the total hours of the Scholar: ${snapshot.data!.first.name}(${snapshot.data!.first.studentNumber})",
+                                                timeStamp: DateTime.now()
+                                                    .microsecondsSinceEpoch
+                                                    .toString(),
+                                                userType: userType,
+                                                id: userID,
+                                              );
+                                            }).catchError(
+                                              (err) {
                                                 Navigator.of(context,
                                                         rootNavigator: true)
                                                     .pop();
-                                                DialogSuccess(
-                                                    headertext: "Success",
-                                                    subtext:
-                                                        "You have successfully reset the total hours of this user! ",
-                                                    textButton: "Close",
-                                                    callback: () {
-                                                      Navigator.of(context,
-                                                              rootNavigator:
-                                                                  true)
-                                                          .pop();
-                                                    }).buildSuccessScreen(context);
-                                              });
-                                            }).buildConfirmScreen(context);
+
+                                                DialogUnsuccessful(
+                                                  headertext: "Error",
+                                                  subtext:
+                                                      "Please try again later!",
+                                                  textButton: "Close",
+                                                  callback: () {
+                                                    Navigator.of(context,
+                                                            rootNavigator: true)
+                                                        .pop();
+                                                  },
+                                                ).buildUnsuccessfulScreen(
+                                                    context);
+                                              },
+                                            );
+                                          },
+                                        ).buildConfirmScreen(context);
                                       },
                                       style: ElevatedButton.styleFrom(
                                         backgroundColor:
@@ -1247,41 +1291,72 @@ class _ScholarProfileState extends State<ScholarProfile> {
                                     child: ElevatedButton(
                                       onPressed: () {
                                         DialogConfirm(
-                                            headertext:
-                                                "Are you sure you want to reset the dtr logs of this user?",
-                                            callback: () async {
+                                          headertext:
+                                              "Are you sure you want to reset the dtr logs of this user?",
+                                          callback: () async {
+                                            Navigator.of(context,
+                                                    rootNavigator: true)
+                                                .pop();
+                                            DialogLoading(
+                                                    subtext: "Resetting...")
+                                                .buildLoadingScreen(context);
+                                            final DatabaseReference
+                                                dtrLogsReference =
+                                                FirebaseDatabase.instance
+                                                    .ref()
+                                                    .child(
+                                                        'dtrlogs/${widget.userID}');
+                                            await dtrLogsReference
+                                                .remove()
+                                                .then((value) async {
+                                              // ignore: use_build_context_synchronously
                                               Navigator.of(context,
                                                       rootNavigator: true)
                                                   .pop();
-                                              DialogLoading(
-                                                      subtext: "Resetting...")
-                                                  .buildLoadingScreen(context);
-                                              final DatabaseReference
-                                                  dtrLogsReference =
-                                                  FirebaseDatabase.instance
-                                                      .ref()
-                                                      .child(
-                                                          'dtrlogs/${widget.userID}');
-                                              await dtrLogsReference
-                                                  .remove()
-                                                  .then((value) {
-                                                // ignore: use_build_context_synchronously
+
+                                              DialogSuccess(
+                                                headertext: "Success",
+                                                subtext:
+                                                    "You have successfully reset the DTR Logs of this user! ",
+                                                textButton: "Close",
+                                                callback: () {
+                                                  Navigator.of(context,
+                                                          rootNavigator: true)
+                                                      .pop();
+                                                },
+                                              ).buildSuccessScreen(context);
+
+                                              await createHistory(
+                                                desc:
+                                                    "Reset the DTR Logs of the Scholar: ${snapshot.data!.first.name}(${snapshot.data!.first.studentNumber})",
+                                                timeStamp: DateTime.now()
+                                                    .microsecondsSinceEpoch
+                                                    .toString(),
+                                                userType: userType,
+                                                id: userID,
+                                              );
+                                            }).catchError(
+                                              (err) {
                                                 Navigator.of(context,
                                                         rootNavigator: true)
                                                     .pop();
-                                                DialogSuccess(
-                                                    headertext: "Success",
-                                                    subtext:
-                                                        "You have successfully reset the DTR Logs of this user! ",
-                                                    textButton: "Close",
-                                                    callback: () {
-                                                      Navigator.of(context,
-                                                              rootNavigator:
-                                                                  true)
-                                                          .pop();
-                                                    }).buildSuccessScreen(context);
-                                              });
-                                            }).buildConfirmScreen(context);
+
+                                                DialogUnsuccessful(
+                                                  headertext: "Error",
+                                                  subtext:
+                                                      "Please try again later!",
+                                                  textButton: "Close",
+                                                  callback: () {
+                                                    Navigator.of(context,
+                                                            rootNavigator: true)
+                                                        .pop();
+                                                  },
+                                                ).buildUnsuccessfulScreen(
+                                                    context);
+                                              },
+                                            );
+                                          },
+                                        ).buildConfirmScreen(context);
                                       },
                                       style: ElevatedButton.styleFrom(
                                         backgroundColor:
@@ -1305,57 +1380,87 @@ class _ScholarProfileState extends State<ScholarProfile> {
                                     child: ElevatedButton(
                                       onPressed: () {
                                         DialogConfirm(
-                                            headertext:
-                                                "Are you sure you want to reset total hours and DTR Logs of this user?",
-                                            callback: () async {
+                                          headertext:
+                                              "Are you sure you want to reset total hours and DTR Logs of this user?",
+                                          callback: () async {
+                                            Navigator.of(context,
+                                                    rootNavigator: true)
+                                                .pop();
+                                            DialogLoading(
+                                                    subtext: "Resetting...")
+                                                .buildLoadingScreen(context);
+                                            final DatabaseReference
+                                                dtrLogsReference =
+                                                FirebaseDatabase.instance
+                                                    .ref()
+                                                    .child(
+                                                        'dtrlogs/${widget.userID}');
+                                            final DatabaseReference
+                                                userReference = FirebaseDatabase
+                                                    .instance
+                                                    .ref()
+                                                    .child(
+                                                        'Users/Scholars/${widget.userID}');
+
+                                            await userReference
+                                                .child('hours')
+                                                .set("0");
+                                            await userReference
+                                                .child('totalHoursInDisplay')
+                                                .set("0:00:00");
+                                            await userReference
+                                                .child('totalHoursInDuration')
+                                                .set("0:00:00.000000");
+                                            await dtrLogsReference
+                                                .remove()
+                                                .then((value) async {
+                                              // ignore: use_build_context_synchronously
                                               Navigator.of(context,
                                                       rootNavigator: true)
                                                   .pop();
-                                              DialogLoading(
-                                                      subtext: "Resetting...")
-                                                  .buildLoadingScreen(context);
-                                              final DatabaseReference
-                                                  dtrLogsReference =
-                                                  FirebaseDatabase.instance
-                                                      .ref()
-                                                      .child(
-                                                          'dtrlogs/${widget.userID}');
-                                              final DatabaseReference
-                                                  userReference =
-                                                  FirebaseDatabase.instance
-                                                      .ref()
-                                                      .child(
-                                                          'Users/Scholars/${widget.userID}');
+                                              DialogSuccess(
+                                                headertext: "Success",
+                                                subtext:
+                                                    "You have successfully reset the Total Hours and DTR Logs of this user! ",
+                                                textButton: "Close",
+                                                callback: () {
+                                                  Navigator.of(context,
+                                                          rootNavigator: true)
+                                                      .pop();
+                                                },
+                                              ).buildSuccessScreen(context);
 
-                                              await userReference
-                                                  .child('hours')
-                                                  .set("0");
-                                              await userReference
-                                                  .child('totalHoursInDisplay')
-                                                  .set("0:00:00");
-                                              await userReference
-                                                  .child('totalHoursInDuration')
-                                                  .set("0:00:00.000000");
-                                              await dtrLogsReference
-                                                  .remove()
-                                                  .then((value) {
-                                                // ignore: use_build_context_synchronously
+                                              await createHistory(
+                                                desc:
+                                                    "Reset the Total Hours and DTR Logs of the Scholar: ${snapshot.data!.first.name}(${snapshot.data!.first.studentNumber})",
+                                                timeStamp: DateTime.now()
+                                                    .microsecondsSinceEpoch
+                                                    .toString(),
+                                                userType: userType,
+                                                id: userID,
+                                              );
+                                            }).catchError(
+                                              (err) {
                                                 Navigator.of(context,
                                                         rootNavigator: true)
                                                     .pop();
-                                                DialogSuccess(
-                                                    headertext: "Success",
-                                                    subtext:
-                                                        "You have successfully reset the Total Hours and DTR Logs of this user! ",
-                                                    textButton: "Close",
-                                                    callback: () {
-                                                      Navigator.of(context,
-                                                              rootNavigator:
-                                                                  true)
-                                                          .pop();
-                                                    }).buildSuccessScreen(context);
-                                              });
-                                            }).buildConfirmScreen(context);
+
+                                                DialogUnsuccessful(
+                                                  headertext: "Error",
+                                                  subtext:
+                                                      "Please try again later!",
+                                                  textButton: "Close",
+                                                  callback: () {
+                                                    Navigator.of(context,
+                                                            rootNavigator: true)
+                                                        .pop();
+                                                  },
+                                                ).buildUnsuccessfulScreen(
+                                                    context);
+                                              },
+                                            );
+                                          },
+                                        ).buildConfirmScreen(context);
                                       },
                                       style: ElevatedButton.styleFrom(
                                         backgroundColor:
@@ -1377,11 +1482,15 @@ class _ScholarProfileState extends State<ScholarProfile> {
                                       onPressed: () {
                                         DialogConfirm(
                                             headertext:
-                                                "Are you sure you reset history logs of this user?",
+                                                "Are you sure you want to the reset history logs of this user?",
                                             callback: () async {
                                               Navigator.of(context,
                                                       rootNavigator: true)
                                                   .pop();
+
+                                              DialogLoading(
+                                                      subtext: "Resetting...")
+                                                  .buildLoadingScreen(context);
 
                                               final DatabaseReference
                                                   historyLogsReference =
@@ -1391,19 +1500,57 @@ class _ScholarProfileState extends State<ScholarProfile> {
                                                           'historylogs/${widget.userID}');
 
                                               await historyLogsReference
-                                                  .remove();
+                                                  .remove()
+                                                  .then(
+                                                (value) async {
+                                                  Navigator.of(context,
+                                                          rootNavigator: true)
+                                                      .pop();
 
-                                              // ignore: use_build_context_synchronously
-                                              Navigator.of(context,
-                                                      rootNavigator: true)
-                                                  .pop();
+                                                  DialogSuccess(
+                                                    headertext: "Success",
+                                                    subtext:
+                                                        "You have successfully reset the History Logs of this user! ",
+                                                    textButton: "Close",
+                                                    callback: () {
+                                                      Navigator.of(context,
+                                                              rootNavigator:
+                                                                  true)
+                                                          .pop();
+                                                    },
+                                                  ).buildSuccessScreen(context);
 
-                                              // ignore: use_build_context_synchronously
-                                              Navigator.pushReplacement(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                      builder: (context) =>
-                                                          const AdminContacts()));
+                                                  await createHistory(
+                                                    desc:
+                                                        "Reset the History Logs of the Scholar: ${snapshot.data!.first.name}(${snapshot.data!.first.studentNumber})",
+                                                    timeStamp: DateTime.now()
+                                                        .microsecondsSinceEpoch
+                                                        .toString(),
+                                                    userType: userType,
+                                                    id: userID,
+                                                  );
+                                                },
+                                              ).catchError(
+                                                (err) {
+                                                  Navigator.of(context,
+                                                          rootNavigator: true)
+                                                      .pop();
+
+                                                  DialogUnsuccessful(
+                                                    headertext: "Error",
+                                                    subtext:
+                                                        "Please try again later!",
+                                                    textButton: "Close",
+                                                    callback: () {
+                                                      Navigator.of(context,
+                                                              rootNavigator:
+                                                                  true)
+                                                          .pop();
+                                                    },
+                                                  ).buildUnsuccessfulScreen(
+                                                      context);
+                                                },
+                                              );
                                             }).buildConfirmScreen(context);
                                       },
                                       style: ElevatedButton.styleFrom(
@@ -1426,54 +1573,62 @@ class _ScholarProfileState extends State<ScholarProfile> {
                               ElevatedButton(
                                 onPressed: () {
                                   DialogConfirm(
-                                      headertext:
-                                          "Are you sure you want to delete this user?",
-                                      callback: () async {
-                                        Navigator.of(context,
-                                                rootNavigator: true)
-                                            .pop();
-                                        final DatabaseReference userReference =
-                                            FirebaseDatabase.instance.ref().child(
-                                                'Users/Scholars/${widget.userID}');
+                                    headertext:
+                                        "Are you sure you want to delete this user?",
+                                    callback: () async {
+                                      Navigator.of(context, rootNavigator: true)
+                                          .pop();
+                                      final DatabaseReference userReference =
+                                          FirebaseDatabase.instance.ref().child(
+                                              'Users/Scholars/${widget.userID}');
 
-                                        final DatabaseReference
-                                            dtrLogsReference = FirebaseDatabase
-                                                .instance
-                                                .ref()
-                                                .child(
-                                                    'dtrlogs/${widget.userID}');
+                                      final DatabaseReference dtrLogsReference =
+                                          FirebaseDatabase.instance.ref().child(
+                                              'dtrlogs/${widget.userID}');
 
-                                        final DatabaseReference
-                                            historyLogsReference =
-                                            FirebaseDatabase.instance.ref().child(
-                                                'historylogs/${widget.userID}');
+                                      final DatabaseReference
+                                          historyLogsReference =
+                                          FirebaseDatabase.instance.ref().child(
+                                              'historylogs/${widget.userID}');
 
-                                        await userReference.remove();
-                                        await dtrLogsReference.remove();
-                                        await historyLogsReference.remove();
-                                        if (FirebaseStorage.instance.refFromURL(
-                                                snapshot.data!.first
-                                                    .profilePicture) !=
-                                            FirebaseStorage.instance.refFromURL(
-                                                HKSAStrings.pfpPlaceholder)) {
-                                          await FirebaseStorage.instance
-                                              .refFromURL(snapshot
-                                                  .data!.first.profilePicture)
-                                              .delete();
-                                        }
+                                      await userReference.remove();
+                                      await dtrLogsReference.remove();
+                                      await historyLogsReference.remove();
+                                      if (FirebaseStorage.instance.refFromURL(
+                                              snapshot.data!.first
+                                                  .profilePicture) !=
+                                          FirebaseStorage.instance.refFromURL(
+                                              HKSAStrings.pfpPlaceholder)) {
+                                        await FirebaseStorage.instance
+                                            .refFromURL(snapshot
+                                                .data!.first.profilePicture)
+                                            .delete();
+                                      }
 
-                                        // ignore: use_build_context_synchronously
-                                        Navigator.of(context,
-                                                rootNavigator: true)
-                                            .pop();
+                                      await createHistory(
+                                        desc:
+                                            "Deleted a Scholar: ${snapshot.data!.first.name}(${snapshot.data!.first.studentNumber})",
+                                        timeStamp: DateTime.now()
+                                            .microsecondsSinceEpoch
+                                            .toString(),
+                                        userType: userType,
+                                        id: userID,
+                                      );
 
-                                        // ignore: use_build_context_synchronously
-                                        Navigator.pushReplacement(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    const AdminContacts()));
-                                      }).buildConfirmScreen(context);
+                                      // ignore: use_build_context_synchronously
+                                      Navigator.of(context, rootNavigator: true)
+                                          .pop();
+
+                                      // ignore: use_build_context_synchronously
+                                      Navigator.pushReplacement(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              const AdminContacts(),
+                                        ),
+                                      );
+                                    },
+                                  ).buildConfirmScreen(context);
                                 },
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: ColorPalette.errorColor,

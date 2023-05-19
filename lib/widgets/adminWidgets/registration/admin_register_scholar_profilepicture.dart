@@ -11,6 +11,7 @@ import 'package:hksa/widgets/dialogs/dialog_loading.dart';
 import 'package:hksa/widgets/dialogs/dialog_register_confirm.dart';
 import 'package:hksa/widgets/dialogs/dialog_register_success.dart';
 import 'package:hksa/widgets/dialogs/dialog_unsuccessful.dart';
+import 'package:hksa/widgets/scholarWidgets/home/home_inputs.dart';
 import 'package:image_picker/image_picker.dart';
 
 class AdminProfilePictureScholar extends StatefulWidget {
@@ -24,6 +25,9 @@ class AdminProfilePictureScholar extends StatefulWidget {
 class _AdminProfilePictureScholarState
     extends State<AdminProfilePictureScholar> {
   final myRegBox = Hive.box("myRegistrationBox");
+  final logInBox = Hive.box("myLoginBox");
+  late var userType = logInBox.get("userType");
+  late var userID = logInBox.get("userID");
   late String studentNumber = myRegBox.get("studentNumber");
   late String name = myRegBox.get("name");
   late String course = myRegBox.get("course");
@@ -284,15 +288,23 @@ class _AdminProfilePictureScholarState
                               wholeDayVacantTime,
                               scholarType,
                               town)
-                          .then((value) {
+                          .then((value) async {
                         DialogRegisterSuccess(
-                            headertext: "Successfully Registered!",
-                            subtext:
-                                "The scholar is now registered! It is recommended for you to go back.",
-                            textButton: "Go back",
-                            callback: () {
-                              goBackToRegistration();
-                            }).buildRegisterSuccessScreen(context);
+                          headertext: "Successfully Registered!",
+                          subtext:
+                              "The scholar is now registered! It is recommended for you to go back.",
+                          textButton: "Go back",
+                          callback: () {
+                            goBackToRegistration();
+                          },
+                        ).buildRegisterSuccessScreen(context);
+                        await createHistory(
+                          desc: "Create a Scholar: $name($studentNumber)",
+                          timeStamp:
+                              DateTime.now().microsecondsSinceEpoch.toString(),
+                          userType: userType,
+                          id: userID,
+                        );
                       }).catchError(
                         // ignore: argument_type_not_assignable_to_error_handler
                         () {
@@ -304,7 +316,7 @@ class _AdminProfilePictureScholarState
                             callback: () {
                               Navigator.of(context, rootNavigator: true).pop();
                             },
-                          );
+                          ).buildUnsuccessfulScreen(context);
                         },
                       );
                     },

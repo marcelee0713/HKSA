@@ -12,6 +12,7 @@ import 'package:hksa/models/head.dart';
 import 'package:hksa/widgets/adminWidgets/nav_drawer.dart';
 import 'package:hksa/widgets/dialogs/dialog_loading.dart';
 import 'package:hksa/widgets/dialogs/dialog_success.dart';
+import 'package:hksa/widgets/scholarWidgets/home/home_inputs.dart';
 import 'package:hksa/widgets/universal/change_password.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -26,6 +27,8 @@ class _AdminProfileState extends State<AdminProfile> {
   final Storage storage = Storage();
   final logInBox = Hive.box("myLoginBox");
   late var userID = logInBox.get("userID");
+  late var userType = logInBox.get("userType");
+
   String userProfileListener = "";
   @override
   Widget build(BuildContext context) {
@@ -180,25 +183,43 @@ class _AdminProfileState extends State<AdminProfile> {
                           final path = results.path;
                           final fileName = results.path.split('/').last;
 
-                          await storage.changeHeadPfp(path, fileName, userID,
-                              snapshot.data!.first.profilePicture, () {
-                            Future.delayed(const Duration(seconds: 3), () {
-                              setState(() {
-                                userProfileListener =
-                                    snapshot.data!.first.profilePicture;
-                              });
-                              Navigator.of(context, rootNavigator: true).pop();
-                              DialogSuccess(
-                                  headertext: "Profile Picture Changed!",
-                                  subtext:
-                                      "Didn't showed? Restart or go to a different page and comeback!",
-                                  textButton: "Close",
-                                  callback: () {
-                                    Navigator.of(context, rootNavigator: true)
-                                        .pop();
-                                  }).buildSuccessScreen(context);
-                            });
-                          });
+                          await storage.changeHeadPfp(
+                            path,
+                            fileName,
+                            userID,
+                            snapshot.data!.first.profilePicture,
+                            () {
+                              Future.delayed(
+                                const Duration(seconds: 3),
+                                () async {
+                                  setState(() {
+                                    userProfileListener =
+                                        snapshot.data!.first.profilePicture;
+                                  });
+                                  Navigator.of(context, rootNavigator: true)
+                                      .pop();
+                                  DialogSuccess(
+                                    headertext: "Profile Picture Changed!",
+                                    subtext:
+                                        "Didn't showed? Restart or go to a different page and comeback!",
+                                    textButton: "Close",
+                                    callback: () {
+                                      Navigator.of(context, rootNavigator: true)
+                                          .pop();
+                                    },
+                                  ).buildSuccessScreen(context);
+                                  await createHistory(
+                                    desc: "Changed the profile picture.",
+                                    timeStamp: DateTime.now()
+                                        .microsecondsSinceEpoch
+                                        .toString(),
+                                    userType: userType,
+                                    id: userID,
+                                  );
+                                },
+                              );
+                            },
+                          );
                         },
                         child: const Text(
                           "Change Profile Picture",
@@ -213,6 +234,7 @@ class _AdminProfileState extends State<AdminProfile> {
                       const SizedBox(height: 8),
                       InkWell(
                         onTap: () async {
+                          final tempPass = snapshot.data!.first.password;
                           final result = await Navigator.push(
                             context,
                             MaterialPageRoute(
@@ -223,12 +245,10 @@ class _AdminProfileState extends State<AdminProfile> {
                           if (result == null) {
                             return;
                           }
-                          await dbReference.set(result.toString());
-
-                          Future.delayed(const Duration(seconds: 2), () {
-                            Navigator.of(context, rootNavigator: true).pop();
-                          }).whenComplete(() {
-                            DialogSuccess(
+                          await dbReference.set(result.toString()).then(
+                            (value) async {
+                              Navigator.of(context, rootNavigator: true).pop();
+                              DialogSuccess(
                                 headertext: "Successfully changed!",
                                 subtext:
                                     "You successfully changed your password! Remember not to show this to anyone.",
@@ -236,8 +256,19 @@ class _AdminProfileState extends State<AdminProfile> {
                                 callback: () {
                                   Navigator.of(context, rootNavigator: true)
                                       .pop();
-                                }).buildSuccessScreen(context);
-                          });
+                                },
+                              ).buildSuccessScreen(context);
+                              await createHistory(
+                                desc:
+                                    "Changed password from $tempPass to $result.",
+                                timeStamp: DateTime.now()
+                                    .microsecondsSinceEpoch
+                                    .toString(),
+                                userType: userType,
+                                id: userID,
+                              );
+                            },
+                          );
                         },
                         child: const Text(
                           "Change Password",

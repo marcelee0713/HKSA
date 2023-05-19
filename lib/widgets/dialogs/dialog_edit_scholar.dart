@@ -5,6 +5,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:hive/hive.dart';
 import 'package:hksa/constant/colors.dart';
 import 'package:hksa/constant/string.dart';
 import 'package:hksa/models/prof_schedule_match.dart';
@@ -13,9 +14,12 @@ import 'package:hksa/models/scholar.dart';
 import 'package:hksa/pages/adminPages/contact.dart';
 import 'package:hksa/widgets/adminWidgets/nav_drawer.dart';
 import 'package:hksa/widgets/dialogs/dialog_confirm.dart';
+import 'package:hksa/widgets/dialogs/dialog_confirm_edit.dart';
 import 'package:hksa/widgets/dialogs/dialog_loading.dart';
 import 'package:hksa/widgets/dialogs/dialog_show_conflict.dart';
 import 'package:hksa/widgets/dialogs/dialog_success.dart';
+import 'package:hksa/widgets/dialogs/dialog_unsuccessful.dart';
+import 'package:hksa/widgets/scholarWidgets/home/home_inputs.dart';
 
 class EditScholar extends StatefulWidget {
   final String userID;
@@ -47,6 +51,9 @@ class EditScholar extends StatefulWidget {
 }
 
 class _EditScholarState extends State<EditScholar> {
+  final logInBox = Hive.box("myLoginBox");
+  late var userType = logInBox.get("userType");
+  late var userID = logInBox.get("userID");
   final _inputControllerStudentNumberID = TextEditingController();
   final _inputControllerName = TextEditingController();
   final _inputControllerEmail = TextEditingController();
@@ -1774,58 +1781,197 @@ class _EditScholarState extends State<EditScholar> {
                                     return;
                                   }
 
-                                  DialogConfirm(
-                                      headertext: "Update this scholar?",
+                                  List<String> changes = [];
+
+                                  String studentNumber =
+                                      _inputControllerStudentNumberID.text
+                                          .trim();
+                                  String fullName =
+                                      _inputControllerName.text.trim();
+                                  String? course = coursesValue;
+                                  String? hkType = hkTypeValue;
+                                  String email =
+                                      _inputControllerEmail.text.trim();
+                                  String phoneNumber =
+                                      _inputControllerPhoneNumber.text.trim();
+                                  String password =
+                                      _inputControllerCfrmPassword.text.trim();
+                                  String hours =
+                                      _inputControllerHours.text.trim();
+                                  String? status = statusValue;
+                                  String totalHoursInDuration =
+                                      getUpdatedDuration(
+                                          hours,
+                                          snapshot.data!.first
+                                              .totalHoursInDuration);
+                                  String totalHoursInDisplay =
+                                      totalHoursInDuration
+                                          .substring(0, 8)
+                                          .replaceAll('.', '');
+                                  String totalHoursRequired = "";
+
+                                  String currentFullName =
+                                      snapshot.data!.first.name;
+                                  String currentCourse =
+                                      snapshot.data!.first.course;
+                                  String currentStatus =
+                                      snapshot.data!.first.status;
+                                  String currentEmail =
+                                      snapshot.data!.first.email;
+                                  String currentPhoneNumber =
+                                      snapshot.data!.first.phonenumber;
+                                  String currentPassword =
+                                      snapshot.data!.first.password;
+                                  String currentTown =
+                                      snapshot.data!.first.town;
+                                  String currenthkType =
+                                      snapshot.data!.first.hkType;
+                                  String currentScholarType =
+                                      snapshot.data!.first.scholarType;
+                                  String currentHours =
+                                      snapshot.data!.first.hours;
+
+                                  String currentDay1 =
+                                      snapshot.data!.first.onSiteDay1;
+                                  String currentDay2 =
+                                      snapshot.data!.first.onSiteDay2;
+                                  String currentWholeDay =
+                                      snapshot.data!.first.wholeDayVacantTime;
+                                  String currentTime1 =
+                                      snapshot.data!.first.vacantTimeDay1;
+                                  String currentTime2 =
+                                      snapshot.data!.first.vacantTimeDay2;
+                                  String currentProfessorD1 =
+                                      snapshot.data!.first.assignedProfD1;
+                                  String currentProfessorD2 =
+                                      snapshot.data!.first.assignedProfD2;
+                                  String currentProfessorWD =
+                                      snapshot.data!.first.assignedProfWd;
+
+                                  if (scholarTypeValue == "Non-Faci") {
+                                    assignedProfDay1 = "";
+                                    assignedProfDay2 = "";
+                                    assignedProfWholeDay = "";
+                                    onSiteDay1Value = "NONE";
+                                    onSiteDay2Value = "NONE";
+                                    wholeDayValue = "NONE";
+                                    vacantTimeDay1Value = "NONE";
+                                    vacantTimeDay2Value = "NONE";
+                                  } else {
+                                    assignedProfDay1 ??= "";
+                                    assignedProfDay2 ??= "";
+                                    assignedProfWholeDay ??= "";
+                                  }
+
+                                  // Under this we will compare if what changes
+                                  // will changed.
+
+                                  if (currentFullName != fullName) {
+                                    changes.add(
+                                        "Changed name from $currentFullName to $fullName");
+                                  }
+
+                                  if (currentCourse != course) {
+                                    changes.add(
+                                        "Changed course from $currentCourse to $course");
+                                  }
+
+                                  if (currentStatus != status) {
+                                    changes.add(
+                                        "Changed status from $currentStatus to $status");
+                                  }
+
+                                  if (currentEmail != email) {
+                                    changes.add(
+                                        "Changed email from $currentEmail to $email");
+                                  }
+
+                                  if (currentPhoneNumber != phoneNumber) {
+                                    changes.add(
+                                        "Changed phone number from $currentPhoneNumber to $phoneNumber");
+                                  }
+
+                                  if (currentPassword != password) {
+                                    changes.add(
+                                        "Changed password from $currentPassword to $password");
+                                  }
+
+                                  if (currentTown != townValue) {
+                                    changes.add(
+                                        "Changed town from $currentTown to $townValue");
+                                  }
+
+                                  if (currenthkType != hkType) {
+                                    changes.add(
+                                        "Changed HK Type from $currenthkType to $hkType");
+                                  }
+
+                                  if (currentScholarType != scholarTypeValue) {
+                                    changes.add(
+                                        "Changed Scholar Type from $currentScholarType to $scholarTypeValue");
+                                  }
+
+                                  if (currentHours != hours) {
+                                    changes.add(
+                                        "Changed total hours from $currentHours to $hours");
+                                  }
+
+                                  if (scholarTypeValue == "Faci") {
+                                    if (currentDay1 != onSiteDay1Value) {
+                                      changes.add(
+                                          "Changed On Site Day 1 from $currentDay1 to $onSiteDay1Value");
+                                    }
+
+                                    if (currentDay2 != onSiteDay2Value) {
+                                      changes.add(
+                                          "Changed On Site Day 2 from $currentDay2 to $onSiteDay2Value");
+                                    }
+
+                                    if (currentWholeDay != wholeDayValue) {
+                                      changes.add(
+                                          "Changed On Site Whole Day from $currentWholeDay to $wholeDayValue");
+                                    }
+
+                                    if (currentTime1 != vacantTimeDay1Value) {
+                                      changes.add(
+                                          "Changed Vacant Time Day 1 from $currentTime1 to $vacantTimeDay1Value");
+                                    }
+
+                                    if (currentTime2 != vacantTimeDay2Value) {
+                                      changes.add(
+                                          "Changed Vacant Time Day 2 from $currentTime2 to $vacantTimeDay2Value");
+                                    }
+
+                                    if (currentProfessorD1 !=
+                                        assignedProfDay1) {
+                                      changes.add(
+                                          "Changed Assigned Day 1 Prof. from $currentProfessorD1 to $assignedProfDay1");
+                                    }
+
+                                    if (currentProfessorD2 !=
+                                        assignedProfDay2) {
+                                      changes.add(
+                                          "Changed Assigned Day 1 Prof. from $currentProfessorD2 to $assignedProfDay2");
+                                    }
+
+                                    if (currentProfessorWD !=
+                                        assignedProfWholeDay) {
+                                      changes.add(
+                                          "Changed Assigned Whole Day Prof. from $currentProfessorWD to $assignedProfWholeDay");
+                                    }
+                                  }
+                                  DialogConfirmEdit(
+                                      headertext: "Update the Scholar?",
+                                      changes: changes,
+                                      subtext:
+                                          "Please take a look first before you press confirm!",
                                       callback: () {
-                                        if (scholarTypeValue == "Non-Faci") {
-                                          assignedProfDay1 = "";
-                                          assignedProfDay2 = "";
-                                          assignedProfWholeDay = "";
-                                          onSiteDay1Value = "NONE";
-                                          onSiteDay2Value = "NONE";
-                                          wholeDayValue = "NONE";
-                                          vacantTimeDay1Value = "NONE";
-                                          vacantTimeDay2Value = "NONE";
-                                        } else {
-                                          assignedProfDay1 ??= "";
-                                          assignedProfDay2 ??= "";
-                                          assignedProfWholeDay ??= "";
-                                        }
                                         Navigator.of(context,
                                                 rootNavigator: true)
                                             .pop();
 
                                         DialogLoading(subtext: "Changing")
                                             .buildLoadingScreen(context);
-
-                                        String studentNumber =
-                                            _inputControllerStudentNumberID.text
-                                                .trim();
-                                        String fullName =
-                                            _inputControllerName.text.trim();
-                                        String? course = coursesValue;
-                                        String? hkType = hkTypeValue;
-                                        String email =
-                                            _inputControllerEmail.text.trim();
-                                        String phoneNumber =
-                                            _inputControllerPhoneNumber.text
-                                                .trim();
-                                        String password =
-                                            _inputControllerCfrmPassword.text
-                                                .trim();
-                                        String hours =
-                                            _inputControllerHours.text.trim();
-                                        String? status = statusValue;
-                                        String totalHoursInDuration =
-                                            getUpdatedDuration(
-                                                hours,
-                                                snapshot.data!.first
-                                                    .totalHoursInDuration);
-                                        String totalHoursInDisplay =
-                                            totalHoursInDuration
-                                                .substring(0, 8)
-                                                .replaceAll('.', '');
-                                        String totalHoursRequired = "";
 
                                         Future.delayed(
                                             const Duration(seconds: 2),
@@ -1888,39 +2034,68 @@ class _EditScholarState extends State<EditScholar> {
 
                                           await _dbReference
                                               .child(studentNumber)
-                                              .set(scholarObj.toJson());
+                                              .set(scholarObj.toJson())
+                                              .then(
+                                            (value) {
+                                              String allChanges =
+                                                  changes.join(", ");
+                                              createHistory(
+                                                desc: changes.isNotEmpty
+                                                    ? "Updated the Scholar $fullName($studentNumber), here are the following changes: $allChanges"
+                                                    : "Just pressed the update without changing anything on the Scholar $fullName($studentNumber).",
+                                                timeStamp: DateTime.now()
+                                                    .microsecondsSinceEpoch
+                                                    .toString(),
+                                                userType: userType,
+                                                id: userID,
+                                              );
+                                              DialogSuccess(
+                                                headertext:
+                                                    "Successfully Modified!",
+                                                subtext:
+                                                    "Would you like to view the contacts? It's recommended so you can see the changes.",
+                                                textButton: "Contacts",
+                                                callback: () {
+                                                  setState(() {
+                                                    onSiteDay1Value = null;
+                                                    onSiteDay2Value = null;
+                                                    wholeDayValue = null;
+                                                    vacantTimeDay1Value = null;
+                                                    vacantTimeDay2Value = null;
+                                                    assignedProfDay1 = null;
+                                                    assignedProfDay2 = null;
+                                                    assignedProfWholeDay = null;
 
-                                          // ignore: use_build_context_synchronously
-                                          DialogSuccess(
-                                            headertext:
-                                                "Successfully Modified!",
-                                            subtext:
-                                                "Would you like to view the contacts? It's recommended so you can see the changes.",
-                                            textButton: "Contacts",
-                                            callback: () {
-                                              setState(() {
-                                                onSiteDay1Value = null;
-                                                onSiteDay2Value = null;
-                                                wholeDayValue = null;
-                                                vacantTimeDay1Value = null;
-                                                vacantTimeDay2Value = null;
-                                                assignedProfDay1 = null;
-                                                assignedProfDay2 = null;
-                                                assignedProfWholeDay = null;
-
-                                                selectedIndex = 1;
-                                              });
-                                              Navigator.of(context)
-                                                  .pushAndRemoveUntil(
-                                                      MaterialPageRoute(
-                                                          builder: (context) =>
-                                                              const AdminContacts()),
-                                                      (Route<dynamic> route) =>
-                                                          false);
+                                                    selectedIndex = 1;
+                                                  });
+                                                  Navigator.of(context)
+                                                      .pushAndRemoveUntil(
+                                                          MaterialPageRoute(
+                                                              builder: (context) =>
+                                                                  const AdminContacts()),
+                                                          (Route<dynamic>
+                                                                  route) =>
+                                                              false);
+                                                },
+                                              ).buildSuccessScreen(context);
                                             },
-                                          ).buildSuccessScreen(context);
+                                          ).catchError(
+                                            (err) {
+                                              DialogUnsuccessful(
+                                                headertext: "Unsuccessful",
+                                                subtext:
+                                                    "Please try again later!",
+                                                textButton: "Close",
+                                                callback: () => Navigator.of(
+                                                        context,
+                                                        rootNavigator: true)
+                                                    .pop(),
+                                              ).buildUnsuccessfulScreen(
+                                                  context);
+                                            },
+                                          );
                                         });
-                                      }).buildConfirmScreen(context);
+                                      }).buildConfirmEditScreen(context);
                                 }),
                                 child: const Center(
                                   child: Text(

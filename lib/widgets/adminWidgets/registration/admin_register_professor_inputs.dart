@@ -1,6 +1,7 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:hive/hive.dart';
 import 'package:hksa/constant/colors.dart';
 import 'package:hksa/constant/string.dart';
 import 'package:hksa/models/professor.dart';
@@ -9,6 +10,7 @@ import 'package:hksa/widgets/adminWidgets/nav_drawer.dart';
 import 'package:hksa/widgets/dialogs/dialog_loading.dart';
 import 'package:hksa/widgets/dialogs/dialog_success.dart';
 import 'package:hksa/widgets/dialogs/dialog_unsuccessful.dart';
+import 'package:hksa/widgets/scholarWidgets/home/home_inputs.dart';
 
 class AdminRegisterProfessorInputs extends StatefulWidget {
   const AdminRegisterProfessorInputs({super.key});
@@ -22,6 +24,9 @@ class _AdminRegisterProfessorInputsState
     extends State<AdminRegisterProfessorInputs> {
   final DatabaseReference choicesReference =
       FirebaseDatabase.instance.ref().child("scheduleChoices/");
+  final logInBox = Hive.box("myLoginBox");
+  late var userType = logInBox.get("userType");
+  late var userID = logInBox.get("userID");
   String? departmentValue;
   String? dayValue;
   String? timeValue;
@@ -929,75 +934,102 @@ class _AdminRegisterProfessorInputsState
                 String? day = dayValue;
                 String? time = timeValue;
 
-                Future.delayed(const Duration(seconds: 2), () async {
-                  await _dbReference.get().then((snapshot) {
-                    for (final test in snapshot.children) {
-                      if (test.key == professorID) {
-                        userExist = true;
-                        break;
+                Future.delayed(
+                  const Duration(seconds: 2),
+                  () async {
+                    await _dbReference.get().then((snapshot) {
+                      for (final test in snapshot.children) {
+                        if (test.key == professorID) {
+                          userExist = true;
+                          break;
+                        }
                       }
-                    }
-                  }).whenComplete(() => {
-                        Future.delayed(const Duration(milliseconds: 2500),
-                            () async {
-                          if (userExist) {
-                            // Show a new a dialog that this user already exist
-                            Navigator.of(context, rootNavigator: true).pop();
-                            DialogUnsuccessful(
-                              headertext: "Account already exist!",
-                              subtext:
-                                  "If you think this is wrong. Please contact or go to the CSDL Department immediately!",
-                              textButton: "Close",
-                              callback: (() =>
-                                  Navigator.of(context, rootNavigator: true)
-                                      .pop()),
-                            ).buildUnsuccessfulScreen(context);
-                          } else {
-                            Professor scholarObj = Professor(
-                              department: department.toString(),
-                              email: email,
-                              name: fullName,
-                              password: password,
-                              phonenumber: phoneNumber,
-                              professorId: professorID,
-                              signaturecode: signature,
-                              profilePicture: HKSAStrings.pfpPlaceholder,
-                              day: day.toString(),
-                              room: room.toString(),
-                              section: section.toString(),
-                              subject: subject.toString(),
-                              time: time.toString(),
-                              listeningTo: "",
-                            );
+                    }).whenComplete(
+                      () => {
+                        Future.delayed(
+                          const Duration(milliseconds: 2500),
+                          () async {
+                            if (userExist) {
+                              // Show a new a dialog that this user already exist
+                              Navigator.of(context, rootNavigator: true).pop();
+                              DialogUnsuccessful(
+                                headertext: "Account already exist!",
+                                subtext:
+                                    "If you think this is wrong. Please contact or go to the CSDL Department immediately!",
+                                textButton: "Close",
+                                callback: (() =>
+                                    Navigator.of(context, rootNavigator: true)
+                                        .pop()),
+                              ).buildUnsuccessfulScreen(context);
+                            } else {
+                              Professor scholarObj = Professor(
+                                department: department.toString(),
+                                email: email,
+                                name: fullName,
+                                password: password,
+                                phonenumber: phoneNumber,
+                                professorId: professorID,
+                                signaturecode: signature,
+                                profilePicture: HKSAStrings.pfpPlaceholder,
+                                day: day.toString(),
+                                room: room.toString(),
+                                section: section.toString(),
+                                subject: subject.toString(),
+                                time: time.toString(),
+                                listeningTo: "",
+                              );
 
-                            await _dbReference
-                                .child(professorID)
-                                .set(scholarObj.toJson());
-
-                            // ignore: use_build_context_synchronously
-                            Navigator.of(context, rootNavigator: true).pop();
-
-                            // ignore: use_build_context_synchronously
-                            DialogSuccess(
-                              headertext: "Successfully Registered!",
-                              subtext: "You have registered a professor!",
-                              textButton: "Go back",
-                              callback: () {
-                                setState(() {
-                                  selectedIndex = 3;
-                                });
-                                // Will replace literally every page, that includes dialogs and others.
-                                Navigator.of(context).pushAndRemoveUntil(
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            const AdminRegistration()),
-                                    (Route<dynamic> route) => false);
-                              },
-                            ).buildSuccessScreen(context);
-                          }
-                        })
-                      });
-                });
+                              await _dbReference
+                                  .child(professorID)
+                                  .set(scholarObj.toJson())
+                                  .then(
+                                (value) async {
+                                  DialogSuccess(
+                                    headertext: "Successfully Registered!",
+                                    subtext: "You have registered a professor!",
+                                    textButton: "Go back",
+                                    callback: () async {
+                                      setState(() {
+                                        selectedIndex = 3;
+                                      });
+                                      // Will replace literally every page, that includes dialogs and others.
+                                      Navigator.of(context).pushAndRemoveUntil(
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                const AdminRegistration()),
+                                        (Route<dynamic> route) => false,
+                                      );
+                                    },
+                                  ).buildSuccessScreen(context);
+                                  await createHistory(
+                                    desc:
+                                        "Create a Professor: $fullName($professorID)",
+                                    timeStamp: DateTime.now()
+                                        .microsecondsSinceEpoch
+                                        .toString(),
+                                    userType: userType,
+                                    id: userID,
+                                  );
+                                },
+                              ).catchError(
+                                (err) {
+                                  DialogUnsuccessful(
+                                    headertext: "Error",
+                                    subtext: "Please try again later!",
+                                    textButton: "Close",
+                                    callback: () => Navigator.of(context,
+                                            rootNavigator: true)
+                                        .pop(),
+                                  ).buildUnsuccessfulScreen(context);
+                                },
+                              );
+                            }
+                          },
+                        )
+                      },
+                    );
+                  },
+                );
               }),
               child: const Text(
                 "Sign up",

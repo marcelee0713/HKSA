@@ -85,6 +85,29 @@ class Storage {
     }
   }
 
+  Future createHistory(
+      {required String desc,
+      required String timeStamp,
+      required String userType,
+      required String id}) async {
+    try {
+      DatabaseReference dbReference =
+          FirebaseDatabase.instance.ref().child('historylogs/$id');
+      String? key = dbReference.push().key;
+
+      final json = {
+        'desc': desc,
+        'timeStamp': timeStamp,
+        'userType': userType,
+        'id': id,
+      };
+
+      await dbReference.child(key!).set(json);
+    } catch (error) {
+      rethrow;
+    }
+  }
+
   Future<void> changeScholarPfp(String filePath, fileName, userID, oldPic,
       VoidCallback showDialog) async {
     File file = File(filePath);

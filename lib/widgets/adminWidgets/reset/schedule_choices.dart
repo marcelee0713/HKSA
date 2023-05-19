@@ -1,11 +1,13 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:hive/hive.dart';
 import 'package:hksa/constant/colors.dart';
 import 'package:hksa/widgets/dialogs/dialog_confirm.dart';
 import 'package:hksa/widgets/dialogs/dialog_loading.dart';
 import 'package:hksa/widgets/dialogs/dialog_success.dart';
 import 'package:hksa/widgets/dialogs/dialog_unsuccessful.dart';
+import 'package:hksa/widgets/scholarWidgets/home/home_inputs.dart';
 
 class ScheduleChoices extends StatefulWidget {
   const ScheduleChoices({super.key});
@@ -17,6 +19,9 @@ class ScheduleChoices extends StatefulWidget {
 class _ScheduleChoicesState extends State<ScheduleChoices> {
   final DatabaseReference choicesReference =
       FirebaseDatabase.instance.ref().child("scheduleChoices/");
+  final logInBox = Hive.box("myLoginBox");
+  late var userType = logInBox.get("userType");
+  late var userID = logInBox.get("userID");
   final formKeyForRoom = GlobalKey<FormState>();
   final formKeyForSection = GlobalKey<FormState>();
   final formKeyForSubject = GlobalKey<FormState>();
@@ -294,7 +299,7 @@ class _ScheduleChoicesState extends State<ScheduleChoices> {
                                       }
                                     }
                                   },
-                                ).then((value) {
+                                ).then((value) async {
                                   Navigator.of(
                                     context,
                                     rootNavigator: true,
@@ -309,6 +314,14 @@ class _ScheduleChoicesState extends State<ScheduleChoices> {
                                       rootNavigator: true,
                                     ).pop(),
                                   ).buildSuccessScreen(context);
+                                  await createHistory(
+                                    desc: "Removed $currentRoom in rooms",
+                                    timeStamp: DateTime.now()
+                                        .microsecondsSinceEpoch
+                                        .toString(),
+                                    userType: userType,
+                                    id: userID,
+                                  );
                                   setState(() {
                                     roomValue = null;
                                   });
@@ -386,7 +399,7 @@ class _ScheduleChoicesState extends State<ScheduleChoices> {
                                     .child("room/$key")
                                     .set(input)
                                     .then(
-                                  (value) {
+                                  (value) async {
                                     Navigator.of(context, rootNavigator: true)
                                         .pop();
                                     DialogSuccess(
@@ -399,6 +412,14 @@ class _ScheduleChoicesState extends State<ScheduleChoices> {
                                         rootNavigator: true,
                                       ).pop(),
                                     ).buildSuccessScreen(context);
+                                    await createHistory(
+                                      desc: "Added $input in rooms",
+                                      timeStamp: DateTime.now()
+                                          .microsecondsSinceEpoch
+                                          .toString(),
+                                      userType: userType,
+                                      id: userID,
+                                    );
                                     setState(() {
                                       inputControllerForRoom.text = "";
                                       roomValue = null;
@@ -640,7 +661,7 @@ class _ScheduleChoicesState extends State<ScheduleChoices> {
                                       }
                                     }
                                   },
-                                ).then((value) {
+                                ).then((value) async {
                                   Navigator.of(
                                     context,
                                     rootNavigator: true,
@@ -655,6 +676,14 @@ class _ScheduleChoicesState extends State<ScheduleChoices> {
                                       rootNavigator: true,
                                     ).pop(),
                                   ).buildSuccessScreen(context);
+                                  await createHistory(
+                                    desc: "Removed $currentSection in sections",
+                                    timeStamp: DateTime.now()
+                                        .microsecondsSinceEpoch
+                                        .toString(),
+                                    userType: userType,
+                                    id: userID,
+                                  );
                                   setState(() {
                                     sectionValue = null;
                                   });
@@ -732,7 +761,7 @@ class _ScheduleChoicesState extends State<ScheduleChoices> {
                                     .child("section/$key")
                                     .set(input)
                                     .then(
-                                  (value) {
+                                  (value) async {
                                     Navigator.of(context, rootNavigator: true)
                                         .pop();
                                     DialogSuccess(
@@ -745,6 +774,14 @@ class _ScheduleChoicesState extends State<ScheduleChoices> {
                                         rootNavigator: true,
                                       ).pop(),
                                     ).buildSuccessScreen(context);
+                                    await createHistory(
+                                      desc: "Added $input in sections",
+                                      timeStamp: DateTime.now()
+                                          .microsecondsSinceEpoch
+                                          .toString(),
+                                      userType: userType,
+                                      id: userID,
+                                    );
                                     setState(() {
                                       inputControllerForSection.text = "";
                                       sectionValue = null;
@@ -987,7 +1024,7 @@ class _ScheduleChoicesState extends State<ScheduleChoices> {
                                       }
                                     }
                                   },
-                                ).then((value) {
+                                ).then((value) async {
                                   Navigator.of(
                                     context,
                                     rootNavigator: true,
@@ -1002,6 +1039,15 @@ class _ScheduleChoicesState extends State<ScheduleChoices> {
                                       rootNavigator: true,
                                     ).pop(),
                                   ).buildSuccessScreen(context);
+                                  await createHistory(
+                                    desc:
+                                        "Removed $currentSubject in subject codes",
+                                    timeStamp: DateTime.now()
+                                        .microsecondsSinceEpoch
+                                        .toString(),
+                                    userType: userType,
+                                    id: userID,
+                                  );
                                   setState(() {
                                     subjectValue = null;
                                   });
@@ -1081,7 +1127,7 @@ class _ScheduleChoicesState extends State<ScheduleChoices> {
                                     .child("subjectCode/$key")
                                     .set(input)
                                     .then(
-                                  (value) {
+                                  (value) async {
                                     Navigator.of(context, rootNavigator: true)
                                         .pop();
                                     DialogSuccess(
@@ -1094,6 +1140,14 @@ class _ScheduleChoicesState extends State<ScheduleChoices> {
                                         rootNavigator: true,
                                       ).pop(),
                                     ).buildSuccessScreen(context);
+                                    await createHistory(
+                                      desc: "Added $input in subject codes",
+                                      timeStamp: DateTime.now()
+                                          .microsecondsSinceEpoch
+                                          .toString(),
+                                      userType: userType,
+                                      id: userID,
+                                    );
                                     setState(() {
                                       inputControllerForSubjectCode.text = "";
                                       subjectValue = null;

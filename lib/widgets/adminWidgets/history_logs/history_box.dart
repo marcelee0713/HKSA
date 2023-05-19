@@ -22,7 +22,7 @@ class HistoryBox extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          Text(
+          SelectableText(
             desc,
             style: const TextStyle(
               fontFamily: 'Inter',

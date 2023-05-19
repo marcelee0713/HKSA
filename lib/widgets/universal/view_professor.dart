@@ -13,6 +13,10 @@ import 'package:hksa/pages/adminPages/contact.dart';
 import 'package:hksa/widgets/dialogs/dialog_confirm.dart';
 import 'package:hksa/widgets/dialogs/dialog_edit_professor.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
+import 'package:hksa/widgets/dialogs/dialog_loading.dart';
+import 'package:hksa/widgets/dialogs/dialog_success.dart';
+import 'package:hksa/widgets/dialogs/dialog_unsuccessful.dart';
+import 'package:hksa/widgets/scholarWidgets/home/home_inputs.dart';
 import 'package:hksa/widgets/universal/view_history_logs.dart';
 import 'package:hksa/widgets/universal/view_inbox.dart';
 
@@ -30,6 +34,8 @@ class ProfessorProfile extends StatefulWidget {
 class _ProfessorProfileState extends State<ProfessorProfile> {
   final logInBox = Hive.box("myLoginBox");
   late var userType = logInBox.get("userType");
+  late var userID = logInBox.get("userID");
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -387,19 +393,17 @@ class _ProfessorProfileState extends State<ProfessorProfile> {
                                         child: ElevatedButton(
                                           onPressed: () {
                                             Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                    builder: (context) => Inbox(
-                                                          receiverFullName:
-                                                              snapshot.data!
-                                                                  .first.name,
-                                                          receiverID: snapshot
-                                                              .data!
-                                                              .first
-                                                              .professorId,
-                                                          receiverType:
-                                                              "professor",
-                                                        )));
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) => Inbox(
+                                                  receiverFullName:
+                                                      snapshot.data!.first.name,
+                                                  receiverID: snapshot
+                                                      .data!.first.professorId,
+                                                  receiverType: "professor",
+                                                ),
+                                              ),
+                                            );
                                           },
                                           style: ElevatedButton.styleFrom(
                                             backgroundColor:
@@ -421,27 +425,21 @@ class _ProfessorProfileState extends State<ProfessorProfile> {
                                         child: ElevatedButton(
                                           onPressed: () {
                                             Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        EditProfessor(
-                                                          userID: snapshot
-                                                              .data!
-                                                              .first
-                                                              .professorId,
-                                                          currentRoom: snapshot
-                                                              .data!.first.room,
-                                                          currentSection:
-                                                              snapshot
-                                                                  .data!
-                                                                  .first
-                                                                  .section,
-                                                          currentSubject:
-                                                              snapshot
-                                                                  .data!
-                                                                  .first
-                                                                  .subject,
-                                                        )));
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) =>
+                                                    EditProfessor(
+                                                  userID: snapshot
+                                                      .data!.first.professorId,
+                                                  currentRoom:
+                                                      snapshot.data!.first.room,
+                                                  currentSection: snapshot
+                                                      .data!.first.section,
+                                                  currentSubject: snapshot
+                                                      .data!.first.subject,
+                                                ),
+                                              ),
+                                            );
                                           },
                                           style: ElevatedButton.styleFrom(
                                             backgroundColor:
@@ -470,7 +468,8 @@ class _ProfessorProfileState extends State<ProfessorProfile> {
                                               MaterialPageRoute(
                                                 builder: (context) =>
                                                     HistoryLogs(
-                                                        userID: widget.userID),
+                                                  userID: widget.userID,
+                                                ),
                                               ),
                                             );
                                           },
@@ -495,35 +494,78 @@ class _ProfessorProfileState extends State<ProfessorProfile> {
                                         child: ElevatedButton(
                                           onPressed: () {
                                             DialogConfirm(
-                                                headertext:
-                                                    "Are you sure you reset history logs of this user?",
-                                                callback: () async {
+                                              headertext:
+                                                  "Are you sure you want the reset history logs of this user?",
+                                              callback: () async {
+                                                Navigator.of(context,
+                                                        rootNavigator: true)
+                                                    .pop();
+
+                                                DialogLoading(
+                                                        subtext: "Resetting...")
+                                                    .buildLoadingScreen(
+                                                        context);
+
+                                                final DatabaseReference
+                                                    historyLogsReference =
+                                                    FirebaseDatabase.instance
+                                                        .ref()
+                                                        .child(
+                                                            'historylogs/${widget.userID}');
+
+                                                await historyLogsReference
+                                                    .remove()
+                                                    .then(
+                                                  (value) async {
+                                                    Navigator.of(context,
+                                                            rootNavigator: true)
+                                                        .pop();
+
+                                                    DialogSuccess(
+                                                      headertext: "Success",
+                                                      subtext:
+                                                          "You have successfully reset the History Logs of this user! ",
+                                                      textButton: "Close",
+                                                      callback: () {
+                                                        Navigator.of(context,
+                                                                rootNavigator:
+                                                                    true)
+                                                            .pop();
+                                                      },
+                                                    ).buildSuccessScreen(
+                                                        context);
+
+                                                    await createHistory(
+                                                      desc:
+                                                          "Reset the History Logs of the Professor: ${snapshot.data!.first.name}(${snapshot.data!.first.professorId})",
+                                                      timeStamp: DateTime.now()
+                                                          .microsecondsSinceEpoch
+                                                          .toString(),
+                                                      userType: userType,
+                                                      id: userID,
+                                                    );
+                                                  },
+                                                ).catchError((err) {
                                                   Navigator.of(context,
                                                           rootNavigator: true)
                                                       .pop();
 
-                                                  final DatabaseReference
-                                                      historyLogsReference =
-                                                      FirebaseDatabase.instance
-                                                          .ref()
-                                                          .child(
-                                                              'historylogs/${widget.userID}');
-
-                                                  await historyLogsReference
-                                                      .remove();
-
-                                                  // ignore: use_build_context_synchronously
-                                                  Navigator.of(context,
-                                                          rootNavigator: true)
-                                                      .pop();
-
-                                                  // ignore: use_build_context_synchronously
-                                                  Navigator.pushReplacement(
-                                                      context,
-                                                      MaterialPageRoute(
-                                                          builder: (context) =>
-                                                              const AdminContacts()));
-                                                }).buildConfirmScreen(context);
+                                                  DialogUnsuccessful(
+                                                    headertext: "Error",
+                                                    subtext:
+                                                        "Please try again later!",
+                                                    textButton: "Close",
+                                                    callback: () {
+                                                      Navigator.of(context,
+                                                              rootNavigator:
+                                                                  true)
+                                                          .pop();
+                                                    },
+                                                  ).buildUnsuccessfulScreen(
+                                                      context);
+                                                });
+                                              },
+                                            ).buildConfirmScreen(context);
                                           },
                                           style: ElevatedButton.styleFrom(
                                             backgroundColor:
@@ -581,6 +623,16 @@ class _ProfessorProfileState extends State<ProfessorProfile> {
                                                       .first.profilePicture)
                                                   .delete();
                                             }
+
+                                            await createHistory(
+                                              desc:
+                                                  "Deleted a Professor: ${snapshot.data!.first.name}(${snapshot.data!.first.professorId})",
+                                              timeStamp: DateTime.now()
+                                                  .microsecondsSinceEpoch
+                                                  .toString(),
+                                              userType: userType,
+                                              id: userID,
+                                            );
 
                                             // ignore: use_build_context_synchronously
                                             Navigator.of(context,

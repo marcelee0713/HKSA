@@ -1,5 +1,6 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 import 'package:hksa/api/send_message.dart';
 import 'package:hksa/constant/colors.dart';
 import 'package:hksa/widgets/adminWidgets/nav_drawer.dart';
@@ -7,6 +8,7 @@ import 'package:hksa/widgets/dialogs/dialog_confirm.dart';
 import 'package:hksa/widgets/dialogs/dialog_loading.dart';
 import 'package:hksa/widgets/dialogs/dialog_success.dart';
 import 'package:hksa/widgets/dialogs/dialog_unsuccessful.dart';
+import 'package:hksa/widgets/scholarWidgets/home/home_inputs.dart';
 
 class UploadGoogleDrivePage extends StatefulWidget {
   const UploadGoogleDrivePage({super.key});
@@ -16,6 +18,9 @@ class UploadGoogleDrivePage extends StatefulWidget {
 }
 
 class _UploadGoogleDrivePageState extends State<UploadGoogleDrivePage> {
+  final logInBox = Hive.box("myLoginBox");
+  late var userType = logInBox.get("userType");
+  late var userID = logInBox.get("userID");
   final formKey = GlobalKey<FormState>();
   final inputController = TextEditingController();
   @override
@@ -68,6 +73,8 @@ class _UploadGoogleDrivePageState extends State<UploadGoogleDrivePage> {
           ),
           const SizedBox(height: 5),
           TextFormField(
+            scrollPhysics:
+                const PageScrollPhysics(parent: BouncingScrollPhysics()),
             controller: inputController,
             validator: (value) {
               if (value!.isNotEmpty) {
@@ -140,6 +147,7 @@ class _UploadGoogleDrivePageState extends State<UploadGoogleDrivePage> {
                     // ignore: use_build_context_synchronously
                     Navigator.of(context, rootNavigator: true).pop();
                     if (res == "success") {
+                      String link = inputController.text;
                       // ignore: use_build_context_synchronously
                       DialogSuccess(
                         headertext:
@@ -152,6 +160,13 @@ class _UploadGoogleDrivePageState extends State<UploadGoogleDrivePage> {
                           Navigator.of(context, rootNavigator: true).pop();
                         },
                       ).buildSuccessScreen(context);
+                      await createHistory(
+                        desc: "Changed the OLD DTR Link to $link.",
+                        timeStamp:
+                            DateTime.now().microsecondsSinceEpoch.toString(),
+                        userType: userType,
+                        id: userID,
+                      );
                     } else {
                       // ignore: use_build_context_synchronously
                       DialogUnsuccessful(
