@@ -977,6 +977,8 @@ class _AdminRegisterProfessorInputsState
                                 subject: subject.toString(),
                                 time: time.toString(),
                                 listeningTo: "",
+                                isEmailVerified: 'false',
+                                isPhoneVerified: 'false',
                               );
 
                               await _dbReference

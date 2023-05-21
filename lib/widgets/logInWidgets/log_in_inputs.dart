@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
@@ -9,6 +10,9 @@ import 'package:hksa/pages/adminPages/home.dart';
 import 'package:hksa/pages/professorPages/home.dart';
 import 'package:hksa/pages/register_scholar.dart';
 import 'package:hksa/pages/scholarPages/home.dart';
+import 'package:hksa/pages/verificationPages/check_phone.dart';
+import 'package:hksa/pages/verificationPages/forgot_password.dart';
+import 'package:hksa/pages/verificationPages/verify_email.dart';
 import 'package:hksa/widgets/dialogs/dialog_loading.dart';
 import 'package:hksa/widgets/dialogs/dialog_unsuccessful.dart';
 import '/constant/colors.dart';
@@ -266,6 +270,7 @@ class _LogInInputsState extends State<LogInInputs> {
                     bool userExist = false;
                     bool doneCheckingUsers = false;
                     bool userActive = true;
+                    bool haveToVerify = false;
 
                     Future.delayed(
                       const Duration(seconds: 2),
@@ -274,13 +279,19 @@ class _LogInInputsState extends State<LogInInputs> {
                           await dbReference
                               .child('Users/Scholars/')
                               .get()
-                              .then((snapshot) {
+                              .then((snapshot) async {
                             for (final test in snapshot.children) {
                               if (test.key == userID) {
                                 Map<String, dynamic> myObj =
                                     jsonDecode(jsonEncode(test.value));
 
                                 Scholar myScholarObj = Scholar.fromJson(myObj);
+
+                                String email = myScholarObj.email;
+                                String isEmailVerified =
+                                    myScholarObj.isEmailVerified;
+                                String isPhoneVerified =
+                                    myScholarObj.isPhoneVerified;
 
                                 if (myScholarObj.status == "inactive") {
                                   Navigator.of(context, rootNavigator: true)
@@ -305,6 +316,45 @@ class _LogInInputsState extends State<LogInInputs> {
                                   debugPrint("IT MATCHES");
                                   Navigator.of(context, rootNavigator: true)
                                       .pop();
+
+                                  if (isPhoneVerified == "false") {
+                                    haveToVerify = true;
+                                    await signOut().then((value) {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              CheckPhoneNumber(
+                                            email: email,
+                                            userID: userID,
+                                            userType: "Scholars",
+                                            password: myScholarObj.password,
+                                          ),
+                                        ),
+                                      );
+                                    });
+                                    return;
+                                  }
+
+                                  if (isEmailVerified == "false") {
+                                    haveToVerify = true;
+                                    await signOut().then((value) {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => VerifyEmail(
+                                            email: email,
+                                            userID: userID,
+                                            userType: "Scholars",
+                                            password: myScholarObj.password,
+                                            headerText:
+                                                "We also have to verify your email so you can log in.",
+                                          ),
+                                        ),
+                                      );
+                                    });
+                                    return;
+                                  }
 
                                   // Put it in our LocalStorage
                                   // Para ma save yung login state niya.
@@ -365,13 +415,19 @@ class _LogInInputsState extends State<LogInInputs> {
                           await dbReference
                               .child('Users/Professors/')
                               .get()
-                              .then((snapshot) {
+                              .then((snapshot) async {
                             for (final test in snapshot.children) {
                               if (test.key == userID) {
                                 Map<String, dynamic> myObj =
                                     jsonDecode(jsonEncode(test.value));
 
                                 Professor myProfObj = Professor.fromJson(myObj);
+
+                                String email = myProfObj.email;
+                                String isEmailVerified =
+                                    myProfObj.isEmailVerified;
+                                String isPhoneVerified =
+                                    myProfObj.isPhoneVerified;
                                 // Dito ka gumawa Monce
 
                                 if (myProfObj.password == userPassword) {
@@ -379,6 +435,41 @@ class _LogInInputsState extends State<LogInInputs> {
                                   Navigator.of(context, rootNavigator: true)
                                       .pop();
 
+                                  if (isPhoneVerified == "false") {
+                                    haveToVerify = true;
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => CheckPhoneNumber(
+                                          email: email,
+                                          userID: userID,
+                                          userType: "Professors",
+                                          password: myProfObj.password,
+                                        ),
+                                      ),
+                                    );
+                                    return;
+                                  }
+
+                                  if (isEmailVerified == "false") {
+                                    haveToVerify = true;
+                                    await signOut().then((value) {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => VerifyEmail(
+                                            email: email,
+                                            userID: userID,
+                                            userType: "Professors",
+                                            password: myProfObj.password,
+                                            headerText:
+                                                "We also have to verify your email so you can log in.",
+                                          ),
+                                        ),
+                                      );
+                                    });
+                                    return;
+                                  }
                                   // Put it in our LocalStorage
                                   // Para ma save yung login state niya.
                                   // And also some other stuff that need
@@ -405,7 +496,7 @@ class _LogInInputsState extends State<LogInInputs> {
                                       timeStamp: DateTime.now()
                                           .microsecondsSinceEpoch
                                           .toString(),
-                                      userType: userType,
+                                      userType: "Professor",
                                       id: userID,
                                     );
                                   });
@@ -434,19 +525,62 @@ class _LogInInputsState extends State<LogInInputs> {
                           await dbReference
                               .child('Users/Head/')
                               .get()
-                              .then((snapshot) {
+                              .then((snapshot) async {
                             for (final test in snapshot.children) {
                               if (test.key == userID) {
                                 Map<String, dynamic> myObj =
                                     jsonDecode(jsonEncode(test.value));
 
                                 Head myHeadObj = Head.fromJson(myObj);
+
+                                String email = myHeadObj.email;
+                                String isEmailVerified =
+                                    myHeadObj.isEmailVerified;
+                                String isPhoneVerified =
+                                    myHeadObj.isPhoneVerified;
                                 // Dito ka gumawa Monce
 
                                 if (myHeadObj.password == userPassword) {
                                   debugPrint("IT MATCHES");
                                   Navigator.of(context, rootNavigator: true)
                                       .pop();
+
+                                  if (isPhoneVerified == "false") {
+                                    haveToVerify = true;
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => CheckPhoneNumber(
+                                          email: email,
+                                          userID: userID,
+                                          userType: "Head",
+                                          password: myHeadObj.password,
+                                        ),
+                                      ),
+                                    );
+                                    return;
+                                  }
+
+                                  if (isEmailVerified == "false") {
+                                    haveToVerify = true;
+                                    await signOut().then((value) {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => VerifyEmail(
+                                            email: email,
+                                            userID: userID,
+                                            userType: "Head",
+                                            password: myHeadObj.password,
+                                            headerText:
+                                                "We also have to verify your email so you can log in.",
+                                          ),
+                                        ),
+                                      );
+                                    });
+
+                                    return;
+                                  }
 
                                   // Put it in our LocalStorage
                                   // Para ma save yung login state niya.
@@ -474,7 +608,7 @@ class _LogInInputsState extends State<LogInInputs> {
                                       timeStamp: DateTime.now()
                                           .microsecondsSinceEpoch
                                           .toString(),
-                                      userType: userType,
+                                      userType: "Head",
                                       id: userID,
                                     );
                                   });
@@ -500,46 +634,53 @@ class _LogInInputsState extends State<LogInInputs> {
                           doneCheckingUsers = true;
                         }
                       }),
-                    ).whenComplete(() => {
-                          Future.delayed(const Duration(milliseconds: 2500),
-                              () async {
-                            userExist
-                                ? doneCheckingUsers = false
-                                : doneCheckingUsers = true;
-                            if (userType == "scholar") {
-                              if (!userExist &&
-                                  doneCheckingUsers &&
-                                  userActive) {
-                                Navigator.of(context, rootNavigator: true)
-                                    .pop();
-                                DialogUnsuccessful(
-                                  headertext: "USER NOT FOUND",
-                                  subtext:
-                                      "Sorry, we can't find that user in our database or maybe you're not connected to the internet.",
-                                  textButton: "Close",
-                                  callback: (() =>
-                                      Navigator.of(context, rootNavigator: true)
+                    ).whenComplete(
+                      () => {
+                        if (!haveToVerify)
+                          {
+                            Future.delayed(
+                              const Duration(milliseconds: 2500),
+                              () {
+                                userExist
+                                    ? doneCheckingUsers = false
+                                    : doneCheckingUsers = true;
+                                if (userType == "scholar") {
+                                  if (!userExist &&
+                                      doneCheckingUsers &&
+                                      userActive) {
+                                    Navigator.of(context, rootNavigator: true)
+                                        .pop();
+                                    DialogUnsuccessful(
+                                      headertext: "USER NOT FOUND",
+                                      subtext:
+                                          "Sorry, we can't find that user in our database or maybe you're not connected to the internet.",
+                                      textButton: "Close",
+                                      callback: (() => Navigator.of(context,
+                                              rootNavigator: true)
                                           .pop()),
-                                ).buildUnsuccessfulScreen(context);
-                              }
-                            } else if (userType == "professor" ||
-                                userType == "head") {
-                              if (!userExist && doneCheckingUsers) {
-                                Navigator.of(context, rootNavigator: true)
-                                    .pop();
-                                DialogUnsuccessful(
-                                  headertext: "USER NOT FOUND",
-                                  subtext:
-                                      "Sorry, we can't find that user in our database or maybe you're not connected to the internet.",
-                                  textButton: "Close",
-                                  callback: (() =>
-                                      Navigator.of(context, rootNavigator: true)
+                                    ).buildUnsuccessfulScreen(context);
+                                  }
+                                } else if (userType == "professor" ||
+                                    userType == "head") {
+                                  if (!userExist && doneCheckingUsers) {
+                                    Navigator.of(context, rootNavigator: true)
+                                        .pop();
+                                    DialogUnsuccessful(
+                                      headertext: "USER NOT FOUND",
+                                      subtext:
+                                          "Sorry, we can't find that user in our database or maybe you're not connected to the internet.",
+                                      textButton: "Close",
+                                      callback: (() => Navigator.of(context,
+                                              rootNavigator: true)
                                           .pop()),
-                                ).buildUnsuccessfulScreen(context);
-                              }
-                            }
-                          })
-                        });
+                                    ).buildUnsuccessfulScreen(context);
+                                  }
+                                }
+                              },
+                            )
+                          }
+                      },
+                    );
                   }),
                   child: const Text(
                     "Log in",
@@ -553,10 +694,36 @@ class _LogInInputsState extends State<LogInInputs> {
                 ),
               ),
             ],
+          ),
+          const SizedBox(height: 20),
+          InkWell(
+            child: const Text(
+              "Forgot Password?",
+              style: TextStyle(
+                color: ColorPalette.accentWhite,
+                decoration: TextDecoration.underline,
+                fontFamily: 'Inter',
+                fontWeight: FontWeight.w500,
+                fontSize: 14,
+              ),
+            ),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const ForgotPasswordPage(),
+                ),
+              );
+            },
           )
         ],
       ),
     );
+  }
+
+  Future signOut() async {
+    FirebaseAuth firebaseAuth = FirebaseAuth.instance;
+    await firebaseAuth.signOut();
   }
 
   Future createHistory(

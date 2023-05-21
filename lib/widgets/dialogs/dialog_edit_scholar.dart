@@ -1848,6 +1848,11 @@ class _EditScholarState extends State<EditScholar> {
                                   String currentProfessorWD =
                                       snapshot.data!.first.assignedProfWd;
 
+                                  String currentEmailVer =
+                                      snapshot.data!.first.isEmailVerified;
+                                  String currentPhoneNumVer =
+                                      snapshot.data!.first.isPhoneVerified;
+
                                   if (scholarTypeValue == "Non-Faci") {
                                     assignedProfDay1 = "";
                                     assignedProfDay2 = "";
@@ -1989,48 +1994,48 @@ class _EditScholarState extends State<EditScholar> {
                                               snapshot.data!.first.isFinished;
 
                                           Scholar scholarObj = Scholar(
-                                              studentNumber: studentNumber,
-                                              name: fullName,
-                                              course: course.toString(),
-                                              email: email,
-                                              phonenumber: phoneNumber,
-                                              password: password,
-                                              hkType: hkType.toString(),
-                                              hours: hours,
-                                              status: status.toString(),
-                                              totalHoursInDisplay:
-                                                  totalHoursInDisplay,
-                                              totalHoursInDuration:
-                                                  totalHoursInDuration,
-                                              totalHoursRequired:
-                                                  totalHoursRequired,
-                                              isFinished: isFinished,
-                                              profilePicture: snapshot
-                                                  .data!.first.profilePicture,
-                                              onSiteDay1:
-                                                  onSiteDay1Value.toString(),
-                                              onSiteDay2:
-                                                  onSiteDay2Value.toString(),
-                                              vacantTimeDay1:
-                                                  vacantTimeDay1Value
-                                                      .toString(),
-                                              vacantTimeDay2:
-                                                  vacantTimeDay2Value
-                                                      .toString(),
-                                              wholeDayVacantTime:
-                                                  wholeDayValue.toString(),
-                                              scholarType:
-                                                  scholarTypeValue.toString(),
-                                              town: townValue.toString(),
-                                              assignedProfD1:
-                                                  assignedProfDay1.toString(),
-                                              assignedProfD2:
-                                                  assignedProfDay2.toString(),
-                                              assignedProfWd:
-                                                  assignedProfWholeDay
-                                                      .toString(),
-                                              listeningTo: snapshot
-                                                  .data!.first.listeningTo);
+                                            studentNumber: studentNumber,
+                                            name: fullName,
+                                            course: course.toString(),
+                                            email: email,
+                                            phonenumber: phoneNumber,
+                                            password: password,
+                                            hkType: hkType.toString(),
+                                            hours: hours,
+                                            status: status.toString(),
+                                            totalHoursInDisplay:
+                                                totalHoursInDisplay,
+                                            totalHoursInDuration:
+                                                totalHoursInDuration,
+                                            totalHoursRequired:
+                                                totalHoursRequired,
+                                            isFinished: isFinished,
+                                            profilePicture: snapshot
+                                                .data!.first.profilePicture,
+                                            onSiteDay1:
+                                                onSiteDay1Value.toString(),
+                                            onSiteDay2:
+                                                onSiteDay2Value.toString(),
+                                            vacantTimeDay1:
+                                                vacantTimeDay1Value.toString(),
+                                            vacantTimeDay2:
+                                                vacantTimeDay2Value.toString(),
+                                            wholeDayVacantTime:
+                                                wholeDayValue.toString(),
+                                            scholarType:
+                                                scholarTypeValue.toString(),
+                                            town: townValue.toString(),
+                                            assignedProfD1:
+                                                assignedProfDay1.toString(),
+                                            assignedProfD2:
+                                                assignedProfDay2.toString(),
+                                            assignedProfWd:
+                                                assignedProfWholeDay.toString(),
+                                            listeningTo: snapshot
+                                                .data!.first.listeningTo,
+                                            isEmailVerified: currentEmailVer,
+                                            isPhoneVerified: currentPhoneNumVer,
+                                          );
 
                                           await _dbReference
                                               .child(studentNumber)
@@ -2172,22 +2177,27 @@ class _EditScholarState extends State<EditScholar> {
             String subject = myObj[key]['subject'];
             String time = myObj[key]['time'];
             String listeningTo = myObj[key]['listeningTo'];
+            String isEmailVerified = myObj[key]['isEmailVerified'];
+            String isPhoneVerified = myObj[key]['isPhoneVerified'];
 
             Professor myProf = Professor(
-                department: department,
-                email: email,
-                name: name,
-                password: password,
-                phonenumber: phonenumber,
-                professorId: professorID,
-                signaturecode: signaturecode,
-                profilePicture: profilePicture,
-                section: section,
-                subject: subject,
-                day: day,
-                time: time,
-                room: room,
-                listeningTo: listeningTo);
+              department: department,
+              email: email,
+              name: name,
+              password: password,
+              phonenumber: phonenumber,
+              professorId: professorID,
+              signaturecode: signaturecode,
+              profilePicture: profilePicture,
+              section: section,
+              subject: subject,
+              day: day,
+              time: time,
+              room: room,
+              listeningTo: listeningTo,
+              isEmailVerified: isEmailVerified,
+              isPhoneVerified: isPhoneVerified,
+            );
 
             if (myProf.day == scholarOnSiteDay1 &&
                 myProf.time == scholarVacantTimeDay1) {

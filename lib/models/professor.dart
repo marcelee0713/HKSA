@@ -19,6 +19,8 @@ class Professor {
   String time;
   String room;
   String listeningTo;
+  String isEmailVerified;
+  String isPhoneVerified;
 
   Professor({
     required this.department,
@@ -35,6 +37,8 @@ class Professor {
     required this.time,
     required this.room,
     required this.listeningTo,
+    required this.isEmailVerified,
+    required this.isPhoneVerified,
   });
 
   factory Professor.fromJson(Map<String, dynamic> json) => Professor(
@@ -52,6 +56,8 @@ class Professor {
         time: json["time"],
         room: json["room"],
         listeningTo: json["listeningTo"],
+        isEmailVerified: json["isEmailVerified"],
+        isPhoneVerified: json["isPhoneVerified"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -69,5 +75,7 @@ class Professor {
         "time": time,
         "room": room,
         "listeningTo": listeningTo,
+        "isEmailVerified": isEmailVerified,
+        "isPhoneVerified": isPhoneVerified,
       };
 }

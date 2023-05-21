@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:another_flushbar/flushbar.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -645,6 +646,7 @@ class _ProfileState extends State<Profile> {
                                           'scholars_faci');
                                       _firebaseMessaging.unsubscribeFromTopic(
                                           'scholars_non_faci');
+                                      await signOut();
                                       await createHistory(
                                         desc: "User logged out",
                                         timeStamp: DateTime.now()
@@ -774,6 +776,11 @@ class _ProfileState extends State<Profile> {
         },
       ),
     );
+  }
+
+  Future signOut() async {
+    FirebaseAuth firebaseAuth = FirebaseAuth.instance;
+    await firebaseAuth.signOut();
   }
 
   Future<String> uploadURL() async {

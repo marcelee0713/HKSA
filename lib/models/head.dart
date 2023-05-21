@@ -10,6 +10,10 @@ class Head {
   String userId;
   String profilePicture;
   String listeningTo;
+  String isEmailVerified;
+  String isPhoneVerified;
+  String phonenumber;
+  String email;
 
   Head({
     required this.name,
@@ -17,6 +21,10 @@ class Head {
     required this.userId,
     required this.profilePicture,
     required this.listeningTo,
+    required this.isEmailVerified,
+    required this.isPhoneVerified,
+    required this.phonenumber,
+    required this.email,
   });
 
   factory Head.fromJson(Map<String, dynamic> json) => Head(
@@ -25,6 +33,10 @@ class Head {
         userId: json["userID"],
         profilePicture: json["profilePicture"],
         listeningTo: json["listeningTo"],
+        isEmailVerified: json["isEmailVerified"],
+        isPhoneVerified: json["isPhoneVerified"],
+        phonenumber: json["phonenumber"],
+        email: json["email"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -33,5 +45,9 @@ class Head {
         "userID": userId,
         "profilePicture": profilePicture,
         "listeningTo": listeningTo,
+        "isEmailVerified": isEmailVerified,
+        "isPhoneVerified": isPhoneVerified,
+        "phonenumber": phonenumber,
+        "email": email,
       };
 }

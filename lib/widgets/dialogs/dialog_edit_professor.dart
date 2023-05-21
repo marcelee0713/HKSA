@@ -1332,6 +1332,12 @@ class _EditProfessorState extends State<EditProfessor> {
                                     String currentRoom =
                                         snapshot.data!.first.room;
 
+                                    String currentEmailVer =
+                                        snapshot.data!.first.isEmailVerified;
+
+                                    String currentPhoneVer =
+                                        snapshot.data!.first.isPhoneVerified;
+
                                     if (currentName != fullName) {
                                       changes.add(
                                           "Changed name from $currentName to $fullName");
@@ -1404,23 +1410,25 @@ class _EditProfessorState extends State<EditProfessor> {
                                               const Duration(seconds: 2),
                                               () async {
                                             Professor scholarObj = Professor(
-                                                department:
-                                                    department.toString(),
-                                                email: email,
-                                                name: fullName,
-                                                password: password,
-                                                phonenumber: phoneNumber,
-                                                professorId: professorID,
-                                                signaturecode: signature,
-                                                profilePicture: snapshot
-                                                    .data!.first.profilePicture,
-                                                day: day,
-                                                room: room,
-                                                section: section,
-                                                subject: subject,
-                                                time: time,
-                                                listeningTo: snapshot
-                                                    .data!.first.listeningTo);
+                                              department: department.toString(),
+                                              email: email,
+                                              name: fullName,
+                                              password: password,
+                                              phonenumber: phoneNumber,
+                                              professorId: professorID,
+                                              signaturecode: signature,
+                                              profilePicture: snapshot
+                                                  .data!.first.profilePicture,
+                                              day: day,
+                                              room: room,
+                                              section: section,
+                                              subject: subject,
+                                              time: time,
+                                              listeningTo: snapshot
+                                                  .data!.first.listeningTo,
+                                              isEmailVerified: currentEmailVer,
+                                              isPhoneVerified: currentPhoneVer,
+                                            );
 
                                             await _dbReference
                                                 .child(professorID)

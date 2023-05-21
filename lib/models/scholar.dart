@@ -30,6 +30,8 @@ class Scholar {
   String assignedProfD2;
   String assignedProfWd;
   String listeningTo;
+  String isEmailVerified;
+  String isPhoneVerified;
 
   Scholar({
     required this.studentNumber,
@@ -57,6 +59,8 @@ class Scholar {
     required this.assignedProfD2,
     required this.assignedProfWd,
     required this.listeningTo,
+    required this.isEmailVerified,
+    required this.isPhoneVerified,
   });
 
   factory Scholar.fromJson(Map<String, dynamic> json) => Scholar(
@@ -85,6 +89,8 @@ class Scholar {
         assignedProfD2: json["assignedProfD2"],
         assignedProfWd: json["assignedProfWD"],
         listeningTo: json["listeningTo"],
+        isEmailVerified: json["isEmailVerified"],
+        isPhoneVerified: json["isPhoneVerified"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -113,5 +119,7 @@ class Scholar {
         "assignedProfD2": assignedProfD2,
         "assignedProfWD": assignedProfWd,
         "listeningTo": listeningTo,
+        "isEmailVerified": isEmailVerified,
+        "isPhoneVerified": isPhoneVerified,
       };
 }

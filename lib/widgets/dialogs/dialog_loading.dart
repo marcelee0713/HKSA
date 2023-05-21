@@ -32,6 +32,7 @@ class DialogLoading {
                     const SizedBox(height: 8),
                     Text(
                       subtext,
+                      textAlign: TextAlign.center,
                       style: const TextStyle(
                         color: ColorPalette.primary,
                         fontFamily: 'Inter',
