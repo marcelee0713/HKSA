@@ -55,7 +55,6 @@ class _VerifyEmailState extends State<VerifyEmail> with WidgetsBindingObserver {
       onWillPop: () async {
         Navigator.pushReplacement(
             context, MaterialPageRoute(builder: (context) => const Login()));
-        await signOut();
         return true;
       },
       child: Scaffold(
@@ -145,8 +144,10 @@ class _VerifyEmailState extends State<VerifyEmail> with WidgetsBindingObserver {
                       onPressed: () async {
                         await user!.reload().then(
                           (value) async {
-                            DialogLoading(subtext: "Checking...")
-                                .buildLoadingScreen(context);
+                            if (mounted) {
+                              DialogLoading(subtext: "Checking...")
+                                  .buildLoadingScreen(context);
+                            }
                             if (user!.emailVerified && user != null) {
                               Navigator.of(context, rootNavigator: true).pop();
                             } else if (!user!.emailVerified) {
@@ -180,13 +181,7 @@ class _VerifyEmailState extends State<VerifyEmail> with WidgetsBindingObserver {
   Future getCredentials() async {
     try {
       FirebaseAuth firebaseAuth = FirebaseAuth.instance;
-      AuthCredential updatedCredential = EmailAuthProvider.credential(
-        email: widget.email,
-        password: widget.password,
-      );
-      UserCredential userCredential =
-          await firebaseAuth.signInWithCredential(updatedCredential);
-      user = userCredential.user;
+      user = firebaseAuth.currentUser;
     } on FirebaseAuthException catch (e) {
       DialogUnsuccessful(
         headertext: "Error",
@@ -218,7 +213,7 @@ class _VerifyEmailState extends State<VerifyEmail> with WidgetsBindingObserver {
                       .buildLoadingScreen(context);
                   try {
                     await user.sendEmailVerification().then(
-                      (value) {
+                      (value) async {
                         Navigator.of(context, rootNavigator: true).pop();
                         DialogSuccess(
                           headertext: "Email Verification Sent!",
@@ -228,6 +223,13 @@ class _VerifyEmailState extends State<VerifyEmail> with WidgetsBindingObserver {
                           callback: () =>
                               Navigator.of(context, rootNavigator: true).pop(),
                         ).buildSuccessScreen(context);
+                        await createHistory(
+                          desc: "Requested for email verification link.",
+                          timeStamp:
+                              DateTime.now().microsecondsSinceEpoch.toString(),
+                          userType: widget.userType,
+                          id: widget.userID,
+                        );
                       },
                     );
                   } on FirebaseAuthException catch (e) {
@@ -286,7 +288,7 @@ class _VerifyEmailState extends State<VerifyEmail> with WidgetsBindingObserver {
             },
           );
           await createHistory(
-            desc: "User logged in",
+            desc: "Verifies Email and logged in",
             timeStamp: DateTime.now().microsecondsSinceEpoch.toString(),
             userType: "Scholar",
             id: widget.userID,
@@ -318,14 +320,14 @@ class _VerifyEmailState extends State<VerifyEmail> with WidgetsBindingObserver {
             },
           );
           await createHistory(
-            desc: "User logged in",
+            desc: "Verifies Email and logged in",
             timeStamp: DateTime.now().microsecondsSinceEpoch.toString(),
             userType: "Professor",
             id: widget.userID,
           );
           await _userReference.set("true");
         } else if (widget.userType == "Head") {
-          await dbReference.child('Users/Professors/').get().then(
+          await dbReference.child('Users/Head/').get().then(
             (snapshot) {
               for (final test in snapshot.children) {
                 if (test.key == widget.userID) {
@@ -350,7 +352,7 @@ class _VerifyEmailState extends State<VerifyEmail> with WidgetsBindingObserver {
             },
           );
           await createHistory(
-            desc: "User logged in",
+            desc: "Verifies Email and logged in",
             timeStamp: DateTime.now().microsecondsSinceEpoch.toString(),
             userType: "Head",
             id: widget.userID,
@@ -359,11 +361,6 @@ class _VerifyEmailState extends State<VerifyEmail> with WidgetsBindingObserver {
         }
       },
     );
-  }
-
-  Future signOut() async {
-    FirebaseAuth firebaseAuth = FirebaseAuth.instance;
-    await firebaseAuth.signOut();
   }
 
   @override

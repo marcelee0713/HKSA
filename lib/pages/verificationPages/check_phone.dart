@@ -369,7 +369,11 @@ class _CheckPhoneNumberState extends State<CheckPhoneNumber> {
       await firebaseAuth.verifyPhoneNumber(
           phoneNumber: phoneNumber,
           verificationCompleted: (phoneAuthCredential) async {
-            await firebaseAuth.signInWithCredential(phoneAuthCredential);
+            User? user = firebaseAuth.currentUser;
+
+            if (user != null) {
+              await user.updatePassword(phoneAuthCredential as String);
+            }
           },
           verificationFailed: (error) {
             throw Exception(error.message);

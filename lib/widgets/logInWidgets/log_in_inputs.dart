@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:hive/hive.dart';
 import 'package:hksa/models/head.dart';
 import 'package:hksa/models/professor.dart';
@@ -27,7 +28,9 @@ class LogInInputs extends StatefulWidget {
 
 class _LogInInputsState extends State<LogInInputs> {
   // Firebase
+  User? user;
   DatabaseReference dbReference = FirebaseDatabase.instance.ref();
+  FirebaseAuth firebaseAuth = FirebaseAuth.instance;
   final _myLoginBox = Hive.box('myLoginBox');
   String realTimeValue = '0';
   String getOnceValue = '0';
@@ -258,429 +261,390 @@ class _LogInInputsState extends State<LogInInputs> {
                     if (!_formKey.currentState!.validate()) {
                       return;
                     }
+
                     DialogLoading(subtext: "Logging in...")
                         .buildLoadingScreen(context);
                     // This is where it finds the user in the firebase database
                     // And if it did find it will log in depends on the user type
                     // if not. It will pop up a modal that it will show
                     // NO USER FOUND
+                    await firebaseAuth.signOut();
                     String userType = value!.toLowerCase();
                     String userID = _inputControllerUserID.text.trim();
                     String userPassword = _inputControllerPassword.text;
-                    bool userExist = false;
-                    bool doneCheckingUsers = false;
-                    bool userActive = true;
+                    bool userDoesNotExist = true;
                     bool haveToVerify = false;
 
-                    Future.delayed(
-                      const Duration(seconds: 2),
-                      (() async {
-                        if (userType == "scholar") {
-                          await dbReference
-                              .child('Users/Scholars/')
-                              .get()
-                              .then((snapshot) async {
-                            for (final test in snapshot.children) {
-                              if (test.key == userID) {
-                                Map<String, dynamic> myObj =
-                                    jsonDecode(jsonEncode(test.value));
+                    if (userType == "scholar") {
+                      await dbReference.child('Users/Scholars/').get().then(
+                        (snapshot) async {
+                          for (final test in snapshot.children) {
+                            if (test.key == userID) {
+                              userDoesNotExist = false;
+                              Map<String, dynamic> myObj =
+                                  jsonDecode(jsonEncode(test.value));
 
-                                Scholar myScholarObj = Scholar.fromJson(myObj);
+                              Scholar myScholarObj = Scholar.fromJson(myObj);
 
-                                String email = myScholarObj.email;
-                                String isEmailVerified =
-                                    myScholarObj.isEmailVerified;
-                                String isPhoneVerified =
-                                    myScholarObj.isPhoneVerified;
+                              String email = myScholarObj.email;
+                              String password =
+                                  _inputControllerPassword.text.trim();
 
-                                if (myScholarObj.status == "inactive") {
+                              if (myScholarObj.status == "inactive") {
+                                Navigator.of(context, rootNavigator: true)
+                                    .pop();
+                                DialogUnsuccessful(
+                                  headertext: "Your Status is Inactive! ",
+                                  subtext:
+                                      "Please proceed to CSDL for this concern",
+                                  textButton: "Close",
+                                  callback: () {
+                                    Navigator.of(context, rootNavigator: true)
+                                        .pop();
+                                  },
+                                ).buildUnsuccessfulScreen(context);
+                                return;
+                              }
+
+                              await signIn(email: email, password: password)
+                                  .then((value) async {
+                                if (user?.phoneNumber == null && user != null) {
+                                  haveToVerify = true;
                                   Navigator.of(context, rootNavigator: true)
                                       .pop();
-                                  userActive = false;
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => CheckPhoneNumber(
+                                        email: email,
+                                        userID: userID,
+                                        userType: "Scholars",
+                                        password: password,
+                                      ),
+                                    ),
+                                  );
+                                  return;
+                                }
+
+                                if (!user!.emailVerified && user != null) {
+                                  haveToVerify = true;
+                                  Navigator.of(context, rootNavigator: true)
+                                      .pop();
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => VerifyEmail(
+                                        email: email,
+                                        userID: userID,
+                                        userType: "Scholars",
+                                        password: password,
+                                        headerText:
+                                            "We also need to verify your email check your inbox right now!",
+                                      ),
+                                    ),
+                                  );
+                                  return;
+                                }
+
+                                // Put it in our LocalStorage
+                                // Para ma save yung login state niya.
+                                // And also some other stuff that need
+                                // to be stored.
+                                _myLoginBox.put("isLoggedIn", true);
+                                _myLoginBox.put("hasTimedIn", false);
+                                _myLoginBox.put("userType", "scholar");
+                                _myLoginBox.put("userID", userID);
+                                _myLoginBox.put("userName", myScholarObj.name);
+                                _myLoginBox.put("getTimeInLS", "");
+                                _myLoginBox.put(
+                                    "scholarType", myScholarObj.scholarType);
+
+                                // Will now go to the ScholarPage
+                                // And literally replace any pages.
+                                Navigator.of(context).pushAndRemoveUntil(
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            const HomeScholar()),
+                                    (Route<dynamic> route) => false);
+
+                                await createHistory(
+                                  desc: "User logged in",
+                                  timeStamp: DateTime.now()
+                                      .microsecondsSinceEpoch
+                                      .toString(),
+                                  userType: userType,
+                                  id: userID,
+                                );
+                              }).catchError(
+                                (err) {
+                                  Navigator.of(context, rootNavigator: true)
+                                      .pop();
                                   DialogUnsuccessful(
-                                    headertext: "Your Status is Inactive! ",
-                                    subtext:
-                                        "Please proceed to CSDL for this concern",
+                                    headertext: "Error!",
+                                    subtext: err,
                                     textButton: "Close",
                                     callback: () {
                                       Navigator.of(context, rootNavigator: true)
                                           .pop();
                                     },
                                   ).buildUnsuccessfulScreen(context);
-                                  userExist = false;
-                                  break;
-                                }
-                                // Dito ka gumawa Monce
-
-                                if (myScholarObj.password == userPassword) {
-                                  debugPrint("IT MATCHES");
-                                  Navigator.of(context, rootNavigator: true)
-                                      .pop();
-
-                                  if (isPhoneVerified == "false") {
-                                    haveToVerify = true;
-                                    await signOut().then((value) {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) =>
-                                              CheckPhoneNumber(
-                                            email: email,
-                                            userID: userID,
-                                            userType: "Scholars",
-                                            password: myScholarObj.password,
-                                          ),
-                                        ),
-                                      );
-                                    });
-                                    return;
-                                  }
-
-                                  if (isEmailVerified == "false") {
-                                    haveToVerify = true;
-                                    await signOut().then((value) {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) => VerifyEmail(
-                                            email: email,
-                                            userID: userID,
-                                            userType: "Scholars",
-                                            password: myScholarObj.password,
-                                            headerText:
-                                                "We also have to verify your email so you can log in.",
-                                          ),
-                                        ),
-                                      );
-                                    });
-                                    return;
-                                  }
-
-                                  // Put it in our LocalStorage
-                                  // Para ma save yung login state niya.
-                                  // And also some other stuff that need
-                                  // to be stored.
-                                  _myLoginBox.put("isLoggedIn", true);
-                                  _myLoginBox.put("hasTimedIn", false);
-                                  _myLoginBox.put("userType", "scholar");
-                                  _myLoginBox.put("userID", userID);
-                                  _myLoginBox.put(
-                                      "userName", myScholarObj.name);
-                                  _myLoginBox.put("getTimeInLS", "");
-                                  _myLoginBox.put(
-                                      "scholarType", myScholarObj.scholarType);
-
-                                  // Will now go to the ScholarPage
-                                  // And literally replace any pages.
-                                  Navigator.of(context).pushAndRemoveUntil(
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              const HomeScholar()),
-                                      (Route<dynamic> route) => false);
-
-                                  userExist = true;
-                                  doneCheckingUsers = false;
-                                  Future.delayed(const Duration(), () async {
-                                    await createHistory(
-                                      desc: "User logged in",
-                                      timeStamp: DateTime.now()
-                                          .microsecondsSinceEpoch
-                                          .toString(),
-                                      userType: userType,
-                                      id: userID,
-                                    );
-                                  });
-                                  break;
-                                } else {
-                                  Navigator.of(context, rootNavigator: true)
-                                      .pop();
-                                  DialogUnsuccessful(
-                                    headertext: "Wrong Password.",
-                                    subtext:
-                                        "Seems like you entered the wrong password.",
-                                    textButton: "Close",
-                                    callback: (() => Navigator.of(context,
-                                            rootNavigator: true)
-                                        .pop()),
-                                  ).buildUnsuccessfulScreen(context);
-                                  userExist = true;
-                                  break;
-                                }
-                              }
+                                },
+                              );
                             }
-                          });
-                          doneCheckingUsers = true;
-                        }
-                        if (userType == "professor") {
-                          await dbReference
-                              .child('Users/Professors/')
-                              .get()
-                              .then((snapshot) async {
-                            for (final test in snapshot.children) {
-                              if (test.key == userID) {
-                                Map<String, dynamic> myObj =
-                                    jsonDecode(jsonEncode(test.value));
-
-                                Professor myProfObj = Professor.fromJson(myObj);
-
-                                String email = myProfObj.email;
-                                String isEmailVerified =
-                                    myProfObj.isEmailVerified;
-                                String isPhoneVerified =
-                                    myProfObj.isPhoneVerified;
-                                // Dito ka gumawa Monce
-
-                                if (myProfObj.password == userPassword) {
-                                  debugPrint("IT MATCHES");
-                                  Navigator.of(context, rootNavigator: true)
-                                      .pop();
-
-                                  if (isPhoneVerified == "false") {
-                                    haveToVerify = true;
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => CheckPhoneNumber(
-                                          email: email,
-                                          userID: userID,
-                                          userType: "Professors",
-                                          password: myProfObj.password,
-                                        ),
-                                      ),
-                                    );
-                                    return;
-                                  }
-
-                                  if (isEmailVerified == "false") {
-                                    haveToVerify = true;
-                                    await signOut().then((value) {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) => VerifyEmail(
-                                            email: email,
-                                            userID: userID,
-                                            userType: "Professors",
-                                            password: myProfObj.password,
-                                            headerText:
-                                                "We also have to verify your email so you can log in.",
-                                          ),
-                                        ),
-                                      );
-                                    });
-                                    return;
-                                  }
-                                  // Put it in our LocalStorage
-                                  // Para ma save yung login state niya.
-                                  // And also some other stuff that need
-                                  // to be stored.
-                                  _myLoginBox.put("isLoggedIn", true);
-                                  _myLoginBox.put("hasTimedIn", false);
-                                  _myLoginBox.put("userType", "professor");
-                                  _myLoginBox.put("userID", userID);
-                                  _myLoginBox.put("userName", myProfObj.name);
-                                  _myLoginBox.put("getTimeInLS", "");
-
-                                  // Will now go to the ProfPage
-                                  // And literally replace any pages.
-                                  Navigator.of(context).pushAndRemoveUntil(
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              const HomeProfessor()),
-                                      (Route<dynamic> route) => false);
-                                  userExist = true;
-                                  doneCheckingUsers = false;
-                                  Future.delayed(const Duration(), () async {
-                                    await createHistory(
-                                      desc: "User logged in",
-                                      timeStamp: DateTime.now()
-                                          .microsecondsSinceEpoch
-                                          .toString(),
-                                      userType: "Professor",
-                                      id: userID,
-                                    );
-                                  });
-                                  break;
-                                } else {
-                                  Navigator.of(context, rootNavigator: true)
-                                      .pop();
-                                  DialogUnsuccessful(
-                                    headertext: "Wrong Password.",
-                                    subtext:
-                                        "Seems like you entered the wrong password.",
-                                    textButton: "Close",
-                                    callback: (() => Navigator.of(context,
-                                            rootNavigator: true)
-                                        .pop()),
-                                  ).buildUnsuccessfulScreen(context);
-                                  userExist = true;
-                                  break;
-                                }
-                              }
-                            }
-                          });
-                          doneCheckingUsers = true;
-                        }
-                        if (userType == "head") {
-                          await dbReference
-                              .child('Users/Head/')
-                              .get()
-                              .then((snapshot) async {
-                            for (final test in snapshot.children) {
-                              if (test.key == userID) {
-                                Map<String, dynamic> myObj =
-                                    jsonDecode(jsonEncode(test.value));
-
-                                Head myHeadObj = Head.fromJson(myObj);
-
-                                String email = myHeadObj.email;
-                                String isEmailVerified =
-                                    myHeadObj.isEmailVerified;
-                                String isPhoneVerified =
-                                    myHeadObj.isPhoneVerified;
-                                // Dito ka gumawa Monce
-
-                                if (myHeadObj.password == userPassword) {
-                                  debugPrint("IT MATCHES");
-                                  Navigator.of(context, rootNavigator: true)
-                                      .pop();
-
-                                  if (isPhoneVerified == "false") {
-                                    haveToVerify = true;
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => CheckPhoneNumber(
-                                          email: email,
-                                          userID: userID,
-                                          userType: "Head",
-                                          password: myHeadObj.password,
-                                        ),
-                                      ),
-                                    );
-                                    return;
-                                  }
-
-                                  if (isEmailVerified == "false") {
-                                    haveToVerify = true;
-                                    await signOut().then((value) {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) => VerifyEmail(
-                                            email: email,
-                                            userID: userID,
-                                            userType: "Head",
-                                            password: myHeadObj.password,
-                                            headerText:
-                                                "We also have to verify your email so you can log in.",
-                                          ),
-                                        ),
-                                      );
-                                    });
-
-                                    return;
-                                  }
-
-                                  // Put it in our LocalStorage
-                                  // Para ma save yung login state niya.
-                                  // And also some other stuff that need
-                                  // to be stored.
-                                  _myLoginBox.put("isLoggedIn", true);
-                                  _myLoginBox.put("hasTimedIn", false);
-                                  _myLoginBox.put("userType", "head");
-                                  _myLoginBox.put("userID", userID);
-                                  _myLoginBox.put("userName", myHeadObj.name);
-                                  _myLoginBox.put("getTimeInLS", "");
-
-                                  // Will now go to the Admin page
-                                  // And literally replace any pages.
-                                  Navigator.of(context).pushAndRemoveUntil(
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              const HomeAdmin()),
-                                      (Route<dynamic> route) => false);
-                                  userExist = true;
-                                  doneCheckingUsers = false;
-                                  Future.delayed(const Duration(), () async {
-                                    await createHistory(
-                                      desc: "User logged in",
-                                      timeStamp: DateTime.now()
-                                          .microsecondsSinceEpoch
-                                          .toString(),
-                                      userType: "Head",
-                                      id: userID,
-                                    );
-                                  });
-                                  break;
-                                } else {
-                                  Navigator.of(context, rootNavigator: true)
-                                      .pop();
-                                  DialogUnsuccessful(
-                                    headertext: "Wrong Password.",
-                                    subtext:
-                                        "Seems like you entered the wrong password.",
-                                    textButton: "Close",
-                                    callback: (() => Navigator.of(context,
-                                            rootNavigator: true)
-                                        .pop()),
-                                  ).buildUnsuccessfulScreen(context);
-                                  userExist = true;
-                                  break;
-                                }
-                              }
-                            }
-                          });
-                          doneCheckingUsers = true;
-                        }
-                      }),
-                    ).whenComplete(
-                      () => {
-                        if (!haveToVerify)
-                          {
-                            Future.delayed(
-                              const Duration(milliseconds: 2500),
-                              () {
-                                userExist
-                                    ? doneCheckingUsers = false
-                                    : doneCheckingUsers = true;
-                                if (userType == "scholar") {
-                                  if (!userExist &&
-                                      doneCheckingUsers &&
-                                      userActive) {
-                                    Navigator.of(context, rootNavigator: true)
-                                        .pop();
-                                    DialogUnsuccessful(
-                                      headertext: "USER NOT FOUND",
-                                      subtext:
-                                          "Sorry, we can't find that user in our database or maybe you're not connected to the internet.",
-                                      textButton: "Close",
-                                      callback: (() => Navigator.of(context,
-                                              rootNavigator: true)
-                                          .pop()),
-                                    ).buildUnsuccessfulScreen(context);
-                                  }
-                                } else if (userType == "professor" ||
-                                    userType == "head") {
-                                  if (!userExist && doneCheckingUsers) {
-                                    Navigator.of(context, rootNavigator: true)
-                                        .pop();
-                                    DialogUnsuccessful(
-                                      headertext: "USER NOT FOUND",
-                                      subtext:
-                                          "Sorry, we can't find that user in our database or maybe you're not connected to the internet.",
-                                      textButton: "Close",
-                                      callback: (() => Navigator.of(context,
-                                              rootNavigator: true)
-                                          .pop()),
-                                    ).buildUnsuccessfulScreen(context);
-                                  }
-                                }
-                              },
-                            )
                           }
-                      },
-                    );
+                        },
+                      ).whenComplete(() {
+                        if (!haveToVerify) {
+                          if (userDoesNotExist) {
+                            Navigator.of(context, rootNavigator: true).pop();
+                            DialogUnsuccessful(
+                              headertext: "Account doesn't exists!",
+                              subtext:
+                                  "If you think this is wrong please proceed to the CSDL Department!",
+                              textButton: "Close",
+                              callback: () {
+                                Navigator.of(context, rootNavigator: true)
+                                    .pop();
+                              },
+                            ).buildUnsuccessfulScreen(context);
+                            return;
+                          }
+                        }
+                      });
+                    }
+                    if (userType == "professor") {
+                      await dbReference.child('Users/Professors/').get().then(
+                        (snapshot) async {
+                          for (final test in snapshot.children) {
+                            if (test.key == userID) {
+                              userDoesNotExist = false;
+                              Map<String, dynamic> myObj =
+                                  jsonDecode(jsonEncode(test.value));
+
+                              Professor myProfObj = Professor.fromJson(myObj);
+
+                              String email = myProfObj.email;
+                              String password =
+                                  _inputControllerPassword.text.trim();
+
+                              await signIn(email: email, password: password)
+                                  .then((value) async {
+                                if (user?.phoneNumber == null) {
+                                  haveToVerify = true;
+                                  Navigator.of(context, rootNavigator: true)
+                                      .pop();
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => CheckPhoneNumber(
+                                        email: email,
+                                        userID: userID,
+                                        userType: "Professors",
+                                        password: password,
+                                      ),
+                                    ),
+                                  );
+                                  return;
+                                }
+
+                                if (!user!.emailVerified) {
+                                  haveToVerify = true;
+                                  Navigator.of(context, rootNavigator: true)
+                                      .pop();
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => VerifyEmail(
+                                        email: email,
+                                        userID: userID,
+                                        userType: "Professors",
+                                        password: password,
+                                        headerText:
+                                            "We also have to verify your email so you can log in.",
+                                      ),
+                                    ),
+                                  );
+                                  return;
+                                }
+                                // Put it in our LocalStorage
+                                // Para ma save yung login state niya.
+                                // And also some other stuff that need
+                                // to be stored.
+                                _myLoginBox.put("isLoggedIn", true);
+                                _myLoginBox.put("hasTimedIn", false);
+                                _myLoginBox.put("userType", "professor");
+                                _myLoginBox.put("userID", userID);
+                                _myLoginBox.put("userName", myProfObj.name);
+                                _myLoginBox.put("getTimeInLS", "");
+
+                                // Will now go to the ProfPage
+                                // And literally replace any pages.
+                                Navigator.of(context).pushAndRemoveUntil(
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            const HomeProfessor()),
+                                    (Route<dynamic> route) => false);
+                                await createHistory(
+                                  desc: "User logged in",
+                                  timeStamp: DateTime.now()
+                                      .microsecondsSinceEpoch
+                                      .toString(),
+                                  userType: "Professor",
+                                  id: userID,
+                                );
+                              }).catchError((err) {
+                                Navigator.of(context, rootNavigator: true)
+                                    .pop();
+                                DialogUnsuccessful(
+                                  headertext: "Error!",
+                                  subtext: err,
+                                  textButton: "Close",
+                                  callback: () {
+                                    Navigator.of(context, rootNavigator: true)
+                                        .pop();
+                                  },
+                                ).buildUnsuccessfulScreen(context);
+                              });
+                            }
+                          }
+                        },
+                      ).whenComplete(() {
+                        if (!haveToVerify) {
+                          if (userDoesNotExist) {
+                            Navigator.of(context, rootNavigator: true).pop();
+                            DialogUnsuccessful(
+                              headertext: "Account doesn't exists!",
+                              subtext:
+                                  "If you think this is wrong please proceed to the CSDL Department!",
+                              textButton: "Close",
+                              callback: () {
+                                Navigator.of(context, rootNavigator: true)
+                                    .pop();
+                              },
+                            ).buildUnsuccessfulScreen(context);
+                            return;
+                          }
+                        }
+                      });
+                    }
+                    if (userType == "head") {
+                      await dbReference.child('Users/Head/').get().then(
+                        (snapshot) async {
+                          for (final test in snapshot.children) {
+                            if (test.key == userID) {
+                              userDoesNotExist = false;
+                              Map<String, dynamic> myObj =
+                                  jsonDecode(jsonEncode(test.value));
+
+                              Head myHeadObj = Head.fromJson(myObj);
+
+                              String email = myHeadObj.email;
+
+                              await signIn(email: email, password: userPassword)
+                                  .then((value) {
+                                if (user?.phoneNumber == null) {
+                                  Navigator.of(context, rootNavigator: true)
+                                      .pop();
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => CheckPhoneNumber(
+                                        email: email,
+                                        userID: userID,
+                                        userType: "Head",
+                                        password: userPassword,
+                                      ),
+                                    ),
+                                  );
+
+                                  return;
+                                }
+
+                                if (!user!.emailVerified) {
+                                  Navigator.of(context, rootNavigator: true)
+                                      .pop();
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => VerifyEmail(
+                                        email: email,
+                                        userID: userID,
+                                        userType: "Head",
+                                        password: userPassword,
+                                        headerText:
+                                            "We also have to verify your email so you can log in.",
+                                      ),
+                                    ),
+                                  );
+
+                                  return;
+                                }
+
+                                // Put it in our LocalStorage
+                                // Para ma save yung login state niya.
+                                // And also some other stuff that need
+                                // to be stored.
+                                _myLoginBox.put("isLoggedIn", true);
+                                _myLoginBox.put("hasTimedIn", false);
+                                _myLoginBox.put("userType", "head");
+                                _myLoginBox.put("userID", userID);
+                                _myLoginBox.put("userName", myHeadObj.name);
+                                _myLoginBox.put("getTimeInLS", "");
+
+                                // Will now go to the Admin page
+                                // And literally replace any pages.
+                                Navigator.of(context).pushAndRemoveUntil(
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            const HomeAdmin()),
+                                    (Route<dynamic> route) => false);
+                                Future.delayed(const Duration(), () async {
+                                  await createHistory(
+                                    desc: "User logged in",
+                                    timeStamp: DateTime.now()
+                                        .microsecondsSinceEpoch
+                                        .toString(),
+                                    userType: "Head",
+                                    id: userID,
+                                  );
+                                });
+                              }).catchError(
+                                (err) {
+                                  Navigator.of(context, rootNavigator: true)
+                                      .pop();
+                                  DialogUnsuccessful(
+                                    headertext: "Error!",
+                                    subtext: err,
+                                    textButton: "Close",
+                                    callback: () {
+                                      Navigator.of(context, rootNavigator: true)
+                                          .pop();
+                                    },
+                                  ).buildUnsuccessfulScreen(context);
+                                },
+                              );
+                            }
+                          }
+                        },
+                      ).whenComplete(() {
+                        if (!haveToVerify) {
+                          if (userDoesNotExist) {
+                            Navigator.of(context, rootNavigator: true).pop();
+                            DialogUnsuccessful(
+                              headertext: "Account doesn't exists!",
+                              subtext:
+                                  "If you think this is wrong please proceed to the CSDL Department!",
+                              textButton: "Close",
+                              callback: () {
+                                Navigator.of(context, rootNavigator: true)
+                                    .pop();
+                              },
+                            ).buildUnsuccessfulScreen(context);
+                            return;
+                          }
+                        }
+                      });
+                    }
                   }),
                   child: const Text(
                     "Log in",
@@ -719,6 +683,18 @@ class _LogInInputsState extends State<LogInInputs> {
         ],
       ),
     );
+  }
+
+  Future signIn({required String email, required String password}) async {
+    try {
+      await firebaseAuth
+          .signInWithEmailAndPassword(email: email, password: password)
+          .then((value) {
+        user = firebaseAuth.currentUser;
+      });
+    } on FirebaseAuthException catch (e) {
+      throw e.message.toString();
+    }
   }
 
   Future signOut() async {

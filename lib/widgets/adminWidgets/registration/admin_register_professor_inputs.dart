@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -42,6 +45,8 @@ class _AdminRegisterProfessorInputsState
   final _inputControllerFirstName = TextEditingController();
   final _inputControllerMiddleName = TextEditingController();
   final _inputControllerEmail = TextEditingController();
+  final _inputControllerEmailDomain =
+      TextEditingController(text: "@phinmaed.com");
   final _inputControllerPhoneNumber = TextEditingController();
   final _inputControllerPassword = TextEditingController();
   final _inputControllerCfrmPassword = TextEditingController();
@@ -655,43 +660,105 @@ class _AdminRegisterProfessorInputsState
           const SizedBox(height: 18),
           Container(height: 1, color: ColorPalette.primary),
           const SizedBox(height: 18),
-          TextFormField(
-            controller: _inputControllerEmail,
-            validator: (value) {
-              // Email RegEx Validation
-              final bool emailValid = RegExp(
-                      r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
-                  .hasMatch(value!);
-              if (value.isNotEmpty && emailValid) {
-                return null;
-              } else {
-                return "Invalid input.";
-              }
-            },
-            keyboardType: TextInputType.emailAddress,
-            decoration: InputDecoration(
-              enabledBorder: OutlineInputBorder(
-                borderSide: const BorderSide(color: Colors.transparent),
-                borderRadius: BorderRadius.circular(10.0),
+          Row(
+            children: [
+              Expanded(
+                child: TextFormField(
+                  controller: _inputControllerEmail,
+                  maxLength: 40,
+                  validator: (value) {
+                    const myString = "@phinmaed.com";
+                    if (!value!.contains(myString) && value.isNotEmpty) {
+                      return null;
+                    } else if (value.contains(myString) && value.isNotEmpty) {
+                      return "Please remove $myString on this input";
+                    } else {
+                      return "Invalid Input";
+                    }
+                  },
+                  keyboardType: TextInputType.text,
+                  decoration: InputDecoration(
+                    counterText: "",
+                    errorStyle: TextStyle(color: ColorPalette.errorColor),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: const BorderSide(color: Colors.transparent),
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: const BorderSide(color: Colors.transparent),
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                    errorBorder: const UnderlineInputBorder(
+                      borderRadius:
+                          BorderRadius.vertical(top: Radius.circular(5)),
+                      borderSide: BorderSide(
+                        color: ColorPalette.errorColor,
+                        width: 1,
+                        style: BorderStyle.solid,
+                      ),
+                    ),
+                    focusedErrorBorder: const UnderlineInputBorder(
+                      borderRadius:
+                          BorderRadius.vertical(top: Radius.circular(5)),
+                      borderSide: BorderSide(
+                        color: ColorPalette.errorColor,
+                        width: 2,
+                        style: BorderStyle.solid,
+                      ),
+                    ),
+                    filled: true,
+                    fillColor: ColorPalette.accentDarkWhite,
+                    hintStyle: const TextStyle(
+                      fontWeight: FontWeight.w300,
+                      fontStyle: FontStyle.italic,
+                    ),
+                    hintText: "Username",
+                  ),
+                  style: const TextStyle(
+                    color: ColorPalette.primary,
+                    fontFamily: 'Inter',
+                    fontSize: 14,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
               ),
-              focusedBorder: OutlineInputBorder(
-                borderSide: const BorderSide(color: Colors.transparent),
-                borderRadius: BorderRadius.circular(10.0),
+              const SizedBox(width: 2),
+              Expanded(
+                child: TextFormField(
+                  validator: (value) {
+                    if (_inputControllerEmail.text != "" &&
+                        !_inputControllerEmail.text.contains("@phinmaed.com")) {
+                      return null;
+                    } else if (_inputControllerEmail.text
+                        .contains("@phinmaed.com")) {
+                      return "@phinmaed.com";
+                    } else {
+                      return "";
+                    }
+                  },
+                  controller: _inputControllerEmailDomain,
+                  keyboardType: TextInputType.emailAddress,
+                  decoration: InputDecoration(
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: const BorderSide(color: Colors.transparent),
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: const BorderSide(color: Colors.transparent),
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                    filled: true,
+                    fillColor: ColorPalette.accentDarkWhite,
+                  ),
+                  style: const TextStyle(
+                    color: ColorPalette.primary,
+                    fontFamily: 'Inter',
+                    fontSize: 14,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
               ),
-              filled: true,
-              fillColor: ColorPalette.accentDarkWhite,
-              hintStyle: const TextStyle(
-                fontWeight: FontWeight.w300,
-                fontStyle: FontStyle.italic,
-              ),
-              hintText: "Email",
-            ),
-            style: const TextStyle(
-              color: ColorPalette.primary,
-              fontFamily: 'Inter',
-              fontSize: 14,
-              fontWeight: FontWeight.w700,
-            ),
+            ],
           ),
           const SizedBox(height: 18),
           TextFormField(
@@ -894,7 +961,7 @@ class _AdminRegisterProfessorInputsState
                 backgroundColor:
                     MaterialStateProperty.all<Color>(ColorPalette.primary),
               ),
-              onPressed: (() {
+              onPressed: () async {
                 if (!_formKey.currentState!.validate()) {
                   return;
                 }
@@ -922,11 +989,14 @@ class _AdminRegisterProfessorInputsState
                 String fullName =
                     "${_inputControllerLastName.text.trim()} ${_inputControllerFirstName.text.trim()} ${_inputControllerMiddleName.text.trim()}";
                 String? department = departmentValue;
-                String email = _inputControllerEmail.text.trim();
+                String email = _inputControllerEmail.text.trim() +
+                    _inputControllerEmailDomain.text;
                 String phoneNumber = _inputControllerPhoneNumber.text.trim();
                 String password = _inputControllerCfrmPassword.text.trim();
                 String signature = _inputControllerSignatureCode.text.trim();
                 bool userExist = false;
+                bool duplicateEmail = false;
+                bool duplicatePhoneNumber = false;
 
                 String? subject = subjectValue;
                 String? section = sectionValue;
@@ -934,105 +1004,149 @@ class _AdminRegisterProfessorInputsState
                 String? day = dayValue;
                 String? time = timeValue;
 
-                Future.delayed(
-                  const Duration(seconds: 2),
-                  () async {
-                    await _dbReference.get().then((snapshot) {
-                      for (final test in snapshot.children) {
-                        if (test.key == professorID) {
-                          userExist = true;
-                          break;
-                        }
-                      }
-                    }).whenComplete(
-                      () => {
-                        Future.delayed(
-                          const Duration(milliseconds: 2500),
-                          () async {
-                            if (userExist) {
-                              // Show a new a dialog that this user already exist
-                              Navigator.of(context, rootNavigator: true).pop();
-                              DialogUnsuccessful(
-                                headertext: "Account already exist!",
-                                subtext:
-                                    "If you think this is wrong. Please contact or go to the CSDL Department immediately!",
-                                textButton: "Close",
-                                callback: (() =>
-                                    Navigator.of(context, rootNavigator: true)
-                                        .pop()),
-                              ).buildUnsuccessfulScreen(context);
-                            } else {
-                              Professor scholarObj = Professor(
-                                department: department.toString(),
-                                email: email,
-                                name: fullName,
-                                password: password,
-                                phonenumber: phoneNumber,
-                                professorId: professorID,
-                                signaturecode: signature,
-                                profilePicture: HKSAStrings.pfpPlaceholder,
-                                day: day.toString(),
-                                room: room.toString(),
-                                section: section.toString(),
-                                subject: subject.toString(),
-                                time: time.toString(),
-                                listeningTo: "",
-                                isEmailVerified: 'false',
-                                isPhoneVerified: 'false',
-                              );
+                await _dbReference.get().then((snapshot) {
+                  for (final data in snapshot.children) {
+                    Map<String, dynamic> myObj =
+                        jsonDecode(jsonEncode(data.value));
+                    Professor myProfObj = Professor.fromJson(myObj);
+                    if (data.key == professorID) {
+                      userExist = true;
+                    }
+                    if (myProfObj.email == email) {
+                      duplicateEmail = true;
+                    }
+                    if (myProfObj.phonenumber == phoneNumber) {
+                      duplicatePhoneNumber = true;
+                    }
+                  }
+                }).then(
+                  (value) async {
+                    if (userExist) {
+                      Navigator.of(context, rootNavigator: true).pop();
+                      DialogUnsuccessful(
+                        headertext: "Account already exist!",
+                        subtext:
+                            "If you think this is wrong. Please contact or go to the CSDL Department immediately!",
+                        textButton: "Close",
+                        callback: (() =>
+                            Navigator.of(context, rootNavigator: true).pop()),
+                      ).buildUnsuccessfulScreen(context);
+                      return;
+                    }
 
-                              await _dbReference
-                                  .child(professorID)
-                                  .set(scholarObj.toJson())
-                                  .then(
-                                (value) async {
-                                  DialogSuccess(
-                                    headertext: "Successfully Registered!",
-                                    subtext: "You have registered a professor!",
-                                    textButton: "Go back",
-                                    callback: () async {
-                                      setState(() {
-                                        selectedIndex = 3;
-                                      });
-                                      // Will replace literally every page, that includes dialogs and others.
-                                      Navigator.of(context).pushAndRemoveUntil(
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                const AdminRegistration()),
-                                        (Route<dynamic> route) => false,
-                                      );
-                                    },
-                                  ).buildSuccessScreen(context);
-                                  await createHistory(
-                                    desc:
-                                        "Create a Professor: $fullName($professorID)",
-                                    timeStamp: DateTime.now()
-                                        .microsecondsSinceEpoch
-                                        .toString(),
-                                    userType: userType,
-                                    id: userID,
+                    if (duplicateEmail) {
+                      Navigator.of(context, rootNavigator: true).pop();
+                      DialogUnsuccessful(
+                        headertext: "Email already exist!",
+                        subtext:
+                            "If you think this is wrong. Please contact or go to the CSDL Department immediately!",
+                        textButton: "Close",
+                        callback: (() =>
+                            Navigator.of(context, rootNavigator: true).pop()),
+                      ).buildUnsuccessfulScreen(context);
+                      return;
+                    }
+
+                    if (duplicatePhoneNumber) {
+                      Navigator.of(context, rootNavigator: true).pop();
+                      DialogUnsuccessful(
+                        headertext: "Phone number already exist!",
+                        subtext:
+                            "If you think this is wrong. Please contact or go to the CSDL Department immediately!",
+                        textButton: "Close",
+                        callback: (() =>
+                            Navigator.of(context, rootNavigator: true).pop()),
+                      ).buildUnsuccessfulScreen(context);
+                      return;
+                    }
+
+                    if (!userExist &&
+                        !duplicateEmail &&
+                        !duplicatePhoneNumber) {
+                      await createUser(email: email, password: password).then(
+                        (value) async {
+                          Professor scholarObj = Professor(
+                            department: department.toString(),
+                            email: email,
+                            name: fullName,
+                            phonenumber: phoneNumber,
+                            professorId: professorID,
+                            signaturecode: signature,
+                            profilePicture: HKSAStrings.pfpPlaceholder,
+                            day: day.toString(),
+                            room: room.toString(),
+                            section: section.toString(),
+                            subject: subject.toString(),
+                            time: time.toString(),
+                            listeningTo: "",
+                            isEmailVerified: 'false',
+                            isPhoneVerified: 'false',
+                          );
+
+                          await _dbReference
+                              .child(professorID)
+                              .set(scholarObj.toJson())
+                              .then(
+                            (value) async {
+                              Navigator.of(context, rootNavigator: true).pop();
+                              DialogSuccess(
+                                headertext: "Successfully Registered!",
+                                subtext: "You have registered a professor!",
+                                textButton: "Go back",
+                                callback: () async {
+                                  setState(() {
+                                    selectedIndex = 3;
+                                  });
+                                  // Will replace literally every page, that includes dialogs and others.
+                                  Navigator.of(context).pushAndRemoveUntil(
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            const AdminRegistration()),
+                                    (Route<dynamic> route) => false,
                                   );
                                 },
-                              ).catchError(
-                                (err) {
-                                  DialogUnsuccessful(
-                                    headertext: "Error",
-                                    subtext: "Please try again later!",
-                                    textButton: "Close",
-                                    callback: () => Navigator.of(context,
-                                            rootNavigator: true)
-                                        .pop(),
-                                  ).buildUnsuccessfulScreen(context);
-                                },
+                              ).buildSuccessScreen(context);
+                              await createHistory(
+                                desc:
+                                    "Create a Professor: $fullName($professorID)",
+                                timeStamp: DateTime.now()
+                                    .microsecondsSinceEpoch
+                                    .toString(),
+                                userType: userType,
+                                id: userID,
                               );
-                            }
-                          },
-                        )
-                      },
-                    );
+                            },
+                          ).catchError(
+                            (err) {
+                              Navigator.of(context, rootNavigator: true).pop();
+                              DialogUnsuccessful(
+                                headertext: "Error",
+                                subtext: "Please try again later!",
+                                textButton: "Close",
+                                callback: () =>
+                                    Navigator.of(context, rootNavigator: true)
+                                        .pop(),
+                              ).buildUnsuccessfulScreen(context);
+                            },
+                          );
+                        },
+                      ).catchError(
+                        (err) {
+                          Navigator.of(context, rootNavigator: true).pop();
+                          DialogUnsuccessful(
+                            headertext: "Error",
+                            subtext: err.toString(),
+                            textButton: "Close",
+                            callback: () =>
+                                Navigator.of(context, rootNavigator: true)
+                                    .pop(),
+                          ).buildUnsuccessfulScreen(context);
+                        },
+                      );
+                    }
                   },
                 );
-              }),
+              },
               child: const Text(
                 "Sign up",
                 style: TextStyle(
@@ -1062,6 +1176,16 @@ class _AdminRegisterProfessorInputsState
     _inputControllerSignatureCode.dispose();
 
     super.dispose();
+  }
+
+  Future createUser({required String email, required String password}) async {
+    FirebaseAuth firebaseAuth = FirebaseAuth.instance;
+    try {
+      await firebaseAuth.createUserWithEmailAndPassword(
+          email: email, password: password);
+    } on FirebaseAuthException catch (e) {
+      throw e.message.toString();
+    }
   }
 
   Future<List<String>> getRooms() async {

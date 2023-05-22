@@ -6,7 +6,6 @@ String headToJson(Head data) => json.encode(data.toJson());
 
 class Head {
   String name;
-  String password;
   String userId;
   String profilePicture;
   String listeningTo;
@@ -17,7 +16,6 @@ class Head {
 
   Head({
     required this.name,
-    required this.password,
     required this.userId,
     required this.profilePicture,
     required this.listeningTo,
@@ -29,7 +27,6 @@ class Head {
 
   factory Head.fromJson(Map<String, dynamic> json) => Head(
         name: json["name"],
-        password: json["password"],
         userId: json["userID"],
         profilePicture: json["profilePicture"],
         listeningTo: json["listeningTo"],
@@ -41,7 +38,6 @@ class Head {
 
   Map<String, dynamic> toJson() => {
         "name": name,
-        "password": password,
         "userID": userId,
         "profilePicture": profilePicture,
         "listeningTo": listeningTo,

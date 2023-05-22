@@ -58,8 +58,6 @@ class _EditScholarState extends State<EditScholar> {
   final _inputControllerName = TextEditingController();
   final _inputControllerEmail = TextEditingController();
   final _inputControllerPhoneNumber = TextEditingController();
-  final _inputControllerPassword = TextEditingController();
-  final _inputControllerCfrmPassword = TextEditingController();
   final _inputControllerHours = TextEditingController();
 
   final _formKey = GlobalKey<FormState>();
@@ -495,6 +493,7 @@ class _EditScholarState extends State<EditScholar> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 TextFormField(
+                                  enabled: false,
                                   controller: _inputControllerEmail,
                                   validator: (value) {
                                     // Email RegEx Validation
@@ -509,14 +508,10 @@ class _EditScholarState extends State<EditScholar> {
                                   },
                                   keyboardType: TextInputType.emailAddress,
                                   decoration: InputDecoration(
-                                    suffixIcon: IconButton(
-                                      onPressed: () {
-                                        setState(() {
-                                          _inputControllerEmail.text =
-                                              snapshot.data!.first.email;
-                                        });
-                                      },
-                                      icon: const Icon(Icons.undo),
+                                    disabledBorder: OutlineInputBorder(
+                                      borderSide: const BorderSide(
+                                          color: Colors.transparent),
+                                      borderRadius: BorderRadius.circular(10.0),
                                     ),
                                     enabledBorder: OutlineInputBorder(
                                       borderSide: const BorderSide(
@@ -626,129 +621,6 @@ class _EditScholarState extends State<EditScholar> {
                                   ),
                                 ),
                               ],
-                            ),
-                            const SizedBox(height: 18),
-                            TextFormField(
-                              controller: _inputControllerPassword,
-                              obscureText: !_passwordVisible,
-                              enableSuggestions: false,
-                              autocorrect: false,
-                              validator: (value) {
-                                final bool passwordValid = RegExp(
-                                        r"^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-.+=_]).{8,}$")
-                                    .hasMatch(value!);
-                                if (passwordValid) {
-                                  return null;
-                                } else {
-                                  return "Invalid Input.";
-                                }
-                              },
-                              keyboardType: TextInputType.visiblePassword,
-                              decoration: InputDecoration(
-                                enabledBorder: OutlineInputBorder(
-                                  borderSide: const BorderSide(
-                                      color: Colors.transparent),
-                                  borderRadius: BorderRadius.circular(10.0),
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderSide: const BorderSide(
-                                      color: Colors.transparent),
-                                  borderRadius: BorderRadius.circular(10.0),
-                                ),
-                                filled: true,
-                                fillColor: ColorPalette.accentDarkWhite,
-                                hintStyle: const TextStyle(
-                                  fontWeight: FontWeight.w300,
-                                  fontStyle: FontStyle.italic,
-                                ),
-                                suffixIcon: IconButton(
-                                  onPressed: () {
-                                    setState(() {
-                                      _passwordVisible = !_passwordVisible;
-                                    });
-                                  },
-                                  icon: Icon(
-                                    _passwordVisible
-                                        ? Icons.visibility
-                                        : Icons.visibility_off,
-                                  ),
-                                ),
-                                hintText: "Password",
-                              ),
-                              style: const TextStyle(
-                                color: ColorPalette.primary,
-                                fontFamily: 'Inter',
-                                fontSize: 14,
-                                fontWeight: FontWeight.w700,
-                              ),
-                            ),
-                            const SizedBox(height: 2),
-                            const Text(
-                              "Note: Password must be at least 8 characters, at least one uppercase, number, and special characters.",
-                              style: TextStyle(
-                                fontFamily: 'Inter',
-                                fontSize: 12,
-                                fontStyle: FontStyle.italic,
-                                fontWeight: FontWeight.w300,
-                              ),
-                            ),
-                            const SizedBox(height: 18),
-                            TextFormField(
-                              controller: _inputControllerCfrmPassword,
-                              obscureText: !_cfrmPasswordVisible,
-                              enableSuggestions: false,
-                              autocorrect: false,
-                              validator: (value) {
-                                final bool cfrmPasswordValid =
-                                    _inputControllerPassword.text ==
-                                        _inputControllerCfrmPassword.text;
-                                if (cfrmPasswordValid) {
-                                  return null;
-                                } else if (value!.isEmpty) {
-                                  return 'Enter input.';
-                                } else {
-                                  return "Password not match";
-                                }
-                              },
-                              keyboardType: TextInputType.visiblePassword,
-                              decoration: InputDecoration(
-                                enabledBorder: OutlineInputBorder(
-                                  borderSide: const BorderSide(
-                                      color: Colors.transparent),
-                                  borderRadius: BorderRadius.circular(10.0),
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderSide: const BorderSide(
-                                      color: Colors.transparent),
-                                  borderRadius: BorderRadius.circular(10.0),
-                                ),
-                                filled: true,
-                                fillColor: ColorPalette.accentDarkWhite,
-                                hintStyle: const TextStyle(
-                                  fontWeight: FontWeight.w300,
-                                  fontStyle: FontStyle.italic,
-                                ),
-                                suffixIcon: IconButton(
-                                  onPressed: () {
-                                    setState(() {
-                                      _cfrmPasswordVisible =
-                                          !_cfrmPasswordVisible;
-                                    });
-                                  },
-                                  icon: Icon(
-                                    _cfrmPasswordVisible
-                                        ? Icons.visibility
-                                        : Icons.visibility_off,
-                                  ),
-                                ),
-                                hintText: "Confirm Password",
-                              ),
-                              style: const TextStyle(
-                                color: ColorPalette.primary,
-                                fontFamily: 'Inter',
-                                fontSize: 14,
-                                fontWeight: FontWeight.w700,
-                              ),
                             ),
                             const SizedBox(height: 18),
                             Column(
@@ -1794,8 +1666,6 @@ class _EditScholarState extends State<EditScholar> {
                                       _inputControllerEmail.text.trim();
                                   String phoneNumber =
                                       _inputControllerPhoneNumber.text.trim();
-                                  String password =
-                                      _inputControllerCfrmPassword.text.trim();
                                   String hours =
                                       _inputControllerHours.text.trim();
                                   String? status = statusValue;
@@ -1820,8 +1690,6 @@ class _EditScholarState extends State<EditScholar> {
                                       snapshot.data!.first.email;
                                   String currentPhoneNumber =
                                       snapshot.data!.first.phonenumber;
-                                  String currentPassword =
-                                      snapshot.data!.first.password;
                                   String currentTown =
                                       snapshot.data!.first.town;
                                   String currenthkType =
@@ -1894,11 +1762,6 @@ class _EditScholarState extends State<EditScholar> {
                                   if (currentPhoneNumber != phoneNumber) {
                                     changes.add(
                                         "Changed phone number from $currentPhoneNumber to $phoneNumber");
-                                  }
-
-                                  if (currentPassword != password) {
-                                    changes.add(
-                                        "Changed password from $currentPassword to $password");
                                   }
 
                                   if (currentTown != townValue) {
@@ -1999,7 +1862,6 @@ class _EditScholarState extends State<EditScholar> {
                                             course: course.toString(),
                                             email: email,
                                             phonenumber: phoneNumber,
-                                            password: password,
                                             hkType: hkType.toString(),
                                             hours: hours,
                                             status: status.toString(),
@@ -2167,7 +2029,6 @@ class _EditScholarState extends State<EditScholar> {
             String department = myObj[key]['department'];
             String email = myObj[key]['email'];
             String name = myObj[key]['name'];
-            String password = myObj[key]['password'];
             String phonenumber = myObj[key]['phonenumber'];
             String professorID = myObj[key]['professorID'];
             String profilePicture = myObj[key]['profilePicture'];
@@ -2184,7 +2045,6 @@ class _EditScholarState extends State<EditScholar> {
               department: department,
               email: email,
               name: name,
-              password: password,
               phonenumber: phonenumber,
               professorId: professorID,
               signaturecode: signaturecode,
@@ -2260,8 +2120,6 @@ class _EditScholarState extends State<EditScholar> {
           _inputControllerName.text = myScholar.name;
           _inputControllerEmail.text = myScholar.email;
           _inputControllerPhoneNumber.text = myScholar.phonenumber;
-          _inputControllerPassword.text = myScholar.password;
-          _inputControllerCfrmPassword.text = myScholar.password;
           _inputControllerHours.text = myScholar.hours;
           hkTypeValue = myScholar.hkType;
           statusValue = myScholar.status;
@@ -2557,10 +2415,8 @@ class _EditScholarState extends State<EditScholar> {
   @override
   void dispose() {
     _inputControllerName.dispose();
-    _inputControllerCfrmPassword.dispose();
     _inputControllerEmail.dispose();
     _inputControllerHours.dispose();
-    _inputControllerPassword.dispose();
     _inputControllerPhoneNumber.dispose();
     _inputControllerStudentNumberID.dispose();
     super.dispose();

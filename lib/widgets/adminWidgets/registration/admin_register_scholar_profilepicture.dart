@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:hksa/api/storage_service.dart';
@@ -24,6 +25,8 @@ class AdminProfilePictureScholar extends StatefulWidget {
 
 class _AdminProfilePictureScholarState
     extends State<AdminProfilePictureScholar> {
+  FirebaseAuth firebaseAuth = FirebaseAuth.instance;
+
   final myRegBox = Hive.box("myRegistrationBox");
   final logInBox = Hive.box("myLoginBox");
   late var userType = logInBox.get("userType");
@@ -236,92 +239,83 @@ class _AdminProfilePictureScholarState
                 }
 
                 DialogRegisterConfirm(
-                    studentNumber,
-                    name,
-                    course,
-                    email,
-                    phoneNumber,
-                    password,
-                    hkType,
-                    hours,
-                    status,
-                    totalHoursInDisplay,
-                    totalHoursInDuration,
-                    totalHoursRequired,
-                    isFinished,
-                    onSiteDay1,
-                    onSiteDay2,
-                    vacantTimeDay1,
-                    vacantTimeDay2,
-                    wholeDayVacantTime,
-                    scholarType,
-                    town,
-                    image!, () async {
-                  Navigator.of(context, rootNavigator: true).pop();
-                  DialogLoading(subtext: "Creating...")
-                      .buildLoadingScreen(context);
-                  Future.delayed(
-                    const Duration(seconds: 2),
-                    () async {
-                      Navigator.of(context, rootNavigator: true).pop();
-                      await Storage()
-                          .createScholar(
-                              path!,
-                              fileName,
-                              studentNumber,
-                              name,
-                              course,
-                              email,
-                              phoneNumber,
-                              password,
-                              hkType,
-                              hours,
-                              status,
-                              totalHoursInDisplay,
-                              totalHoursInDuration,
-                              totalHoursRequired,
-                              isFinished,
-                              onSiteDay1,
-                              onSiteDay2,
-                              vacantTimeDay1,
-                              vacantTimeDay2,
-                              wholeDayVacantTime,
-                              scholarType,
-                              town)
-                          .then((value) async {
-                        DialogRegisterSuccess(
-                          headertext: "Successfully Registered!",
-                          subtext:
-                              "The scholar is now registered! It is recommended for you to go back.",
-                          textButton: "Go back",
-                          callback: () {
-                            goBackToRegistration();
+                  studentNumber,
+                  name,
+                  course,
+                  email,
+                  phoneNumber,
+                  password,
+                  hkType,
+                  hours,
+                  status,
+                  totalHoursInDisplay,
+                  totalHoursInDuration,
+                  totalHoursRequired,
+                  isFinished,
+                  onSiteDay1,
+                  onSiteDay2,
+                  vacantTimeDay1,
+                  vacantTimeDay2,
+                  wholeDayVacantTime,
+                  scholarType,
+                  town,
+                  image!,
+                  () async {
+                    Navigator.of(context, rootNavigator: true).pop();
+                    DialogLoading(subtext: "Creating...")
+                        .buildLoadingScreen(context);
+                    await createUser(email: email, password: password).then(
+                      (value) async {
+                        await Storage()
+                            .createScholar(
+                                path!,
+                                fileName,
+                                studentNumber,
+                                name,
+                                course,
+                                email,
+                                phoneNumber,
+                                password,
+                                hkType,
+                                hours,
+                                status,
+                                totalHoursInDisplay,
+                                totalHoursInDuration,
+                                totalHoursRequired,
+                                isFinished,
+                                onSiteDay1,
+                                onSiteDay2,
+                                vacantTimeDay1,
+                                vacantTimeDay2,
+                                wholeDayVacantTime,
+                                scholarType,
+                                town)
+                            .then(
+                          (value) async {
+                            Navigator.of(context, rootNavigator: true).pop();
+                            DialogRegisterSuccess(
+                              headertext: "Successfully Registered!",
+                              subtext:
+                                  "The scholar is now registered! It is recommended for you to go back.",
+                              textButton: "Go back",
+                              callback: () {
+                                goBackToRegistration();
+                              },
+                            ).buildRegisterSuccessScreen(context);
+                            await createHistory(
+                              desc: "Create a Scholar: $name($studentNumber)",
+                              timeStamp: DateTime.now()
+                                  .microsecondsSinceEpoch
+                                  .toString(),
+                              userType: userType,
+                              id: userID,
+                            );
                           },
-                        ).buildRegisterSuccessScreen(context);
-                        await createHistory(
-                          desc: "Create a Scholar: $name($studentNumber)",
-                          timeStamp:
-                              DateTime.now().microsecondsSinceEpoch.toString(),
-                          userType: userType,
-                          id: userID,
                         );
-                      }).catchError(
-                        // ignore: argument_type_not_assignable_to_error_handler
-                        () {
-                          DialogUnsuccessful(
-                            headertext: "Error",
-                            subtext:
-                                "Something is wrong please try again later",
-                            textButton: "Close",
-                            callback: () {
-                              Navigator.of(context, rootNavigator: true).pop();
-                            },
-                          ).buildUnsuccessfulScreen(context);
-                        },
-                      );
-                    },
-                  );
-                }).build(context);
+                      },
+                    );
+                  },
+                ).build(context);
               },
               child: const Text(
                 "Next",
@@ -331,6 +325,21 @@ class _AdminProfilePictureScholarState
         ],
       ),
     );
+  }
+
+  Future createUser({required String email, required String password}) async {
+    try {
+      await firebaseAuth.createUserWithEmailAndPassword(
+          email: email, password: password);
+    } on FirebaseAuthException catch (e) {
+      Navigator.of(context, rootNavigator: true).pop();
+      DialogUnsuccessful(
+        headertext: "Error",
+        subtext: e.message.toString(),
+        textButton: "Close",
+        callback: () => Navigator.of(context, rootNavigator: true).pop(),
+      ).buildUnsuccessfulScreen(context);
+    }
   }
 
   void goBackToRegistration() {

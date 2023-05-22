@@ -7,7 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:hksa/api/storage_service.dart';
 import 'package:hksa/constant/colors.dart';
-import 'package:hksa/main.dart';
 import 'package:hksa/models/scholar.dart';
 import 'package:hksa/pages/login.dart';
 import 'package:hksa/widgets/dialogs/dialog_confirm.dart';
@@ -28,8 +27,10 @@ class Profile extends StatefulWidget {
 
 class _ProfileState extends State<Profile> {
   final Storage storage = Storage();
+  FirebaseAuth firebaseAuth = FirebaseAuth.instance;
   final logInBox = Hive.box("myLoginBox");
   late var userID = logInBox.get("userID");
+  late var userType = logInBox.get("userType");
   String userProfileListener = "";
   String oldDTRURl = "";
 
@@ -58,11 +59,7 @@ class _ProfileState extends State<Profile> {
         Future.delayed(const Duration(), (() {
           DialogLoading(subtext: "Logging out...").buildLoadingScreen(context);
         })).whenComplete(() {
-          Future.delayed(const Duration(seconds: 3), () {
-            _firebaseMessaging.unsubscribeFromTopic('user_all');
-            _firebaseMessaging.unsubscribeFromTopic('scholars');
-            _firebaseMessaging.unsubscribeFromTopic('scholars_faci');
-            _firebaseMessaging.unsubscribeFromTopic('scholars_non_faci');
+          Future.delayed(const Duration(seconds: 3), () async {
             logInBox.put("isLoggedIn", false);
             logInBox.put("hasTimedIn", false);
             logInBox.put("userType", "");
@@ -159,6 +156,11 @@ class _ProfileState extends State<Profile> {
                 );
               },
             );
+            await firebaseAuth.signOut();
+            await _firebaseMessaging.unsubscribeFromTopic('user_all');
+            await _firebaseMessaging.unsubscribeFromTopic('scholars');
+            await _firebaseMessaging.unsubscribeFromTopic('scholars_faci');
+            await _firebaseMessaging.unsubscribeFromTopic('scholars_non_faci');
           });
         });
       }
@@ -172,10 +174,6 @@ class _ProfileState extends State<Profile> {
           Future.delayed(
             const Duration(seconds: 3),
             () async {
-              _firebaseMessaging.unsubscribeFromTopic('user_all');
-              _firebaseMessaging.unsubscribeFromTopic('scholars');
-              _firebaseMessaging.unsubscribeFromTopic('scholars_faci');
-              _firebaseMessaging.unsubscribeFromTopic('scholars_non_faci');
               logInBox.put("isLoggedIn", false);
               logInBox.put("hasTimedIn", false);
               logInBox.put("userType", "");
@@ -272,6 +270,12 @@ class _ProfileState extends State<Profile> {
                 },
               );
               logInBox.put("userID", "");
+              await firebaseAuth.signOut();
+              await _firebaseMessaging.unsubscribeFromTopic('user_all');
+              await _firebaseMessaging.unsubscribeFromTopic('scholars');
+              await _firebaseMessaging.unsubscribeFromTopic('scholars_faci');
+              await _firebaseMessaging
+                  .unsubscribeFromTopic('scholars_non_faci');
               await createHistory(
                 desc: "User logged out due to its status being inactive",
                 timeStamp: DateTime.now().microsecondsSinceEpoch.toString(),
@@ -744,20 +748,47 @@ class _ProfileState extends State<Profile> {
                       if (result == null) {
                         return;
                       }
-                      await dbReference.set(result.toString());
+                      // ignore: use_build_context_synchronously
+                      DialogLoading(subtext: "Changing...")
+                          .buildLoadingScreen(context);
+                      if (result == null) {
+                        return;
+                      }
 
-                      Future.delayed(const Duration(seconds: 2), () {
-                        Navigator.of(context, rootNavigator: true).pop();
-                      }).whenComplete(() {
-                        DialogSuccess(
+                      await changePassword(newPassword: result).then(
+                        (value) async {
+                          Navigator.of(context, rootNavigator: true).pop();
+                          DialogSuccess(
                             headertext: "Successfully changed!",
                             subtext:
                                 "You successfully changed your password! Remember not to show this to anyone.",
                             textButton: "Close",
                             callback: () {
                               Navigator.of(context, rootNavigator: true).pop();
-                            }).buildSuccessScreen(context);
-                      });
+                            },
+                          ).buildSuccessScreen(context);
+                          await createHistory(
+                            desc: "Changed password",
+                            timeStamp: DateTime.now()
+                                .microsecondsSinceEpoch
+                                .toString(),
+                            userType: userType,
+                            id: userID,
+                          );
+                        },
+                      ).catchError(
+                        (err) {
+                          Navigator.of(context, rootNavigator: true).pop();
+                          DialogUnsuccessful(
+                            headertext: "Error",
+                            subtext: err,
+                            textButton: "Close",
+                            callback: () =>
+                                Navigator.of(context, rootNavigator: true)
+                                    .pop(),
+                          ).buildUnsuccessfulScreen(context);
+                        },
+                      );
                     },
                     child: const Text(
                       "Change Password",
@@ -776,6 +807,20 @@ class _ProfileState extends State<Profile> {
         },
       ),
     );
+  }
+
+  Future changePassword({required String newPassword}) async {
+    try {
+      User? user = firebaseAuth.currentUser;
+
+      if (user != null) {
+        await user.updatePassword(newPassword);
+      } else {
+        throw "Error, we recommend you to log in again.";
+      }
+    } on FirebaseAuthException catch (e) {
+      throw e.message.toString();
+    }
   }
 
   Future signOut() async {

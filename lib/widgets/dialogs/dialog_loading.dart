@@ -11,36 +11,41 @@ class DialogLoading {
         context: context,
         barrierDismissible: false,
         builder: (context) {
-          return Material(
-            color: Colors.transparent,
-            child: Center(
-              child: Container(
-                decoration: const BoxDecoration(
-                  color: ColorPalette.accentWhite,
-                  borderRadius: BorderRadius.all(Radius.circular(10)),
-                ),
-                height: 200,
-                width: 200,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    const SpinKitCircle(
-                      color: ColorPalette.secondary,
-                      size: 50,
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      subtext,
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(
-                        color: ColorPalette.primary,
-                        fontFamily: 'Inter',
-                        fontWeight: FontWeight.w400,
-                        fontSize: 14,
+          return WillPopScope(
+            onWillPop: () async {
+              return false;
+            },
+            child: Material(
+              color: Colors.transparent,
+              child: Center(
+                child: Container(
+                  decoration: const BoxDecoration(
+                    color: ColorPalette.accentWhite,
+                    borderRadius: BorderRadius.all(Radius.circular(10)),
+                  ),
+                  height: 200,
+                  width: 200,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      const SpinKitCircle(
+                        color: ColorPalette.secondary,
+                        size: 50,
                       ),
-                    ),
-                  ],
+                      const SizedBox(height: 8),
+                      Text(
+                        subtext,
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                          color: ColorPalette.primary,
+                          fontFamily: 'Inter',
+                          fontWeight: FontWeight.w400,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),

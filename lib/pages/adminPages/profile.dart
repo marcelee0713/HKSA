@@ -1,7 +1,5 @@
 import 'dart:convert';
-
-import 'package:another_flushbar/flushbar.dart';
-import 'package:file_picker/file_picker.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -12,6 +10,7 @@ import 'package:hksa/models/head.dart';
 import 'package:hksa/widgets/adminWidgets/nav_drawer.dart';
 import 'package:hksa/widgets/dialogs/dialog_loading.dart';
 import 'package:hksa/widgets/dialogs/dialog_success.dart';
+import 'package:hksa/widgets/dialogs/dialog_unsuccessful.dart';
 import 'package:hksa/widgets/scholarWidgets/home/home_inputs.dart';
 import 'package:hksa/widgets/universal/change_password.dart';
 import 'package:image_picker/image_picker.dart';
@@ -25,6 +24,7 @@ class AdminProfile extends StatefulWidget {
 
 class _AdminProfileState extends State<AdminProfile> {
   final Storage storage = Storage();
+  FirebaseAuth firebaseAuth = FirebaseAuth.instance;
   final logInBox = Hive.box("myLoginBox");
   late var userID = logInBox.get("userID");
   late var userType = logInBox.get("userType");
@@ -32,8 +32,6 @@ class _AdminProfileState extends State<AdminProfile> {
   String userProfileListener = "";
   @override
   Widget build(BuildContext context) {
-    DatabaseReference dbReference =
-        FirebaseDatabase.instance.ref().child("Users/Head/$userID/password");
     return Scaffold(
       backgroundColor: ColorPalette.accentWhite,
       drawer: const NavDraw(),
@@ -234,7 +232,6 @@ class _AdminProfileState extends State<AdminProfile> {
                       const SizedBox(height: 8),
                       InkWell(
                         onTap: () async {
-                          final tempPass = snapshot.data!.first.password;
                           final result = await Navigator.push(
                             context,
                             MaterialPageRoute(
@@ -242,10 +239,14 @@ class _AdminProfileState extends State<AdminProfile> {
                                   userID: userID, userType: "Head"),
                             ),
                           );
+                          // ignore: use_build_context_synchronously
+                          DialogLoading(subtext: "Changing...")
+                              .buildLoadingScreen(context);
                           if (result == null) {
                             return;
                           }
-                          await dbReference.set(result.toString()).then(
+
+                          await changePassword(newPassword: result).then(
                             (value) async {
                               Navigator.of(context, rootNavigator: true).pop();
                               DialogSuccess(
@@ -259,14 +260,25 @@ class _AdminProfileState extends State<AdminProfile> {
                                 },
                               ).buildSuccessScreen(context);
                               await createHistory(
-                                desc:
-                                    "Changed password from $tempPass to $result.",
+                                desc: "Changed password",
                                 timeStamp: DateTime.now()
                                     .microsecondsSinceEpoch
                                     .toString(),
                                 userType: userType,
                                 id: userID,
                               );
+                            },
+                          ).catchError(
+                            (err) {
+                              Navigator.of(context, rootNavigator: true).pop();
+                              DialogUnsuccessful(
+                                headertext: "Error",
+                                subtext: err,
+                                textButton: "Close",
+                                callback: () =>
+                                    Navigator.of(context, rootNavigator: true)
+                                        .pop(),
+                              ).buildUnsuccessfulScreen(context);
                             },
                           );
                         },
@@ -289,6 +301,20 @@ class _AdminProfileState extends State<AdminProfile> {
         ),
       ),
     );
+  }
+
+  Future changePassword({required String newPassword}) async {
+    try {
+      User? user = firebaseAuth.currentUser;
+
+      if (user != null) {
+        await user.updatePassword(newPassword);
+      } else {
+        throw "Error, we recommend you to log in again.";
+      }
+    } on FirebaseAuthException catch (e) {
+      throw e.message.toString();
+    }
   }
 
   Future<List<Head>> getHead() async {

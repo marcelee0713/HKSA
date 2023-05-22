@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -7,7 +8,6 @@ import 'package:hksa/constant/colors.dart';
 import 'package:hksa/pages/login.dart';
 import 'package:hksa/widgets/dialogs/dialog_loading.dart';
 import 'package:hksa/widgets/dialogs/dialog_unsuccessful.dart';
-import 'package:hksa/widgets/scholarWidgets/chart/logs.dart';
 
 class ChangeProfessorSignature extends StatefulWidget {
   const ChangeProfessorSignature({super.key, required this.userID});
@@ -40,6 +40,7 @@ class _ChangeProfessorSignatureState extends State<ChangeProfessorSignature> {
     late var userID = logInBox.get("userID");
     DatabaseReference userRef =
         FirebaseDatabase.instance.ref().child('Users/Professors/$userID');
+    FirebaseAuth firebaseAuth = FirebaseAuth.instance;
     final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
 
     userRef.get().then((user) {
@@ -47,9 +48,7 @@ class _ChangeProfessorSignatureState extends State<ChangeProfessorSignature> {
         Future.delayed(const Duration(), (() {
           DialogLoading(subtext: "Logging out...").buildLoadingScreen(context);
         })).whenComplete(() {
-          Future.delayed(const Duration(seconds: 3), () {
-            _firebaseMessaging.unsubscribeFromTopic('user_all');
-            _firebaseMessaging.unsubscribeFromTopic('professors');
+          Future.delayed(const Duration(seconds: 3), () async {
             logInBox.put("isLoggedIn", false);
             logInBox.put("hasTimedIn", false);
             logInBox.put("userType", "");
@@ -146,6 +145,9 @@ class _ChangeProfessorSignatureState extends State<ChangeProfessorSignature> {
                 );
               },
             );
+            await firebaseAuth.signOut();
+            await _firebaseMessaging.unsubscribeFromTopic('user_all');
+            await _firebaseMessaging.unsubscribeFromTopic('professors');
           });
         });
       }

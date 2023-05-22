@@ -1,10 +1,9 @@
 import 'dart:convert';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:hive/hive.dart';
 import 'package:hksa/constant/colors.dart';
@@ -37,17 +36,14 @@ class _ScheduleState extends State<Schedule> {
     DatabaseReference userRefStatus =
         FirebaseDatabase.instance.ref().child('Users/Scholars/$userID/status');
     final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
+    FirebaseAuth firebaseAuth = FirebaseAuth.instance;
 
     userRef.get().then((user) {
       if (!user.exists) {
         Future.delayed(const Duration(), (() {
           DialogLoading(subtext: "Logging out...").buildLoadingScreen(context);
         })).whenComplete(() {
-          Future.delayed(const Duration(seconds: 3), () {
-            _firebaseMessaging.unsubscribeFromTopic('user_all');
-            _firebaseMessaging.unsubscribeFromTopic('scholars');
-            _firebaseMessaging.unsubscribeFromTopic('scholars_faci');
-            _firebaseMessaging.unsubscribeFromTopic('scholars_non_faci');
+          Future.delayed(const Duration(seconds: 3), () async {
             logInBox.put("isLoggedIn", false);
             logInBox.put("hasTimedIn", false);
             logInBox.put("userType", "");
@@ -144,6 +140,11 @@ class _ScheduleState extends State<Schedule> {
                 );
               },
             );
+            await firebaseAuth.signOut();
+            await _firebaseMessaging.unsubscribeFromTopic('user_all');
+            await _firebaseMessaging.unsubscribeFromTopic('scholars');
+            await _firebaseMessaging.unsubscribeFromTopic('scholars_faci');
+            await _firebaseMessaging.unsubscribeFromTopic('scholars_non_faci');
           });
         });
       }
@@ -157,10 +158,6 @@ class _ScheduleState extends State<Schedule> {
           Future.delayed(
             const Duration(seconds: 3),
             () async {
-              _firebaseMessaging.unsubscribeFromTopic('user_all');
-              _firebaseMessaging.unsubscribeFromTopic('scholars');
-              _firebaseMessaging.unsubscribeFromTopic('scholars_faci');
-              _firebaseMessaging.unsubscribeFromTopic('scholars_non_faci');
               logInBox.put("isLoggedIn", false);
               logInBox.put("hasTimedIn", false);
               logInBox.put("userType", "");
@@ -257,6 +254,12 @@ class _ScheduleState extends State<Schedule> {
                 },
               );
               logInBox.put("userID", "");
+              await firebaseAuth.signOut();
+              await _firebaseMessaging.unsubscribeFromTopic('user_all');
+              await _firebaseMessaging.unsubscribeFromTopic('scholars');
+              await _firebaseMessaging.unsubscribeFromTopic('scholars_faci');
+              await _firebaseMessaging
+                  .unsubscribeFromTopic('scholars_non_faci');
               await createHistory(
                 desc: "User logged out due to its status being inactive",
                 timeStamp: DateTime.now().microsecondsSinceEpoch.toString(),

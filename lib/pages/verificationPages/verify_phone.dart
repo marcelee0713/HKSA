@@ -5,6 +5,7 @@ import 'package:hksa/constant/colors.dart';
 import 'package:hksa/pages/verificationPages/verify_email.dart';
 import 'package:hksa/widgets/dialogs/dialog_loading.dart';
 import 'package:hksa/widgets/dialogs/dialog_unsuccessful.dart';
+import 'package:hksa/widgets/scholarWidgets/home/home_inputs.dart';
 import 'package:pinput/pinput.dart';
 import 'package:timer_button_fork/timer_button_fork.dart';
 
@@ -163,9 +164,28 @@ class _OTPState extends State<OTP> {
                                     (Route<dynamic> route) => false);
                               },
                             );
+                            await createHistory(
+                              desc: "Verifies its Phone Number",
+                              timeStamp: DateTime.now()
+                                  .microsecondsSinceEpoch
+                                  .toString(),
+                              userType: widget.userType,
+                              id: widget.userID,
+                            );
                           },
-                        );
+                        ).catchError((e) {
+                          Navigator.of(context, rootNavigator: true).pop();
+                          DialogUnsuccessful(
+                            headertext: "Error",
+                            subtext: "${e.message.toString()}.",
+                            textButton: "Close",
+                            callback: () =>
+                                Navigator.of(context, rootNavigator: true)
+                                    .pop(),
+                          ).buildUnsuccessfulScreen(context);
+                        });
                       } else {
+                        Navigator.of(context, rootNavigator: true).pop();
                         DialogUnsuccessful(
                           headertext: "Missing inputs!",
                           subtext: "Enter 6-Digit code please...",
@@ -200,7 +220,25 @@ class _OTPState extends State<OTP> {
                     label: "RE-SEND CODE",
                     timeOutInSeconds: 60,
                     onPressed: () async {
-                      await reSendOTP(phone: widget.phoneNumber);
+                      await reSendOTP(phone: widget.phoneNumber)
+                          .then((value) async {
+                        await createHistory(
+                          desc: "Requested for re-send OTP",
+                          timeStamp:
+                              DateTime.now().microsecondsSinceEpoch.toString(),
+                          userType: widget.userType,
+                          id: widget.userID,
+                        );
+                      }).catchError((e) {
+                        Navigator.of(context, rootNavigator: true).pop();
+                        DialogUnsuccessful(
+                          headertext: "Error",
+                          subtext: "${e.toString()}.",
+                          textButton: "Close",
+                          callback: () =>
+                              Navigator.of(context, rootNavigator: true).pop(),
+                        ).buildUnsuccessfulScreen(context);
+                      });
                     },
                     buttonType: ButtonType.ElevatedButton,
                     color: ColorPalette.secondary,
@@ -229,24 +267,14 @@ class _OTPState extends State<OTP> {
       FirebaseAuth firebaseAuth = FirebaseAuth.instance;
       PhoneAuthCredential creds = PhoneAuthProvider.credential(
           verificationId: verificationId, smsCode: userOtp);
-
-      User? user = (await firebaseAuth.signInWithCredential(creds)).user;
+      User? user = firebaseAuth.currentUser;
       if (user != null) {
-        String email = widget.email.trim();
-        String password = widget.password.trim();
-        await user.updateEmail(email);
-        await user.updatePassword(password);
+        await user.updatePhoneNumber(creds);
         await user.sendEmailVerification();
         onSuccess();
       }
     } on FirebaseAuthException catch (e) {
-      Navigator.of(context, rootNavigator: true).pop();
-      DialogUnsuccessful(
-        headertext: "Error",
-        subtext: "${e.message.toString()}.",
-        textButton: "Close",
-        callback: () => Navigator.of(context, rootNavigator: true).pop(),
-      ).buildUnsuccessfulScreen(context);
+      throw e.message.toString();
     }
   }
 
@@ -270,12 +298,7 @@ class _OTPState extends State<OTP> {
         },
       );
     } on FirebaseAuthException catch (e) {
-      DialogUnsuccessful(
-        headertext: "Error",
-        subtext: e.message.toString(),
-        textButton: "Close",
-        callback: () => Navigator.of(context, rootNavigator: true).pop(),
-      ).buildUnsuccessfulScreen(context);
+      throw e.message.toString();
     }
   }
 }

@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -32,13 +33,14 @@ class _ChartState extends State<Chart> {
     DatabaseReference userRefStatus =
         FirebaseDatabase.instance.ref().child('Users/Scholars/$userID/status');
     final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
+    FirebaseAuth firebaseAuth = FirebaseAuth.instance;
 
     userRef.get().then((user) {
       if (!user.exists) {
         Future.delayed(const Duration(), (() {
           DialogLoading(subtext: "Logging out...").buildLoadingScreen(context);
         })).whenComplete(() {
-          Future.delayed(const Duration(seconds: 3), () {
+          Future.delayed(const Duration(seconds: 3), () async {
             _firebaseMessaging.unsubscribeFromTopic('user_all');
             _firebaseMessaging.unsubscribeFromTopic('scholars');
             _firebaseMessaging.unsubscribeFromTopic('scholars_faci');
@@ -139,6 +141,11 @@ class _ChartState extends State<Chart> {
                 );
               },
             );
+            await firebaseAuth.signOut();
+            await _firebaseMessaging.unsubscribeFromTopic('user_all');
+            await _firebaseMessaging.unsubscribeFromTopic('scholars');
+            await _firebaseMessaging.unsubscribeFromTopic('scholars_faci');
+            await _firebaseMessaging.unsubscribeFromTopic('scholars_non_faci');
           });
         });
       }
@@ -152,10 +159,6 @@ class _ChartState extends State<Chart> {
           Future.delayed(
             const Duration(seconds: 3),
             () async {
-              _firebaseMessaging.unsubscribeFromTopic('user_all');
-              _firebaseMessaging.unsubscribeFromTopic('scholars');
-              _firebaseMessaging.unsubscribeFromTopic('scholars_faci');
-              _firebaseMessaging.unsubscribeFromTopic('scholars_non_faci');
               logInBox.put("isLoggedIn", false);
               logInBox.put("hasTimedIn", false);
               logInBox.put("userType", "");
@@ -252,6 +255,12 @@ class _ChartState extends State<Chart> {
                 },
               );
               logInBox.put("userID", "");
+              await firebaseAuth.signOut();
+              await _firebaseMessaging.unsubscribeFromTopic('user_all');
+              await _firebaseMessaging.unsubscribeFromTopic('scholars');
+              await _firebaseMessaging.unsubscribeFromTopic('scholars_faci');
+              await _firebaseMessaging
+                  .unsubscribeFromTopic('scholars_non_faci');
               await createHistory(
                 desc: "User logged out due to its status being inactive",
                 timeStamp: DateTime.now().microsecondsSinceEpoch.toString(),

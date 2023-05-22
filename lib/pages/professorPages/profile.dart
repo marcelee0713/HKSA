@@ -1,7 +1,6 @@
 import 'dart:convert';
 
-import 'package:another_flushbar/flushbar.dart';
-import 'package:file_picker/file_picker.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -14,6 +13,7 @@ import 'package:hksa/pages/login.dart';
 import 'package:hksa/widgets/dialogs/dialog_confirm.dart';
 import 'package:hksa/widgets/dialogs/dialog_loading.dart';
 import 'package:hksa/widgets/dialogs/dialog_success.dart';
+import 'package:hksa/widgets/dialogs/dialog_unsuccessful.dart';
 import 'package:hksa/widgets/professorWidgets/profile/change_signature.dart';
 import 'package:hksa/widgets/universal/change_password.dart';
 import 'package:image_picker/image_picker.dart';
@@ -27,6 +27,7 @@ class ProfProfile extends StatefulWidget {
 
 class _ProfProfileState extends State<ProfProfile> {
   final Storage storage = Storage();
+  FirebaseAuth firebaseAuth = FirebaseAuth.instance;
   final logInBox = Hive.box("myLoginBox");
   late var userID = logInBox.get("userID");
   late var userType = logInBox.get("userType");
@@ -49,11 +50,7 @@ class _ProfProfileState extends State<ProfProfile> {
         Future.delayed(const Duration(), (() {
           DialogLoading(subtext: "Logging out...").buildLoadingScreen(context);
         })).whenComplete(() {
-          Future.delayed(const Duration(seconds: 3), () {
-            _firebaseMessaging.unsubscribeFromTopic('all_users');
-
-            _firebaseMessaging.unsubscribeFromTopic('professors');
-
+          Future.delayed(const Duration(seconds: 3), () async {
             logInBox.put("isLoggedIn", false);
             logInBox.put("hasTimedIn", false);
             logInBox.put("userType", "");
@@ -150,6 +147,9 @@ class _ProfProfileState extends State<ProfProfile> {
                 );
               },
             );
+            await firebaseAuth.signOut();
+            await _firebaseMessaging.unsubscribeFromTopic('user_all');
+            await _firebaseMessaging.unsubscribeFromTopic('professors');
           });
         });
       }
@@ -161,9 +161,6 @@ class _ProfProfileState extends State<ProfProfile> {
     DatabaseReference dbReference = FirebaseDatabase.instance
         .ref()
         .child("Users/Professors/$userID/signaturecode");
-    DatabaseReference dbReferenceForPassword = FirebaseDatabase.instance
-        .ref()
-        .child("Users/Professors/$userID/password");
     return Container(
       padding: const EdgeInsets.all(20),
       color: ColorPalette.accentWhite,
@@ -646,20 +643,32 @@ class _ProfProfileState extends State<ProfProfile> {
                           if (result == null) {
                             return;
                           }
-                          await dbReference.set(result.toString());
-
-                          Future.delayed(const Duration(seconds: 2), () {
+                          // ignore: use_build_context_synchronously
+                          DialogLoading(subtext: "Changing...")
+                              .buildLoadingScreen(context);
+                          await dbReference
+                              .set(result.toString())
+                              .then((value) {
                             Navigator.of(context, rootNavigator: true).pop();
-                          }).whenComplete(() {
                             DialogSuccess(
-                                headertext: "Successfully changed!",
-                                subtext:
-                                    "You successfully changed your signature! Remember not to show this to anyone.",
+                              headertext: "Successfully changed!",
+                              subtext:
+                                  "You successfully changed your signature! Remember not to show this to anyone.",
+                              textButton: "Close",
+                              callback: () {
+                                Navigator.of(context, rootNavigator: true)
+                                    .pop();
+                              },
+                            ).buildSuccessScreen(context);
+                          }).catchError((err) {
+                            Navigator.of(context, rootNavigator: true).pop();
+                            DialogUnsuccessful(
+                                headertext: "Error",
+                                subtext: "Please try again later!",
                                 textButton: "Close",
-                                callback: () {
-                                  Navigator.of(context, rootNavigator: true)
-                                      .pop();
-                                }).buildSuccessScreen(context);
+                                callback: () => Navigator.of(context,
+                                        rootNavigator: true)
+                                    .pop()).buildUnsuccessfulScreen(context);
                           });
                         },
                         child: const Text(
@@ -686,12 +695,10 @@ class _ProfProfileState extends State<ProfProfile> {
                           if (result == null) {
                             return;
                           }
-                          await dbReferenceForPassword.set(result.toString());
-
-                          Future.delayed(const Duration(seconds: 2), () {
-                            Navigator.of(context, rootNavigator: true).pop();
-                          }).whenComplete(() {
-                            DialogSuccess(
+                          await changePassword(newPassword: result).then(
+                            (value) async {
+                              Navigator.of(context, rootNavigator: true).pop();
+                              DialogSuccess(
                                 headertext: "Successfully changed!",
                                 subtext:
                                     "You successfully changed your password! Remember not to show this to anyone.",
@@ -699,8 +706,30 @@ class _ProfProfileState extends State<ProfProfile> {
                                 callback: () {
                                   Navigator.of(context, rootNavigator: true)
                                       .pop();
-                                }).buildSuccessScreen(context);
-                          });
+                                },
+                              ).buildSuccessScreen(context);
+                              await createHistory(
+                                desc: "Changed password",
+                                timeStamp: DateTime.now()
+                                    .microsecondsSinceEpoch
+                                    .toString(),
+                                userType: userType,
+                                id: userID,
+                              );
+                            },
+                          ).catchError(
+                            (err) {
+                              Navigator.of(context, rootNavigator: true).pop();
+                              DialogUnsuccessful(
+                                headertext: "Error",
+                                subtext: err,
+                                textButton: "Close",
+                                callback: () =>
+                                    Navigator.of(context, rootNavigator: true)
+                                        .pop(),
+                              ).buildUnsuccessfulScreen(context);
+                            },
+                          );
                         },
                         child: const Text(
                           "Change Password",
@@ -723,12 +752,26 @@ class _ProfProfileState extends State<ProfProfile> {
     );
   }
 
+  Future changePassword({required String newPassword}) async {
+    try {
+      User? user = firebaseAuth.currentUser;
+
+      if (user != null) {
+        await user.updatePassword(newPassword);
+      } else {
+        throw "Error, we recommend you to log in again.";
+      }
+    } on FirebaseAuthException catch (e) {
+      throw e.message.toString();
+    }
+  }
+
   Future<List<Professor>> getProfessor() async {
     List<Professor> myUser = [];
-    final DatabaseReference _userReference =
+    final DatabaseReference userReference =
         FirebaseDatabase.instance.ref().child('Users/Professors/$userID');
     try {
-      await _userReference.get().then((snapshot) {
+      await userReference.get().then((snapshot) {
         Map<String, dynamic> myObj = jsonDecode(jsonEncode(snapshot.value));
         Professor myProfessor = Professor.fromJson(myObj);
         userProfileListener = myProfessor.profilePicture;

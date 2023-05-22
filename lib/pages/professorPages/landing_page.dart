@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -28,15 +29,14 @@ class _ProfLandingPageState extends State<ProfLandingPage> {
     DatabaseReference userRef =
         FirebaseDatabase.instance.ref().child('Users/Professors/$userID');
     final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
+    FirebaseAuth firebaseAuth = FirebaseAuth.instance;
 
     userRef.get().then((user) {
       if (!user.exists) {
         Future.delayed(const Duration(), (() {
           DialogLoading(subtext: "Logging out...").buildLoadingScreen(context);
         })).whenComplete(() {
-          Future.delayed(const Duration(seconds: 3), () {
-            _firebaseMessaging.unsubscribeFromTopic('user_all');
-            _firebaseMessaging.unsubscribeFromTopic('professors');
+          Future.delayed(const Duration(seconds: 3), () async {
             logInBox.put("isLoggedIn", false);
             logInBox.put("hasTimedIn", false);
             logInBox.put("userType", "");
@@ -133,6 +133,9 @@ class _ProfLandingPageState extends State<ProfLandingPage> {
                 );
               },
             );
+            await firebaseAuth.signOut();
+            await _firebaseMessaging.unsubscribeFromTopic('user_all');
+            await _firebaseMessaging.unsubscribeFromTopic('professors');
           });
         });
       }

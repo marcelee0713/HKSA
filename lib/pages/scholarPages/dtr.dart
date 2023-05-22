@@ -1,10 +1,10 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:hksa/pages/login.dart';
 import 'package:hksa/widgets/dialogs/dialog_loading.dart';
-import 'package:hksa/widgets/dialogs/dialog_unsuccessful.dart';
 import 'package:hksa/widgets/scholarWidgets/home/home_header.dart';
 import 'package:hksa/widgets/scholarWidgets/home/home_info.dart';
 import 'package:hksa/widgets/scholarWidgets/home/home_inputs.dart';
@@ -31,13 +31,14 @@ class _DTRState extends State<DTR> {
     DatabaseReference userRefStatus =
         FirebaseDatabase.instance.ref().child('Users/Scholars/$userID/status');
     final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
+    FirebaseAuth firebaseAuth = FirebaseAuth.instance;
 
     userRef.get().then((user) {
       if (!user.exists) {
         Future.delayed(const Duration(), (() {
           DialogLoading(subtext: "Logging out...").buildLoadingScreen(context);
         })).whenComplete(() {
-          Future.delayed(const Duration(seconds: 3), () {
+          Future.delayed(const Duration(seconds: 3), () async {
             _firebaseMessaging.unsubscribeFromTopic('user_all');
             _firebaseMessaging.unsubscribeFromTopic('scholars');
             _firebaseMessaging.unsubscribeFromTopic('scholars_faci');
@@ -138,6 +139,11 @@ class _DTRState extends State<DTR> {
                 );
               },
             );
+            await firebaseAuth.signOut();
+            await _firebaseMessaging.unsubscribeFromTopic('user_all');
+            await _firebaseMessaging.unsubscribeFromTopic('scholars');
+            await _firebaseMessaging.unsubscribeFromTopic('scholars_faci');
+            await _firebaseMessaging.unsubscribeFromTopic('scholars_non_faci');
           });
         });
       }
@@ -151,10 +157,6 @@ class _DTRState extends State<DTR> {
           Future.delayed(
             const Duration(seconds: 3),
             () async {
-              _firebaseMessaging.unsubscribeFromTopic('user_all');
-              _firebaseMessaging.unsubscribeFromTopic('scholars');
-              _firebaseMessaging.unsubscribeFromTopic('scholars_faci');
-              _firebaseMessaging.unsubscribeFromTopic('scholars_non_faci');
               logInBox.put("isLoggedIn", false);
               logInBox.put("hasTimedIn", false);
               logInBox.put("userType", "");
@@ -252,6 +254,12 @@ class _DTRState extends State<DTR> {
               );
 
               logInBox.put("userID", "");
+              await firebaseAuth.signOut();
+              await _firebaseMessaging.unsubscribeFromTopic('user_all');
+              await _firebaseMessaging.unsubscribeFromTopic('scholars');
+              await _firebaseMessaging.unsubscribeFromTopic('scholars_faci');
+              await _firebaseMessaging
+                  .unsubscribeFromTopic('scholars_non_faci');
               await createHistory(
                 desc: "User logged out due to its status being inactive",
                 timeStamp: DateTime.now().microsecondsSinceEpoch.toString(),
