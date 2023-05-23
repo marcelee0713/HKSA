@@ -5,12 +5,12 @@ import 'package:hksa/constant/colors.dart';
 import 'package:hksa/firebase_options.dart';
 import 'package:hksa/pages/adminPages/home.dart';
 import 'package:hksa/pages/professorPages/home.dart';
-import 'package:hksa/widgets/dialogs/dialog_success.dart';
 import 'pages/login.dart';
 import 'pages/scholarPages/home.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 bool? userLoggedIn;
 String? userType;
 
@@ -67,6 +67,7 @@ void main() async {
 
   runApp(
     MaterialApp(
+      navigatorKey: navigatorKey,
       title: "HKSA",
       home: const MyApp(),
       theme: ThemeData(

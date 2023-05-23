@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:hive/hive.dart';
 import 'package:hksa/models/head.dart';
 import 'package:hksa/models/professor.dart';
@@ -622,6 +621,7 @@ class _LogInInputsState extends State<LogInInputs> {
                                 _myLoginBox.put("userID", userID);
                                 _myLoginBox.put("userName", myHeadObj.name);
                                 _myLoginBox.put("getTimeInLS", "");
+                                _myLoginBox.put("hasListened", false);
 
                                 // Will now go to the Admin page
                                 // And literally replace any pages.

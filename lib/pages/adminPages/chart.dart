@@ -288,6 +288,17 @@ class _AdminChartState extends State<AdminChart> {
         }
       }
 
+      if (scholarTotal == 0) {
+        StatusData activeObj =
+            StatusData("No Data", 0.1, ColorPalette.primary, "0", "0");
+        StatusData inActiveObj =
+            StatusData("No Data", 0.1, ColorPalette.errorColor, "0", "0");
+
+        activeAndInactive.add(activeObj);
+        activeAndInactive.add(inActiveObj);
+        return activeAndInactive;
+      }
+
       double percentageOfActive = (activeStatusCount / scholarTotal) * 100;
       double percentageOfInActive = (inActiveStatusCount / scholarTotal) * 100;
 
@@ -334,8 +345,26 @@ class _AdminChartState extends State<AdminChart> {
         }
       }
 
+      if (scholarTotal == 0) {
+        StatusData finishedObj =
+            StatusData("No Data", 0.1, ColorPalette.primary, "0", "0");
+        StatusData unFinishedObj =
+            StatusData("No Data", 0.1, ColorPalette.errorColor, "0", "0");
+        finishedAndUnFinished.add(finishedObj);
+        finishedAndUnFinished.add(unFinishedObj);
+        return finishedAndUnFinished;
+      }
+
       double percentageOfFinished = (finishedCount / scholarTotal) * 100;
       double percentageOfUnFinished = (unFinishedCount / scholarTotal) * 100;
+
+      if (percentageOfFinished.isNaN || percentageOfFinished.isInfinite) {
+        percentageOfFinished = 1;
+      }
+
+      if (percentageOfUnFinished.isNaN || percentageOfUnFinished.isInfinite) {
+        percentageOfUnFinished = 1;
+      }
 
       String percentOfFinishedStr = "${percentageOfFinished.round()}%";
       String percentOfUnFinishedStr = "${percentageOfUnFinished.round()}%";

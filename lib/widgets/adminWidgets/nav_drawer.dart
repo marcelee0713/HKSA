@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
@@ -20,6 +22,8 @@ class NavDraw extends StatefulWidget {
 }
 
 int selectedIndex = 0;
+bool hasListened = false;
+StreamSubscription<DatabaseEvent>? authStateSubscription;
 
 class _NavDrawState extends State<NavDraw> {
   final logInBox = Hive.box("myLoginBox");
@@ -174,6 +178,8 @@ class _NavDrawState extends State<NavDraw> {
                       Navigator.of(context, rootNavigator: true).pop();
                       // Might be more soon
                       // This includes the time in
+                      authStateSubscription!.cancel();
+                      hasListened = false;
                       Future.delayed(const Duration(), (() {
                         DialogLoading(subtext: "Logging out...")
                             .buildLoadingScreen(context);

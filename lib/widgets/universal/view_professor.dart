@@ -703,7 +703,7 @@ class _ProfessorProfileState extends State<ProfessorProfile> {
                                           ),
                                         ),
                                       ),
-                                      const SizedBox(width: 10),
+                                      const SizedBox(width: 5),
                                       Expanded(
                                         child: ElevatedButton(
                                           onPressed: () {
