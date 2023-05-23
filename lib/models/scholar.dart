@@ -1,7 +1,3 @@
-// To parse this JSON data, do
-//
-//     final scholar = scholarFromJson(jsonString);
-
 import 'dart:convert';
 
 Scholar scholarFromJson(String str) => Scholar.fromJson(json.decode(str));
@@ -32,6 +28,7 @@ class Scholar {
   String totalHoursInDuration;
   String totalHoursRequired;
   String town;
+  String uid;
   String vacantTimeDay1;
   String vacantTimeDay2;
   String wholeDayVacantTime;
@@ -60,6 +57,7 @@ class Scholar {
     required this.totalHoursInDuration,
     required this.totalHoursRequired,
     required this.town,
+    required this.uid,
     required this.vacantTimeDay1,
     required this.vacantTimeDay2,
     required this.wholeDayVacantTime,
@@ -89,6 +87,7 @@ class Scholar {
         totalHoursInDuration: json["totalHoursInDuration"],
         totalHoursRequired: json["totalHoursRequired"],
         town: json["town"],
+        uid: json["uid"],
         vacantTimeDay1: json["vacantTimeDay1"],
         vacantTimeDay2: json["vacantTimeDay2"],
         wholeDayVacantTime: json["wholeDayVacantTime"],
@@ -118,6 +117,7 @@ class Scholar {
         "totalHoursInDuration": totalHoursInDuration,
         "totalHoursRequired": totalHoursRequired,
         "town": town,
+        "uid": uid,
         "vacantTimeDay1": vacantTimeDay1,
         "vacantTimeDay2": vacantTimeDay2,
         "wholeDayVacantTime": wholeDayVacantTime,

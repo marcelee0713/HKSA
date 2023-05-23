@@ -1292,6 +1292,7 @@ class _EditProfessorState extends State<EditProfessor> {
                                                   .data!.first.listeningTo,
                                               isEmailVerified: currentEmailVer,
                                               isPhoneVerified: currentPhoneVer,
+                                              uid: snapshot.data!.first.uid,
                                             );
 
                                             await _dbReference

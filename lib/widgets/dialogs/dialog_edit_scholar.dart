@@ -1897,6 +1897,7 @@ class _EditScholarState extends State<EditScholar> {
                                                 .data!.first.listeningTo,
                                             isEmailVerified: currentEmailVer,
                                             isPhoneVerified: currentPhoneNumVer,
+                                            uid: snapshot.data!.first.uid,
                                           );
 
                                           await _dbReference
@@ -2040,6 +2041,7 @@ class _EditScholarState extends State<EditScholar> {
             String listeningTo = myObj[key]['listeningTo'];
             String isEmailVerified = myObj[key]['isEmailVerified'];
             String isPhoneVerified = myObj[key]['isPhoneVerified'];
+            String uid = myObj[key]['uid'];
 
             Professor myProf = Professor(
               department: department,
@@ -2057,6 +2059,7 @@ class _EditScholarState extends State<EditScholar> {
               listeningTo: listeningTo,
               isEmailVerified: isEmailVerified,
               isPhoneVerified: isPhoneVerified,
+              uid: uid,
             );
 
             if (myProf.day == scholarOnSiteDay1 &&

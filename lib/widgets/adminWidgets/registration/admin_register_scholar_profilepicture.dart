@@ -26,6 +26,7 @@ class AdminProfilePictureScholar extends StatefulWidget {
 class _AdminProfilePictureScholarState
     extends State<AdminProfilePictureScholar> {
   FirebaseAuth firebaseAuth = FirebaseAuth.instance;
+  User? user;
 
   final myRegBox = Hive.box("myRegistrationBox");
   final logInBox = Hive.box("myLoginBox");
@@ -268,28 +269,30 @@ class _AdminProfilePictureScholarState
                       (value) async {
                         await Storage()
                             .createScholar(
-                                path!,
-                                fileName,
-                                studentNumber,
-                                name,
-                                course,
-                                email,
-                                phoneNumber,
-                                password,
-                                hkType,
-                                hours,
-                                status,
-                                totalHoursInDisplay,
-                                totalHoursInDuration,
-                                totalHoursRequired,
-                                isFinished,
-                                onSiteDay1,
-                                onSiteDay2,
-                                vacantTimeDay1,
-                                vacantTimeDay2,
-                                wholeDayVacantTime,
-                                scholarType,
-                                town)
+                          path!,
+                          fileName,
+                          studentNumber,
+                          name,
+                          course,
+                          email,
+                          phoneNumber,
+                          password,
+                          hkType,
+                          hours,
+                          status,
+                          totalHoursInDisplay,
+                          totalHoursInDuration,
+                          totalHoursRequired,
+                          isFinished,
+                          onSiteDay1,
+                          onSiteDay2,
+                          vacantTimeDay1,
+                          vacantTimeDay2,
+                          wholeDayVacantTime,
+                          scholarType,
+                          town,
+                          user!.uid,
+                        )
                             .then(
                           (value) async {
                             Navigator.of(context, rootNavigator: true).pop();
@@ -313,7 +316,16 @@ class _AdminProfilePictureScholarState
                           },
                         );
                       },
-                    );
+                    ).catchError((e) {
+                      Navigator.of(context, rootNavigator: true).pop();
+                      DialogUnsuccessful(
+                        headertext: "Error",
+                        subtext: e.toString(),
+                        textButton: "Close",
+                        callback: () =>
+                            Navigator.of(context, rootNavigator: true).pop(),
+                      ).buildUnsuccessfulScreen(context);
+                    });
                   },
                 ).build(context);
               },
@@ -329,16 +341,11 @@ class _AdminProfilePictureScholarState
 
   Future createUser({required String email, required String password}) async {
     try {
-      await firebaseAuth.createUserWithEmailAndPassword(
-          email: email, password: password);
+      await firebaseAuth
+          .createUserWithEmailAndPassword(email: email, password: password)
+          .then((value) => user = value.user);
     } on FirebaseAuthException catch (e) {
-      Navigator.of(context, rootNavigator: true).pop();
-      DialogUnsuccessful(
-        headertext: "Error",
-        subtext: e.message.toString(),
-        textButton: "Close",
-        callback: () => Navigator.of(context, rootNavigator: true).pop(),
-      ).buildUnsuccessfulScreen(context);
+      throw e.message.toString();
     }
   }
 

@@ -25,6 +25,8 @@ class AdminRegisterProfessorInputs extends StatefulWidget {
 
 class _AdminRegisterProfessorInputsState
     extends State<AdminRegisterProfessorInputs> {
+  FirebaseAuth firebaseAuth = FirebaseAuth.instance;
+  User? user;
   final DatabaseReference choicesReference =
       FirebaseDatabase.instance.ref().child("scheduleChoices/");
   final logInBox = Hive.box("myLoginBox");
@@ -1066,6 +1068,7 @@ class _AdminRegisterProfessorInputsState
                       await createUser(email: email, password: password).then(
                         (value) async {
                           Professor scholarObj = Professor(
+                            uid: user!.uid,
                             department: department.toString(),
                             email: email,
                             name: fullName,
@@ -1170,6 +1173,7 @@ class _AdminRegisterProfessorInputsState
     _inputControllerFirstName.dispose();
     _inputControllerMiddleName.dispose();
     _inputControllerEmail.dispose();
+    _inputControllerEmailDomain.dispose();
     _inputControllerPhoneNumber.dispose();
     _inputControllerPassword.dispose();
     _inputControllerCfrmPassword.dispose();
@@ -1181,8 +1185,9 @@ class _AdminRegisterProfessorInputsState
   Future createUser({required String email, required String password}) async {
     FirebaseAuth firebaseAuth = FirebaseAuth.instance;
     try {
-      await firebaseAuth.createUserWithEmailAndPassword(
-          email: email, password: password);
+      await firebaseAuth
+          .createUserWithEmailAndPassword(email: email, password: password)
+          .then((value) => user = value.user);
     } on FirebaseAuthException catch (e) {
       throw e.message.toString();
     }

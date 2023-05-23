@@ -534,10 +534,11 @@ class _ProfProfileState extends State<ProfProfile> {
                                       logInBox.put("userName", "");
                                       logInBox.put("getTimeInLS", "");
                                       logInBox.put("dateTimedIn", "");
-                                      _firebaseMessaging
+                                      await _firebaseMessaging
                                           .unsubscribeFromTopic('user_all');
-                                      _firebaseMessaging
+                                      await _firebaseMessaging
                                           .unsubscribeFromTopic('professors');
+                                      await FirebaseAuth.instance.signOut();
                                       await createHistory(
                                         desc: "User logged out",
                                         timeStamp: DateTime.now()

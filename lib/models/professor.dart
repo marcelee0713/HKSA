@@ -20,6 +20,7 @@ class Professor {
   String signaturecode;
   String subject;
   String time;
+  String uid;
 
   Professor({
     required this.day,
@@ -37,6 +38,7 @@ class Professor {
     required this.signaturecode,
     required this.subject,
     required this.time,
+    required this.uid,
   });
 
   factory Professor.fromJson(Map<String, dynamic> json) => Professor(
@@ -55,6 +57,7 @@ class Professor {
         signaturecode: json["signaturecode"],
         subject: json["subject"],
         time: json["time"],
+        uid: json["uid"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -73,5 +76,6 @@ class Professor {
         "signaturecode": signaturecode,
         "subject": subject,
         "time": time,
+        "uid": uid,
       };
 }

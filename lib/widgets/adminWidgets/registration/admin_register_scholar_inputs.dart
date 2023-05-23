@@ -1,8 +1,12 @@
+import 'dart:convert';
+
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:hksa/constant/colors.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:hksa/constant/string.dart';
+import 'package:hksa/models/scholar.dart';
 import 'package:hksa/pages/adminPages/registration.dart';
 import 'package:hksa/widgets/adminWidgets/nav_drawer.dart';
 import 'package:hksa/widgets/adminWidgets/registration/admin_register_scholar_profilepicture.dart';
@@ -40,6 +44,8 @@ class _AdminRegisterScholarInputsState
   final _inputControllerFirstName = TextEditingController();
   final _inputControllerMiddleName = TextEditingController();
   final _inputControllerEmail = TextEditingController();
+  final _inputControllerEmailDomain =
+      TextEditingController(text: "@phinmaed.com");
   final _inputControllerPhoneNumber = TextEditingController();
   final _inputControllerPassword = TextEditingController();
   final _inputControllerCfrmPassword = TextEditingController();
@@ -638,43 +644,105 @@ class _AdminRegisterScholarInputsState
                   ],
                 )
               : const SizedBox(height: 18),
-          TextFormField(
-            controller: _inputControllerEmail,
-            validator: (value) {
-              // Email RegEx Validation
-              final bool emailValid = RegExp(
-                      r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
-                  .hasMatch(value!);
-              if (value.isNotEmpty && emailValid) {
-                return null;
-              } else {
-                return "Invalid input.";
-              }
-            },
-            keyboardType: TextInputType.emailAddress,
-            decoration: InputDecoration(
-              enabledBorder: OutlineInputBorder(
-                borderSide: const BorderSide(color: Colors.transparent),
-                borderRadius: BorderRadius.circular(10.0),
+          Row(
+            children: [
+              Expanded(
+                child: TextFormField(
+                  controller: _inputControllerEmail,
+                  maxLength: 40,
+                  validator: (value) {
+                    const myString = "@phinmaed.com";
+                    if (!value!.contains(myString) && value.isNotEmpty) {
+                      return null;
+                    } else if (value.contains(myString) && value.isNotEmpty) {
+                      return "Please remove $myString on this input";
+                    } else {
+                      return "Invalid Input";
+                    }
+                  },
+                  keyboardType: TextInputType.text,
+                  decoration: InputDecoration(
+                    counterText: "",
+                    errorStyle: const TextStyle(color: ColorPalette.errorColor),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: const BorderSide(color: Colors.transparent),
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: const BorderSide(color: Colors.transparent),
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                    errorBorder: const UnderlineInputBorder(
+                      borderRadius:
+                          BorderRadius.vertical(top: Radius.circular(5)),
+                      borderSide: BorderSide(
+                        color: ColorPalette.errorColor,
+                        width: 1,
+                        style: BorderStyle.solid,
+                      ),
+                    ),
+                    focusedErrorBorder: const UnderlineInputBorder(
+                      borderRadius:
+                          BorderRadius.vertical(top: Radius.circular(5)),
+                      borderSide: BorderSide(
+                        color: ColorPalette.errorColor,
+                        width: 2,
+                        style: BorderStyle.solid,
+                      ),
+                    ),
+                    filled: true,
+                    fillColor: ColorPalette.accentDarkWhite,
+                    hintStyle: const TextStyle(
+                      fontWeight: FontWeight.w300,
+                      fontStyle: FontStyle.italic,
+                    ),
+                    hintText: "Username",
+                  ),
+                  style: const TextStyle(
+                    color: ColorPalette.primary,
+                    fontFamily: 'Inter',
+                    fontSize: 14,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
               ),
-              focusedBorder: OutlineInputBorder(
-                borderSide: const BorderSide(color: Colors.transparent),
-                borderRadius: BorderRadius.circular(10.0),
+              const SizedBox(width: 2),
+              Expanded(
+                child: TextFormField(
+                  validator: (value) {
+                    if (_inputControllerEmail.text != "" &&
+                        !_inputControllerEmail.text.contains("@phinmaed.com")) {
+                      return null;
+                    } else if (_inputControllerEmail.text
+                        .contains("@phinmaed.com")) {
+                      return "@phinmaed.com";
+                    } else {
+                      return "";
+                    }
+                  },
+                  controller: _inputControllerEmailDomain,
+                  keyboardType: TextInputType.emailAddress,
+                  decoration: InputDecoration(
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: const BorderSide(color: Colors.transparent),
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: const BorderSide(color: Colors.transparent),
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                    filled: true,
+                    fillColor: ColorPalette.accentDarkWhite,
+                  ),
+                  style: const TextStyle(
+                    color: ColorPalette.primary,
+                    fontFamily: 'Inter',
+                    fontSize: 14,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
               ),
-              filled: true,
-              fillColor: ColorPalette.accentDarkWhite,
-              hintStyle: const TextStyle(
-                fontWeight: FontWeight.w300,
-                fontStyle: FontStyle.italic,
-              ),
-              hintText: "Email",
-            ),
-            style: const TextStyle(
-              color: ColorPalette.primary,
-              fontFamily: 'Inter',
-              fontSize: 14,
-              fontWeight: FontWeight.w700,
-            ),
+            ],
           ),
           const SizedBox(height: 18),
           TextFormField(
@@ -804,125 +872,159 @@ class _AdminRegisterScholarInputsState
                 backgroundColor:
                     MaterialStateProperty.all<Color>(ColorPalette.primary),
               ),
-              onPressed: (() {
-                setState(() {
-                  if (!_formKey.currentState!.validate()) {
-                    return;
-                  } else if (coursesValue == null ||
-                      hkTypeValue == null ||
-                      vacantTimeValue == null ||
-                      onSiteValue == null ||
-                      vacantTime2Value == null ||
-                      onSite2Value == null ||
-                      vacantDayValue == null ||
-                      faciTypeValue == null ||
-                      townValue == null) {
-                    DialogUnsuccessful(
-                      headertext: "Fill all the corresponding inputs!",
-                      subtext: "Seems like there's something you missed?",
-                      textButton: "Close",
-                      callback: (() =>
-                          Navigator.of(context, rootNavigator: true).pop()),
-                    ).buildUnsuccessfulScreen(context);
-                    return;
-                  }
-                  // This is where it finds the user in the firebase database
-                  // And if it did find it will log in depends on the user type
-                  // if not. It will pop up a modal that it will show
-                  // NO USER FOUND
+              onPressed: () async {
+                if (!_formKey.currentState!.validate()) {
+                  return;
+                } else if (coursesValue == null ||
+                    hkTypeValue == null ||
+                    vacantTimeValue == null ||
+                    onSiteValue == null ||
+                    vacantTime2Value == null ||
+                    onSite2Value == null ||
+                    vacantDayValue == null ||
+                    faciTypeValue == null ||
+                    townValue == null) {
+                  DialogUnsuccessful(
+                    headertext: "Fill all the corresponding inputs!",
+                    subtext: "Seems like there's something you missed?",
+                    textButton: "Close",
+                    callback: (() =>
+                        Navigator.of(context, rootNavigator: true).pop()),
+                  ).buildUnsuccessfulScreen(context);
+                  return;
+                }
+                // This is where it finds the user in the firebase database
+                // And if it did find it will log in depends on the user type
+                // if not. It will pop up a modal that it will show
+                // NO USER FOUND
 
-                  // Show loading screen for 2 seconds
-                  DialogLoading(subtext: "Validating...")
-                      .buildLoadingScreen(context);
+                // Show loading screen for 2 seconds
+                DialogLoading(subtext: "Validating...")
+                    .buildLoadingScreen(context);
 
-                  String studentNumber =
-                      _inputControllerStudentNumberID.text.trim();
-                  String fullName =
-                      "${_inputControllerLastName.text.trim()} ${_inputControllerFirstName.text.trim()} ${_inputControllerMiddleName.text.trim()}";
-                  String? course = coursesValue;
-                  String? hkType = hkTypeValue;
-                  String? onSite1 = onSiteValue;
-                  String? onSite2 = onSite2Value;
-                  String? vacantTime1 = vacantTimeValue;
-                  String? vacantTime2 = vacantTime2Value;
-                  String? vacantDay = vacantDayValue;
-                  String? scholarType = faciTypeValue;
-                  String? town = townValue;
-                  String email = _inputControllerEmail.text.trim();
-                  String phoneNumber = _inputControllerPhoneNumber.text.trim();
-                  String password = _inputControllerCfrmPassword.text.trim();
-                  String hours = "0";
-                  String status = "active";
-                  String totalHoursInDisplay = "0:00:00";
-                  String totalHoursInDuration = "0:00:00.000000";
-                  String totalHoursRequired = "";
-                  String isFinished = "false";
+                String studentNumber =
+                    _inputControllerStudentNumberID.text.trim();
+                String fullName =
+                    "${_inputControllerLastName.text.trim()} ${_inputControllerFirstName.text.trim()} ${_inputControllerMiddleName.text.trim()}";
+                String? course = coursesValue;
+                String? hkType = hkTypeValue;
+                String? onSite1 = onSiteValue;
+                String? onSite2 = onSite2Value;
+                String? vacantTime1 = vacantTimeValue;
+                String? vacantTime2 = vacantTime2Value;
+                String? vacantDay = vacantDayValue;
+                String? scholarType = faciTypeValue;
+                String? town = townValue;
+                String email = _inputControllerEmail.text.trim() +
+                    _inputControllerEmailDomain.text;
+                String phoneNumber = _inputControllerPhoneNumber.text.trim();
+                String password = _inputControllerCfrmPassword.text.trim();
+                String hours = "0";
+                String status = "active";
+                String totalHoursInDisplay = "0:00:00";
+                String totalHoursInDuration = "0:00:00.000000";
+                String totalHoursRequired = "";
+                String isFinished = "false";
 
-                  bool userExist = false;
+                bool userExist = false;
+                bool userEmailDuplicate = false;
+                bool userPhoneDuplicate = false;
+                DatabaseReference testReference =
+                    FirebaseDatabase.instance.ref().child("Users/Scholars/");
 
-                  Future.delayed(
-                      const Duration(seconds: 2),
-                      (() => {
-                            _testReference.get().then((snapshot) {
-                              for (final test in snapshot.children) {
-                                if (test.key == studentNumber) {
-                                  userExist = true;
-                                  break;
-                                }
-                              }
-                            })
-                          })).whenComplete(() => {
-                        Future.delayed(const Duration(milliseconds: 2500),
-                            () async {
-                          Navigator.of(context, rootNavigator: true).pop();
-                          if (userExist) {
-                            // Show a new a dialog that this user already exist
-                            DialogUnsuccessful(
-                              headertext: "Account already exist!",
-                              subtext:
-                                  "If you think this is wrong. Please contact or go to the CSDL Department immediately!",
-                              textButton: "Close",
-                              callback: (() =>
-                                  Navigator.of(context, rootNavigator: true)
-                                      .pop()),
-                            ).buildUnsuccessfulScreen(context);
-                          } else {
-                            _myRegBox.put("studentNumber", studentNumber);
-                            _myRegBox.put("name", fullName);
-                            _myRegBox.put("course", course);
-                            _myRegBox.put("email", email);
-                            _myRegBox.put("phoneNumber", phoneNumber);
-                            _myRegBox.put("password", password);
-                            _myRegBox.put("hkType", hkType);
-                            _myRegBox.put("hours", hours);
-                            _myRegBox.put("status", status);
-                            _myRegBox.put(
-                                "totalHoursInDisplay", totalHoursInDisplay);
-                            _myRegBox.put(
-                                "totalHoursInDuration", totalHoursInDuration);
-                            _myRegBox.put(
-                                "totalHoursRequired", totalHoursRequired);
-                            _myRegBox.put("isFinished", isFinished);
-                            _myRegBox.put("onSiteDay1", onSite1);
-                            _myRegBox.put("onSiteDay2", onSite2);
-                            _myRegBox.put("vacantTimeDay1", vacantTime1);
-                            _myRegBox.put("vacantTimeDay2", vacantTime2);
-                            _myRegBox.put("wholeDayVacantTime", vacantDay);
-                            _myRegBox.put("scholarType", scholarType);
-                            _myRegBox.put("town", town);
+                await testReference.get().then(
+                  (snapshot) {
+                    for (final data in snapshot.children) {
+                      Map<String, dynamic> myObj =
+                          jsonDecode(jsonEncode(data.value));
+                      Scholar myScholarObj = Scholar.fromJson(myObj);
+                      if (data.key == studentNumber) {
+                        userExist = true;
+                      }
+                      if (myScholarObj.email == email) {
+                        userEmailDuplicate = true;
+                      }
+                      if (myScholarObj.phonenumber == phoneNumber) {
+                        userPhoneDuplicate = true;
+                      }
+                    }
+                  },
+                ).then(
+                  (value) async {
+                    Navigator.of(context, rootNavigator: true).pop();
+                    if (userExist) {
+                      // Show a new a dialog that this user already exist
+                      DialogUnsuccessful(
+                        headertext: "Account already exist!",
+                        subtext:
+                            "If you think this is wrong. Please contact or go to the CSDL Department immediately!",
+                        textButton: "Close",
+                        callback: (() =>
+                            Navigator.of(context, rootNavigator: true).pop()),
+                      ).buildUnsuccessfulScreen(context);
+                      return;
+                    }
 
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    const AdminProfilePictureScholar(),
-                              ),
-                            );
-                          }
-                        })
-                      });
-                });
-              }),
+                    if (userEmailDuplicate) {
+                      DialogUnsuccessful(
+                        headertext: "Email already exist!",
+                        subtext:
+                            "If you think this is wrong. Please contact or go to the CSDL Department immediately!",
+                        textButton: "Close",
+                        callback: (() =>
+                            Navigator.of(context, rootNavigator: true).pop()),
+                      ).buildUnsuccessfulScreen(context);
+                      return;
+                    }
+
+                    if (userPhoneDuplicate) {
+                      DialogUnsuccessful(
+                        headertext: "Phone number already exist!",
+                        subtext:
+                            "If you think this is wrong. Please contact or go to the CSDL Department immediately!",
+                        textButton: "Close",
+                        callback: (() =>
+                            Navigator.of(context, rootNavigator: true).pop()),
+                      ).buildUnsuccessfulScreen(context);
+                      return;
+                    }
+
+                    if (!userExist &&
+                        !userPhoneDuplicate &&
+                        !userEmailDuplicate) {
+                      _myRegBox.put("studentNumber", studentNumber);
+                      _myRegBox.put("name", fullName);
+                      _myRegBox.put("course", course);
+                      _myRegBox.put("email", email);
+                      _myRegBox.put("phoneNumber", phoneNumber);
+                      _myRegBox.put("password", password);
+                      _myRegBox.put("hkType", hkType);
+                      _myRegBox.put("hours", hours);
+                      _myRegBox.put("status", status);
+                      _myRegBox.put("totalHoursInDisplay", totalHoursInDisplay);
+                      _myRegBox.put(
+                          "totalHoursInDuration", totalHoursInDuration);
+                      _myRegBox.put("totalHoursRequired", totalHoursRequired);
+                      _myRegBox.put("isFinished", isFinished);
+                      _myRegBox.put("onSiteDay1", onSite1);
+                      _myRegBox.put("onSiteDay2", onSite2);
+                      _myRegBox.put("vacantTimeDay1", vacantTime1);
+                      _myRegBox.put("vacantTimeDay2", vacantTime2);
+                      _myRegBox.put("wholeDayVacantTime", vacantDay);
+                      _myRegBox.put("scholarType", scholarType);
+                      _myRegBox.put("town", town);
+
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              const AdminProfilePictureScholar(),
+                        ),
+                      );
+                    }
+                  },
+                );
+              },
               child: const Text(
                 "Next",
                 style: TextStyle(

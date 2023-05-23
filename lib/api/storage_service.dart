@@ -41,6 +41,7 @@ class Storage {
     wholeDayVacantTime,
     scholarType,
     town,
+    uid,
   ) async {
     File file = File(filePath);
     DatabaseReference dbReference =
@@ -83,6 +84,7 @@ class Storage {
           listeningTo: '',
           isEmailVerified: 'false',
           isPhoneVerified: 'false',
+          uid: uid,
         );
 
         await dbReference.child(studentNumber).set(scholarObj.toJson());
