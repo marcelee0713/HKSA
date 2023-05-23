@@ -13,6 +13,7 @@ class Head {
   String isEmailVerified;
   String isPhoneVerified;
   String phonenumber;
+  String status;
   String email;
 
   Head({
@@ -24,6 +25,7 @@ class Head {
     required this.isEmailVerified,
     required this.isPhoneVerified,
     required this.phonenumber,
+    required this.status,
     required this.email,
   });
 
@@ -36,6 +38,7 @@ class Head {
         isEmailVerified: json["isEmailVerified"],
         isPhoneVerified: json["isPhoneVerified"],
         phonenumber: json["phonenumber"],
+        status: json["status"],
         email: json["email"],
       );
 
@@ -48,6 +51,7 @@ class Head {
         "isEmailVerified": isEmailVerified,
         "isPhoneVerified": isPhoneVerified,
         "phonenumber": phonenumber,
+        "status": status,
         "email": email,
       };
 }

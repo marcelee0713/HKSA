@@ -381,6 +381,39 @@ class _ProfessorProfileState extends State<ProfessorProfile> {
                           ],
                         ),
                         const SizedBox(
+                          height: 20,
+                        ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              'Status:',
+                              style: TextStyle(
+                                fontSize: 15,
+                                fontFamily: 'Inter',
+                                fontWeight: FontWeight.w600,
+                                color: Colors.black,
+                              ),
+                            ),
+                            const SizedBox(
+                              height: 5,
+                            ),
+                            Text(
+                              snapshot.data!.first.status.replaceAll(
+                                  snapshot.data!.first.status.substring(0, 1),
+                                  snapshot.data!.first.status
+                                      .substring(0, 1)
+                                      .toUpperCase()),
+                              style: const TextStyle(
+                                fontSize: 13,
+                                fontFamily: 'Inter',
+                                fontWeight: FontWeight.w300,
+                                color: Colors.black,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(
                           height: 10,
                         ),
                         userType == "head"
@@ -585,80 +618,178 @@ class _ProfessorProfileState extends State<ProfessorProfile> {
                                       ),
                                     ],
                                   ),
-                                  ElevatedButton(
-                                    onPressed: () {
-                                      DialogConfirm(
-                                          headertext:
-                                              "Are you sure you want to delete this user?",
-                                          callback: () async {
-                                            Navigator.of(context,
-                                                    rootNavigator: true)
-                                                .pop();
-                                            final DatabaseReference
-                                                userReference = FirebaseDatabase
-                                                    .instance
-                                                    .ref()
-                                                    .child(
-                                                        'Users/Professors/${widget.userID}');
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        child: ElevatedButton(
+                                          onPressed: () {
+                                            DialogConfirm(
+                                              headertext:
+                                                  "User status will be active now, you sure?",
+                                              callback: () async {
+                                                Navigator.of(context,
+                                                        rootNavigator: true)
+                                                    .pop();
+                                                DialogLoading(
+                                                        subtext: "Loading...")
+                                                    .buildLoadingScreen(
+                                                        context);
+                                                final DatabaseReference
+                                                    statusReference =
+                                                    FirebaseDatabase.instance
+                                                        .ref()
+                                                        .child(
+                                                            'Users/Professors/${widget.userID}/status');
 
-                                            final DatabaseReference
-                                                historyLogsReference =
-                                                FirebaseDatabase.instance
-                                                    .ref()
-                                                    .child(
-                                                        'historylogs/${widget.userID}');
+                                                await statusReference
+                                                    .set("active")
+                                                    .then((value) async {
+                                                  Navigator.of(context,
+                                                          rootNavigator: true)
+                                                      .pop();
+                                                  DialogSuccess(
+                                                    headertext: "Success",
+                                                    subtext:
+                                                        "They can now log in and make changes in the app",
+                                                    textButton: "Close",
+                                                    callback: () =>
+                                                        Navigator.of(context,
+                                                                rootNavigator:
+                                                                    true)
+                                                            .pop(),
+                                                  ).buildSuccessScreen(context);
+                                                  await createHistory(
+                                                    desc:
+                                                        "Made a Professor Active: ${snapshot.data!.first.name}(${snapshot.data!.first.professorId})",
+                                                    timeStamp: DateTime.now()
+                                                        .microsecondsSinceEpoch
+                                                        .toString(),
+                                                    userType: userType,
+                                                    id: userID,
+                                                  );
+                                                }).catchError((e) {
+                                                  Navigator.of(context,
+                                                          rootNavigator: true)
+                                                      .pop();
+                                                  DialogUnsuccessful(
+                                                    headertext: "Error",
+                                                    subtext:
+                                                        "Please try again later!",
+                                                    textButton: "Close",
+                                                    callback: () {
+                                                      Navigator.of(context,
+                                                              rootNavigator:
+                                                                  true)
+                                                          .pop();
+                                                    },
+                                                  ).buildUnsuccessfulScreen(
+                                                      context);
+                                                });
+                                              },
+                                            ).buildConfirmScreen(context);
+                                          },
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor:
+                                                ColorPalette.errorColor,
+                                          ),
+                                          child: const Text(
+                                            "Reactivate",
+                                            style: TextStyle(
+                                                fontFamily: 'Inter',
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.w400,
+                                                color:
+                                                    ColorPalette.accentWhite),
+                                          ),
+                                        ),
+                                      ),
+                                      const SizedBox(width: 10),
+                                      Expanded(
+                                        child: ElevatedButton(
+                                          onPressed: () {
+                                            DialogConfirm(
+                                              headertext:
+                                                  "User will log out and can't log in. You sure?",
+                                              callback: () async {
+                                                Navigator.of(context,
+                                                        rootNavigator: true)
+                                                    .pop();
+                                                DialogLoading(
+                                                        subtext: "Loading...")
+                                                    .buildLoadingScreen(
+                                                        context);
+                                                final DatabaseReference
+                                                    statusReference =
+                                                    FirebaseDatabase.instance
+                                                        .ref()
+                                                        .child(
+                                                            'Users/Professors/${widget.userID}/status');
 
-                                            await userReference.remove();
-                                            await historyLogsReference.remove();
-                                            if (FirebaseStorage.instance
-                                                    .refFromURL(snapshot
-                                                        .data!
-                                                        .first
-                                                        .profilePicture) !=
-                                                FirebaseStorage.instance
-                                                    .refFromURL(HKSAStrings
-                                                        .pfpPlaceholder)) {
-                                              await FirebaseStorage.instance
-                                                  .refFromURL(snapshot.data!
-                                                      .first.profilePicture)
-                                                  .delete();
-                                            }
-
-                                            await createHistory(
-                                              desc:
-                                                  "Deleted a Professor: ${snapshot.data!.first.name}(${snapshot.data!.first.professorId})",
-                                              timeStamp: DateTime.now()
-                                                  .microsecondsSinceEpoch
-                                                  .toString(),
-                                              userType: userType,
-                                              id: userID,
-                                            );
-
-                                            // ignore: use_build_context_synchronously
-                                            Navigator.of(context,
-                                                    rootNavigator: true)
-                                                .pop();
-
-                                            // ignore: use_build_context_synchronously
-                                            Navigator.pushReplacement(
-                                                context,
-                                                MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        const AdminContacts()));
-                                          }).buildConfirmScreen(context);
-                                    },
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: ColorPalette.errorColor,
-                                    ),
-                                    child: const Text(
-                                      "Delete",
-                                      style: TextStyle(
-                                          fontFamily: 'Inter',
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w400,
-                                          color: ColorPalette.accentWhite),
-                                    ),
-                                  )
+                                                await statusReference
+                                                    .set("inactive")
+                                                    .then((value) async {
+                                                  Navigator.of(context,
+                                                          rootNavigator: true)
+                                                      .pop();
+                                                  DialogSuccess(
+                                                    headertext: "Success",
+                                                    subtext:
+                                                        "Again, it will log them out. If you wanna know when they logged out, go to its history logs.",
+                                                    textButton: "Close",
+                                                    callback: () =>
+                                                        Navigator.of(context,
+                                                                rootNavigator:
+                                                                    true)
+                                                            .pop(),
+                                                  ).buildSuccessScreen(context);
+                                                  await createHistory(
+                                                    desc:
+                                                        "Made a Professor Inactive: ${snapshot.data!.first.name}(${snapshot.data!.first.professorId})",
+                                                    timeStamp: DateTime.now()
+                                                        .microsecondsSinceEpoch
+                                                        .toString(),
+                                                    userType: userType,
+                                                    id: userID,
+                                                  );
+                                                }).catchError((e) {
+                                                  Navigator.of(context,
+                                                          rootNavigator: true)
+                                                      .pop();
+                                                  DialogUnsuccessful(
+                                                    headertext: "Error",
+                                                    subtext:
+                                                        "Please try again later!",
+                                                    textButton: "Close",
+                                                    callback: () {
+                                                      Navigator.of(context,
+                                                              rootNavigator:
+                                                                  true)
+                                                          .pop();
+                                                    },
+                                                  ).buildUnsuccessfulScreen(
+                                                      context);
+                                                });
+                                              },
+                                            ).buildConfirmScreen(context);
+                                          },
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor:
+                                                ColorPalette.errorColor,
+                                          ),
+                                          child: const Text(
+                                            "Deactivate",
+                                            style: TextStyle(
+                                                fontFamily: 'Inter',
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.w400,
+                                                color:
+                                                    ColorPalette.accentWhite),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 10),
                                 ],
                               )
                             : ElevatedButton(

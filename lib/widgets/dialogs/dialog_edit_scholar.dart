@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:ffi';
 
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
@@ -13,7 +12,6 @@ import 'package:hksa/models/professor.dart';
 import 'package:hksa/models/scholar.dart';
 import 'package:hksa/pages/adminPages/contact.dart';
 import 'package:hksa/widgets/adminWidgets/nav_drawer.dart';
-import 'package:hksa/widgets/dialogs/dialog_confirm.dart';
 import 'package:hksa/widgets/dialogs/dialog_confirm_edit.dart';
 import 'package:hksa/widgets/dialogs/dialog_loading.dart';
 import 'package:hksa/widgets/dialogs/dialog_show_conflict.dart';
@@ -67,7 +65,6 @@ class _EditScholarState extends State<EditScholar> {
 
   String? coursesValue;
   String? hkTypeValue;
-  String? statusValue;
   String? townValue;
   String? scholarTypeValue;
 
@@ -81,8 +78,6 @@ class _EditScholarState extends State<EditScholar> {
   String? assignedProfDay2;
   String? assignedProfWholeDay;
 
-  bool _passwordVisible = false;
-  bool _cfrmPasswordVisible = false;
   bool gotValue = false;
 
   Map<String, String> professorNameForDay1 = {};
@@ -92,9 +87,6 @@ class _EditScholarState extends State<EditScholar> {
   @override
   void initState() {
     if (widget.scholarType == "Faci") {
-      final DatabaseReference scholarRef = FirebaseDatabase.instance
-          .ref()
-          .child("Users/Scholars/${widget.userID}");
       final DatabaseReference profRef =
           FirebaseDatabase.instance.ref().child("Users/Professors/");
       List<String> conflicts = [];
@@ -427,58 +419,6 @@ class _EditScholarState extends State<EditScholar> {
                                 const SizedBox(height: 2),
                                 Text(
                                   "Course was ${snapshot.data!.first.course}",
-                                  style: const TextStyle(
-                                    fontFamily: 'Inter',
-                                    fontSize: 11,
-                                    fontStyle: FontStyle.italic,
-                                    fontWeight: FontWeight.w300,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 18),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Container(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 12, vertical: 4),
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(10),
-                                    color: ColorPalette.accentDarkWhite,
-                                  ),
-                                  child: DropdownButtonHideUnderline(
-                                    child: DropdownButton(
-                                      hint: const Text(
-                                        "Status",
-                                        style: TextStyle(
-                                          fontFamily: 'Inter',
-                                          fontSize: 14,
-                                          fontStyle: FontStyle.italic,
-                                          fontWeight: FontWeight.w300,
-                                        ),
-                                      ),
-                                      value: statusValue,
-                                      isExpanded: true,
-                                      iconSize: 32,
-                                      icon: const Icon(
-                                        Icons.arrow_drop_down,
-                                        color: ColorPalette.primary,
-                                      ),
-                                      items: HKSAStrings.statuses
-                                          .map(buildMenuItemStatuses)
-                                          .toList(),
-                                      onChanged: ((statusValue) => setState(() {
-                                            this.statusValue =
-                                                statusValue ?? "";
-                                          })),
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(height: 2),
-                                Text(
-                                  "Status was ${snapshot.data!.first.status}",
                                   style: const TextStyle(
                                     fontFamily: 'Inter',
                                     fontSize: 11,
@@ -1668,7 +1608,6 @@ class _EditScholarState extends State<EditScholar> {
                                       _inputControllerPhoneNumber.text.trim();
                                   String hours =
                                       _inputControllerHours.text.trim();
-                                  String? status = statusValue;
                                   String totalHoursInDuration =
                                       getUpdatedDuration(
                                           hours,
@@ -1684,8 +1623,6 @@ class _EditScholarState extends State<EditScholar> {
                                       snapshot.data!.first.name;
                                   String currentCourse =
                                       snapshot.data!.first.course;
-                                  String currentStatus =
-                                      snapshot.data!.first.status;
                                   String currentEmail =
                                       snapshot.data!.first.email;
                                   String currentPhoneNumber =
@@ -1747,11 +1684,6 @@ class _EditScholarState extends State<EditScholar> {
                                   if (currentCourse != course) {
                                     changes.add(
                                         "Changed course from $currentCourse to $course");
-                                  }
-
-                                  if (currentStatus != status) {
-                                    changes.add(
-                                        "Changed status from $currentStatus to $status");
                                   }
 
                                   if (currentEmail != email) {
@@ -1864,7 +1796,7 @@ class _EditScholarState extends State<EditScholar> {
                                             phonenumber: phoneNumber,
                                             hkType: hkType.toString(),
                                             hours: hours,
-                                            status: status.toString(),
+                                            status: snapshot.data!.first.status,
                                             totalHoursInDisplay:
                                                 totalHoursInDisplay,
                                             totalHoursInDuration:
@@ -2042,6 +1974,7 @@ class _EditScholarState extends State<EditScholar> {
             String isEmailVerified = myObj[key]['isEmailVerified'];
             String isPhoneVerified = myObj[key]['isPhoneVerified'];
             String uid = myObj[key]['uid'];
+            String status = myObj[key]['status'];
 
             Professor myProf = Professor(
               department: department,
@@ -2060,6 +1993,7 @@ class _EditScholarState extends State<EditScholar> {
               isEmailVerified: isEmailVerified,
               isPhoneVerified: isPhoneVerified,
               uid: uid,
+              status: status,
             );
 
             if (myProf.day == scholarOnSiteDay1 &&
@@ -2125,7 +2059,6 @@ class _EditScholarState extends State<EditScholar> {
           _inputControllerPhoneNumber.text = myScholar.phonenumber;
           _inputControllerHours.text = myScholar.hours;
           hkTypeValue = myScholar.hkType;
-          statusValue = myScholar.status;
           coursesValue = myScholar.course;
           townValue = myScholar.town;
           scholarTypeValue = myScholar.scholarType;

@@ -1068,6 +1068,7 @@ class _AdminRegisterProfessorInputsState
                       await createUser(email: email, password: password).then(
                         (value) async {
                           Professor scholarObj = Professor(
+                            status: 'active',
                             uid: user!.uid,
                             department: department.toString(),
                             email: email,

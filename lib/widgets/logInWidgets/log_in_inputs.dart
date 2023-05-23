@@ -427,6 +427,22 @@ class _LogInInputsState extends State<LogInInputs> {
                               String password =
                                   _inputControllerPassword.text.trim();
 
+                              if (myProfObj.status == "inactive") {
+                                Navigator.of(context, rootNavigator: true)
+                                    .pop();
+                                DialogUnsuccessful(
+                                  headertext: "Your Status is Inactive! ",
+                                  subtext:
+                                      "Please proceed to CSDL for this concern",
+                                  textButton: "Close",
+                                  callback: () {
+                                    Navigator.of(context, rootNavigator: true)
+                                        .pop();
+                                  },
+                                ).buildUnsuccessfulScreen(context);
+                                return;
+                              }
+
                               await signIn(email: email, password: password)
                                   .then((value) async {
                                 if (user?.phoneNumber == null) {
@@ -539,6 +555,22 @@ class _LogInInputsState extends State<LogInInputs> {
                               Head myHeadObj = Head.fromJson(myObj);
 
                               String email = myHeadObj.email;
+
+                              if (myHeadObj.status == "inactive") {
+                                Navigator.of(context, rootNavigator: true)
+                                    .pop();
+                                DialogUnsuccessful(
+                                  headertext: "Your Status is Inactive! ",
+                                  subtext:
+                                      "Please proceed to CSDL for this concern",
+                                  textButton: "Close",
+                                  callback: () {
+                                    Navigator.of(context, rootNavigator: true)
+                                        .pop();
+                                  },
+                                ).buildUnsuccessfulScreen(context);
+                                return;
+                              }
 
                               await signIn(email: email, password: userPassword)
                                   .then((value) {

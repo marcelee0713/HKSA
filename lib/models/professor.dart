@@ -18,6 +18,7 @@ class Professor {
   String room;
   String section;
   String signaturecode;
+  String status;
   String subject;
   String time;
   String uid;
@@ -36,6 +37,7 @@ class Professor {
     required this.room,
     required this.section,
     required this.signaturecode,
+    required this.status,
     required this.subject,
     required this.time,
     required this.uid,
@@ -55,6 +57,7 @@ class Professor {
         room: json["room"],
         section: json["section"],
         signaturecode: json["signaturecode"],
+        status: json["status"],
         subject: json["subject"],
         time: json["time"],
         uid: json["uid"],
@@ -74,6 +77,7 @@ class Professor {
         "room": room,
         "section": section,
         "signaturecode": signaturecode,
+        "status": status,
         "subject": subject,
         "time": time,
         "uid": uid,

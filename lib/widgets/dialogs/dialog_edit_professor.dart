@@ -1275,6 +1275,8 @@ class _EditProfessorState extends State<EditProfessor> {
                                               const Duration(seconds: 2),
                                               () async {
                                             Professor scholarObj = Professor(
+                                              status:
+                                                  snapshot.data!.first.status,
                                               department: department.toString(),
                                               email: email,
                                               name: fullName,
