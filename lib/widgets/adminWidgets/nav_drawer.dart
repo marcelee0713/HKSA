@@ -25,13 +25,12 @@ class NavDraw extends StatefulWidget {
 }
 
 int selectedIndex = 0;
-bool headGetTheProfileOnce = true;
 
 class _NavDrawState extends State<NavDraw> {
   final logInBox = Hive.box("myLoginBox");
   late var userName = logInBox.get("userName");
   late var userID = logInBox.get("userID");
-  String userProfileListener = HKSAStrings.pfpPlaceholder;
+  String userProfileListener = "";
 
   @override
   void initState() {
@@ -64,12 +63,9 @@ class _NavDrawState extends State<NavDraw> {
               height: 200.0,
               child: Column(
                 children: [
-                  Container(
+                  SizedBox(
                     width: 150,
                     height: 150,
-                    decoration: const BoxDecoration(
-                        color: ColorPalette.secondary,
-                        borderRadius: BorderRadius.all(Radius.circular(99))),
                     child: AspectRatio(
                       aspectRatio: 1 / 1,
                       child: ClipOval(
@@ -220,7 +216,6 @@ class _NavDrawState extends State<NavDraw> {
                       sawItAlready = true;
                       headHasListened = false;
                       isSuperAdmin = false;
-                      headGetTheProfileOnce = true;
                       Future.delayed(const Duration(), (() {
                         DialogLoading(subtext: "Logging out...")
                             .buildLoadingScreen(context);
