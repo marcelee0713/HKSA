@@ -128,6 +128,7 @@ class _UploadGoogleDrivePageState extends State<UploadGoogleDrivePage> {
                   DialogLoading(subtext: "Changing...")
                       .buildLoadingScreen(context);
                   await testReference.set(link).catchError((error) {
+                    Navigator.of(context, rootNavigator: true).pop();
                     DialogUnsuccessful(
                       headertext: "Error",
                       subtext: "Please try it again later!",
@@ -138,16 +139,12 @@ class _UploadGoogleDrivePageState extends State<UploadGoogleDrivePage> {
                       },
                     ).buildUnsuccessfulScreen(context);
                   }).then((value) async {
-                    String res = await sendNotificationToTopic(
+                    await sendNotificationToTopic(
                       'scholars',
                       "Updated Google Drive Link",
                       "Google Drive link has now changed to a different link, please upload your OLD DTR file as soon as possible!",
-                    );
-                    // ignore: use_build_context_synchronously
-                    Navigator.of(context, rootNavigator: true).pop();
-                    if (res == "success") {
-                      String link = inputController.text;
-                      // ignore: use_build_context_synchronously
+                    ).then((value) async {
+                      Navigator.of(context, rootNavigator: true).pop();
                       DialogSuccess(
                         headertext:
                             "Google Drive Link has now successfully changed/updated!",
@@ -166,8 +163,8 @@ class _UploadGoogleDrivePageState extends State<UploadGoogleDrivePage> {
                         userType: userType,
                         id: userID,
                       );
-                    } else {
-                      // ignore: use_build_context_synchronously
+                    }).catchError((e) {
+                      Navigator.of(context, rootNavigator: true).pop();
                       DialogUnsuccessful(
                         headertext: "Error",
                         subtext:
@@ -178,7 +175,7 @@ class _UploadGoogleDrivePageState extends State<UploadGoogleDrivePage> {
                           Navigator.of(context, rootNavigator: true).pop();
                         },
                       ).buildUnsuccessfulScreen(context);
-                    }
+                    });
                   });
                 },
               ).buildConfirmScreen(context);

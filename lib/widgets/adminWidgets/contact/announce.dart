@@ -1,3 +1,7 @@
+// ignore_for_file: use_build_context_synchronously
+
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
@@ -5,6 +9,7 @@ import 'package:hive/hive.dart';
 import 'package:hksa/api/send_message.dart';
 import 'package:hksa/constant/colors.dart';
 import 'package:hksa/constant/string.dart';
+import 'package:hksa/models/scholar.dart';
 import 'package:hksa/widgets/dialogs/dialog_confirm.dart';
 import 'package:hksa/widgets/dialogs/dialog_loading.dart';
 import 'package:hksa/widgets/dialogs/dialog_success.dart';
@@ -285,105 +290,192 @@ class _AnnounceState extends State<Announce> {
                           }
 
                           DialogConfirm(
-                              headertext:
-                                  "Are you sure you want to post this announcement?",
-                              callback: () async {
-                                Navigator.of(context, rootNavigator: true)
-                                    .pop();
-                                DialogLoading(subtext: "Sending...")
-                                    .buildLoadingScreen(context);
-                                String userValue = 'All';
+                            headertext:
+                                "Are you sure you want to post this announcement?",
+                            callback: () async {
+                              Navigator.of(context, rootNavigator: true).pop();
+                              DialogLoading(subtext: "Sending...")
+                                  .buildLoadingScreen(context);
+                              String userValue = 'All';
+                              if (userTypeValue == 'All') {
+                                userValue = 'user_all';
+                              } else if (userTypeValue == "Scholars") {
+                                userValue = 'scholars';
+                              } else if (userTypeValue == "Scholars (Faci)") {
+                                userValue = 'scholars_faci';
+                              } else if (userTypeValue ==
+                                  "Scholars (Non-Faci)") {
+                                userValue = 'scholars_non_faci';
+                              } else if (userTypeValue == "Professors") {
+                                userValue = 'professors';
+                              }
+                              await sendNotificationToTopic(
+                                userValue,
+                                _inputControllerHeader.text.trim(),
+                                _inputControllerBody.text.trim(),
+                              ).then((value) async {
+                                String fullMessage =
+                                    "${_inputControllerHeader.text.trim()} ${_inputControllerBody.text.trim()}";
                                 if (userTypeValue == 'All') {
-                                  userValue = 'user_all';
-                                } else if (userTypeValue == "Scholars") {
-                                  userValue = 'scholars';
-                                } else if (userTypeValue == "Scholars (Faci)") {
-                                  userValue = 'scholars_faci';
-                                } else if (userTypeValue ==
-                                    "Scholars (Non-Faci)") {
-                                  userValue = 'scholars_non_faci';
-                                } else if (userTypeValue == "Professors") {
-                                  userValue = 'professors';
-                                }
-                                String res = await sendNotificationToTopic(
-                                    userValue,
-                                    _inputControllerHeader.text.trim(),
-                                    _inputControllerBody.text.trim());
-                                Future.delayed(const Duration(seconds: 2), () {
-                                  _scholarReference.get().then((snapshot) {
-                                    for (final scholarsId
-                                        in snapshot.children) {
-                                      String scholarID =
-                                          scholarsId.key.toString();
-                                      String recieverUserType = "scholars";
-                                      checkInbox(recieverUserType, scholarID);
-                                      sendMessage(
-                                          message:
-                                              _inputControllerBody.text.trim(),
-                                          receiverID: scholarID,
-                                          receiverUserType: recieverUserType);
-                                    }
-                                  }).whenComplete(() {
-                                    _profReference.get().then((snapshot) {
+                                  await _scholarReference.get().then(
+                                    (snapshot) async {
+                                      for (final scholarsId
+                                          in snapshot.children) {
+                                        String scholarID =
+                                            scholarsId.key.toString();
+                                        String recieverUserType = "scholars";
+                                        await checkInbox(
+                                            recieverUserType, scholarID);
+                                        await sendMessage(
+                                            message: fullMessage,
+                                            receiverID: scholarID,
+                                            receiverUserType: recieverUserType);
+                                      }
+                                    },
+                                  );
+
+                                  await _profReference.get().then(
+                                    (snapshot) async {
                                       for (final professorsId
                                           in snapshot.children) {
                                         String professorID =
                                             professorsId.key.toString();
                                         String recieverUserType = "professors";
-                                        checkInbox(
+                                        await checkInbox(
                                             recieverUserType, professorID);
-                                        sendMessage(
-                                            message: _inputControllerBody.text
-                                                .trim(),
+                                        await sendMessage(
+                                            message: fullMessage,
                                             receiverID: professorID,
                                             receiverUserType: recieverUserType);
                                       }
-                                    });
-                                  });
-                                }).whenComplete(() async {
-                                  if (res == "success") {
+                                    },
+                                  );
+                                } else if (userTypeValue == "Scholars") {
+                                  await _scholarReference.get().then(
+                                    (snapshot) async {
+                                      for (final scholarsId
+                                          in snapshot.children) {
+                                        String scholarID =
+                                            scholarsId.key.toString();
+                                        String recieverUserType = "scholars";
+                                        await checkInbox(
+                                            recieverUserType, scholarID);
+                                        await sendMessage(
+                                            message: fullMessage,
+                                            receiverID: scholarID,
+                                            receiverUserType: recieverUserType);
+                                      }
+                                    },
+                                  );
+                                } else if (userTypeValue == "Scholars (Faci)") {
+                                  await _scholarReference.get().then(
+                                    (snapshot) async {
+                                      for (final scholarsId
+                                          in snapshot.children) {
+                                        Map<String, dynamic> myObj = jsonDecode(
+                                            jsonEncode(scholarsId.value));
+                                        Scholar myScholar =
+                                            Scholar.fromJson(myObj);
+
+                                        if (myScholar.hkType == "Faci") {
+                                          String scholarID =
+                                              scholarsId.key.toString();
+                                          String recieverUserType = "scholars";
+                                          await checkInbox(
+                                              recieverUserType, scholarID);
+                                          await sendMessage(
+                                              message: fullMessage,
+                                              receiverID: scholarID,
+                                              receiverUserType:
+                                                  recieverUserType);
+                                        }
+                                      }
+                                    },
+                                  );
+                                } else if (userTypeValue ==
+                                    "Scholars (Non-Faci)") {
+                                  await _scholarReference.get().then(
+                                    (snapshot) async {
+                                      for (final scholarsId
+                                          in snapshot.children) {
+                                        Map<String, dynamic> myObj = jsonDecode(
+                                            jsonEncode(scholarsId.value));
+                                        Scholar myScholar =
+                                            Scholar.fromJson(myObj);
+
+                                        if (myScholar.hkType == "Non-Faci") {
+                                          String scholarID =
+                                              scholarsId.key.toString();
+                                          String recieverUserType = "scholars";
+                                          await checkInbox(
+                                              recieverUserType, scholarID);
+                                          await sendMessage(
+                                              message: fullMessage,
+                                              receiverID: scholarID,
+                                              receiverUserType:
+                                                  recieverUserType);
+                                        }
+                                      }
+                                    },
+                                  );
+                                } else if (userTypeValue == "Professors") {
+                                  await _profReference.get().then(
+                                    (snapshot) async {
+                                      for (final professorsId
+                                          in snapshot.children) {
+                                        String professorID =
+                                            professorsId.key.toString();
+                                        String recieverUserType = "professors";
+                                        await checkInbox(
+                                            recieverUserType, professorID);
+                                        await sendMessage(
+                                            message: fullMessage,
+                                            receiverID: professorID,
+                                            receiverUserType: recieverUserType);
+                                      }
+                                    },
+                                  );
+                                }
+
+                                Navigator.of(context, rootNavigator: true)
+                                    .pop();
+                                DialogSuccess(
+                                  headertext: "Successfully posted!",
+                                  subtext:
+                                      "You have succesfully sent to $userTypeValue, care to share another?",
+                                  textButton: "YES",
+                                  callback: () {
                                     Navigator.of(context, rootNavigator: true)
                                         .pop();
-                                    DialogSuccess(
-                                      headertext: "Successfully posted!",
-                                      subtext:
-                                          "You have succesfully sent to $userTypeValue, care to share another?",
-                                      textButton: "YES",
-                                      callback: () {
-                                        Navigator.of(context,
-                                                rootNavigator: true)
-                                            .pop();
-                                      },
-                                    ).buildSuccessScreen(context);
-                                    await createHistory(
-                                      desc:
-                                          "Posted an announcement to $userTypeValue.",
-                                      timeStamp: DateTime.now()
-                                          .microsecondsSinceEpoch
-                                          .toString(),
-                                      userType: userType,
-                                      id: userID,
-                                    );
+                                  },
+                                ).buildSuccessScreen(context);
+                                await createHistory(
+                                  desc:
+                                      "Posted an announcement to $userTypeValue. User sends this message: $fullMessage",
+                                  timeStamp: DateTime.now()
+                                      .microsecondsSinceEpoch
+                                      .toString(),
+                                  userType: userType,
+                                  id: userID,
+                                );
+                              }).catchError((e) {
+                                Navigator.of(context, rootNavigator: true)
+                                    .pop();
+                                DialogUnsuccessful(
+                                  headertext: "Error",
+                                  subtext:
+                                      "Something went wrong, please try again later.",
+                                  textButton: "Clear",
+                                  callback: () {
+                                    Navigator.of(context, rootNavigator: true)
+                                        .pop();
                                     _inputControllerHeader.text = "";
                                     _inputControllerBody.text = "";
-                                  } else {
-                                    Navigator.of(context, rootNavigator: true)
-                                        .pop();
-                                    DialogUnsuccessful(
-                                        headertext: "Error",
-                                        subtext:
-                                            "Something went wrong, please try again later.",
-                                        textButton: "Clear",
-                                        callback: () {
-                                          Navigator.of(context,
-                                                  rootNavigator: true)
-                                              .pop();
-                                          _inputControllerHeader.text = "";
-                                          _inputControllerBody.text = "";
-                                        }).buildUnsuccessfulScreen(context);
-                                  }
-                                });
-                              }).buildConfirmScreen(context);
+                                  },
+                                ).buildUnsuccessfulScreen(context);
+                              });
+                            },
+                          ).buildConfirmScreen(context);
                         },
                       ),
                     ),

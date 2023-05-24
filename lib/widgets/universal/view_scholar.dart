@@ -1,22 +1,16 @@
 import 'dart:convert';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:file_picker/file_picker.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:hive/hive.dart';
 import 'package:hksa/api/pdf_api.dart';
 import 'package:hksa/api/storage_service.dart';
 import 'package:hksa/constant/colors.dart';
-import 'package:hksa/constant/string.dart';
 import 'package:hksa/models/logs.dart';
 import 'package:hksa/models/professor.dart';
 import 'package:hksa/models/scholar.dart';
 import 'package:hksa/models/scholar_prof_detail.dart';
-import 'package:hksa/pages/adminPages/contact.dart';
 import 'package:hksa/widgets/dialogs/dialog_confirm.dart';
 import 'package:hksa/widgets/dialogs/dialog_edit_scholar.dart';
 import 'package:hksa/widgets/dialogs/dialog_loading.dart';
@@ -103,6 +97,14 @@ class _ScholarProfileState extends State<ScholarProfile> {
                 ),
               );
             }
+            String emailVerified =
+                snapshot.data!.first.isEmailVerified == "true"
+                    ? "Email is verified"
+                    : "Phone number is not verified";
+            String phoneVerified =
+                snapshot.data!.first.isPhoneVerified == "true"
+                    ? "Phone number is verified"
+                    : "Phone number is not verified";
             return ListView(
               shrinkWrap: true,
               scrollDirection: Axis.vertical,
@@ -152,6 +154,43 @@ class _ScholarProfileState extends State<ScholarProfile> {
                               color: Colors.black,
                             ),
                             textAlign: TextAlign.center,
+                          ),
+                          const SizedBox(
+                            height: 5,
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Tooltip(
+                                triggerMode: TooltipTriggerMode.tap,
+                                message: emailVerified,
+                                preferBelow: false,
+                                waitDuration: const Duration(milliseconds: 500),
+                                height: 20,
+                                textStyle: const TextStyle(
+                                  fontSize: 13,
+                                  fontFamily: 'Inter',
+                                  fontWeight: FontWeight.w300,
+                                  color: ColorPalette.accentWhite,
+                                ),
+                                child: const Icon(Icons.email_rounded),
+                              ),
+                              const SizedBox(width: 5),
+                              Tooltip(
+                                triggerMode: TooltipTriggerMode.tap,
+                                message: phoneVerified,
+                                preferBelow: false,
+                                waitDuration: const Duration(milliseconds: 500),
+                                height: 20,
+                                textStyle: const TextStyle(
+                                  fontSize: 13,
+                                  fontFamily: 'Inter',
+                                  fontWeight: FontWeight.w300,
+                                  color: ColorPalette.accentWhite,
+                                ),
+                                child: const Icon(Icons.phone),
+                              ),
+                            ],
                           ),
                           const SizedBox(
                             height: 20,
