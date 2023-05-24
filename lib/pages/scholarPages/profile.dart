@@ -36,6 +36,16 @@ class _ProfileState extends State<Profile> {
   String oldDTRURl = "";
 
   @override
+  void initState() {
+    DatabaseReference oldDTRRef =
+        FirebaseDatabase.instance.ref().child('olddtrlink');
+    oldDTRRef.get().then((link) => {
+          if (link.exists) {oldDTRURl = link.value.toString()}
+        });
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final FirebaseMessaging firebaseMessaging = FirebaseMessaging.instance;
 
