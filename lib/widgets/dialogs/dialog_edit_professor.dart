@@ -10,7 +10,6 @@ import 'package:hksa/constant/string.dart';
 import 'package:hksa/models/professor.dart';
 import 'package:hksa/pages/adminPages/contact.dart';
 import 'package:hksa/widgets/adminWidgets/nav_drawer.dart';
-import 'package:hksa/widgets/dialogs/dialog_confirm.dart';
 import 'package:hksa/widgets/dialogs/dialog_confirm_edit.dart';
 import 'package:hksa/widgets/dialogs/dialog_loading.dart';
 import 'package:hksa/widgets/dialogs/dialog_show_conflict.dart';
@@ -60,8 +59,6 @@ class _EditProfessorState extends State<EditProfessor> {
   String? sectionValue;
   String? subjectValue;
 
-  bool _passwordVisible = false;
-  bool _cfrmPasswordVisible = false;
   bool _signatureCodeVisible = false;
   bool gotValue = false;
   bool gotValueSubject = false;
@@ -1294,7 +1291,6 @@ class _EditProfessorState extends State<EditProfessor> {
                                                   .data!.first.listeningTo,
                                               isEmailVerified: currentEmailVer,
                                               isPhoneVerified: currentPhoneVer,
-                                              uid: snapshot.data!.first.uid,
                                             );
 
                                             await _dbReference

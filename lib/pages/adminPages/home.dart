@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -11,6 +13,9 @@ import 'package:hksa/widgets/adminWidgets/home/home_header.dart';
 import 'package:hksa/widgets/adminWidgets/nav_drawer.dart';
 import 'package:hksa/widgets/dialogs/dialog_loading.dart';
 import 'package:hksa/widgets/scholarWidgets/home/home_inputs.dart';
+
+bool headHasListened = false;
+StreamSubscription<DatabaseEvent>? headSubscription;
 
 class HomeAdmin extends StatefulWidget {
   const HomeAdmin({super.key});
@@ -28,13 +33,13 @@ class _HomeAdminState extends State<HomeAdmin> {
   void initState() {
     final FirebaseMessaging firebaseMessaging = FirebaseMessaging.instance;
     FirebaseAuth firebaseAuth = FirebaseAuth.instance;
-    if (!hasListened) {
+    if (!headHasListened) {
       DatabaseReference listenRef =
           FirebaseDatabase.instance.ref().child("Users/Head/$userID/status");
       DatabaseReference chatRef = FirebaseDatabase.instance
           .ref()
           .child("Users/Head/$userID/listeningTo");
-      authStateSubscription = listenRef.onValue.listen((event) {
+      headSubscription = listenRef.onValue.listen((event) {
         String status = event.snapshot.value.toString();
 
         if (status == "inactive") {
@@ -45,8 +50,8 @@ class _HomeAdminState extends State<HomeAdmin> {
             Future.delayed(
               const Duration(seconds: 3),
               () async {
-                authStateSubscription!.cancel();
-                hasListened = false;
+                headSubscription!.cancel();
+                headHasListened = false;
                 logInBox.put("isLoggedIn", false);
                 logInBox.put("hasTimedIn", false);
                 logInBox.put("userType", "");
@@ -159,9 +164,7 @@ class _HomeAdminState extends State<HomeAdmin> {
           });
         }
       });
-      hasListened = true;
-    } else {
-      debugPrint("I've already listened to this. Sorry");
+      headHasListened = true;
     }
     super.initState();
   }

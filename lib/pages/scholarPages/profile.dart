@@ -9,6 +9,7 @@ import 'package:hksa/api/storage_service.dart';
 import 'package:hksa/constant/colors.dart';
 import 'package:hksa/models/scholar.dart';
 import 'package:hksa/pages/login.dart';
+import 'package:hksa/pages/scholarPages/home.dart';
 import 'package:hksa/widgets/dialogs/dialog_confirm.dart';
 import 'package:hksa/widgets/dialogs/dialog_loading.dart';
 import 'package:hksa/widgets/dialogs/dialog_success.dart';
@@ -35,266 +36,8 @@ class _ProfileState extends State<Profile> {
   String oldDTRURl = "";
 
   @override
-  void initState() {
-    super.initState();
-    // Basically what this does is.
-    // It checks if this User still exist or inactive in the database
-    // And if he does. Then log out this user.
-    final logInBox = Hive.box("myLoginBox");
-    late var userID = logInBox.get("userID");
-    DatabaseReference oldDTRRef =
-        FirebaseDatabase.instance.ref().child('olddtrlink');
-    DatabaseReference userRef =
-        FirebaseDatabase.instance.ref().child('Users/Scholars/$userID');
-    DatabaseReference userRefStatus =
-        FirebaseDatabase.instance.ref().child('Users/Scholars/$userID/status');
-    final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
-
-    oldDTRRef.get().then((link) => {
-          if (link.exists) {oldDTRURl = link.value.toString()}
-        });
-
-    userRef.get().then((user) {
-      if (!user.exists) {
-        Future.delayed(const Duration(), (() {
-          DialogLoading(subtext: "Logging out...").buildLoadingScreen(context);
-        })).whenComplete(() {
-          Future.delayed(const Duration(seconds: 3), () async {
-            logInBox.put("isLoggedIn", false);
-            logInBox.put("hasTimedIn", false);
-            logInBox.put("userType", "");
-            logInBox.put("userID", "");
-            logInBox.put("userName", "");
-            logInBox.put("getTimeInLS", "");
-            logInBox.put("dateTimedIn", "");
-
-            Navigator.of(context).pushAndRemoveUntil(
-                MaterialPageRoute(builder: (context) => const Login()),
-                (Route<dynamic> route) => false);
-
-            showDialog(
-              context: context,
-              barrierDismissible: true,
-              builder: (context) {
-                return AlertDialog(
-                  backgroundColor: ColorPalette.accentDarkWhite,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10.0),
-                  ),
-                  actions: [
-                    Center(
-                      child: Container(
-                        padding: const EdgeInsets.all(10),
-                        decoration: const BoxDecoration(
-                          color: ColorPalette.accentDarkWhite,
-                          borderRadius: BorderRadius.all(Radius.circular(10)),
-                        ),
-                        height: 375,
-                        width: 275,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            const Icon(
-                              Icons.warning_rounded,
-                              color: ColorPalette.errorColor,
-                              size: 200,
-                            ),
-                            const SizedBox(height: 2),
-                            const Text(
-                              "Account removed",
-                              style: TextStyle(
-                                color: ColorPalette.primary,
-                                fontFamily: 'Inter',
-                                fontWeight: FontWeight.w700,
-                                fontSize: 14,
-                              ),
-                            ),
-                            const SizedBox(height: 8),
-                            const Text(
-                              "If you think this is wrong, proceed to CSDL!",
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                color: ColorPalette.primary,
-                                fontFamily: 'Inter',
-                                fontWeight: FontWeight.w400,
-                                fontSize: 12,
-                              ),
-                            ),
-                            const SizedBox(height: 8),
-                            ElevatedButton(
-                              onPressed: (() {
-                                Navigator.of(context, rootNavigator: true)
-                                    .pop();
-                              }),
-                              child: Container(
-                                height: 40,
-                                width: 100,
-                                decoration: const BoxDecoration(
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(10.0)),
-                                  color: ColorPalette.primary,
-                                ),
-                                child: const Center(
-                                  child: Text(
-                                    "Close",
-                                    style: TextStyle(
-                                      color: ColorPalette.accentWhite,
-                                      fontFamily: 'Inter',
-                                      fontWeight: FontWeight.w700,
-                                      fontSize: 15,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                );
-              },
-            );
-            await firebaseAuth.signOut();
-            await _firebaseMessaging.unsubscribeFromTopic('user_all');
-            await _firebaseMessaging.unsubscribeFromTopic('scholars');
-            await _firebaseMessaging.unsubscribeFromTopic('scholars_faci');
-            await _firebaseMessaging.unsubscribeFromTopic('scholars_non_faci');
-          });
-        });
-      }
-    });
-
-    userRefStatus.get().then((snapshot) {
-      if (snapshot.value.toString() == "inactive") {
-        Future.delayed(const Duration(), (() {
-          DialogLoading(subtext: "Logging out...").buildLoadingScreen(context);
-        })).whenComplete(() {
-          Future.delayed(
-            const Duration(seconds: 3),
-            () async {
-              logInBox.put("isLoggedIn", false);
-              logInBox.put("hasTimedIn", false);
-              logInBox.put("userType", "");
-              logInBox.put("userName", "");
-              logInBox.put("getTimeInLS", "");
-              logInBox.put("dateTimedIn", "");
-
-              Navigator.of(context).pushAndRemoveUntil(
-                  MaterialPageRoute(builder: (context) => const Login()),
-                  (Route<dynamic> route) => false);
-
-              showDialog(
-                context: context,
-                barrierDismissible: true,
-                builder: (context) {
-                  return AlertDialog(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10.0),
-                    ),
-                    backgroundColor: ColorPalette.accentDarkWhite,
-                    actions: [
-                      Center(
-                        child: Container(
-                          padding: const EdgeInsets.all(10),
-                          decoration: const BoxDecoration(
-                            color: ColorPalette.accentDarkWhite,
-                            borderRadius: BorderRadius.all(Radius.circular(10)),
-                          ),
-                          height: 375,
-                          width: 275,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              const Icon(
-                                Icons.warning_rounded,
-                                color: ColorPalette.errorColor,
-                                size: 200,
-                              ),
-                              const SizedBox(height: 2),
-                              const Text(
-                                "Account Inactive",
-                                style: TextStyle(
-                                  color: ColorPalette.primary,
-                                  fontFamily: 'Inter',
-                                  fontWeight: FontWeight.w700,
-                                  fontSize: 14,
-                                ),
-                              ),
-                              const SizedBox(height: 8),
-                              const Text(
-                                "If you think this is wrong, proceed to CSDL!",
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  color: ColorPalette.primary,
-                                  fontFamily: 'Inter',
-                                  fontWeight: FontWeight.w400,
-                                  fontSize: 12,
-                                ),
-                              ),
-                              const SizedBox(height: 8),
-                              ElevatedButton(
-                                onPressed: (() {
-                                  Navigator.of(context, rootNavigator: true)
-                                      .pop();
-                                }),
-                                child: Container(
-                                  height: 40,
-                                  width: 100,
-                                  decoration: const BoxDecoration(
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(10.0)),
-                                    color: ColorPalette.primary,
-                                  ),
-                                  child: const Center(
-                                    child: Text(
-                                      "Close",
-                                      style: TextStyle(
-                                        color: ColorPalette.accentWhite,
-                                        fontFamily: 'Inter',
-                                        fontWeight: FontWeight.w700,
-                                        fontSize: 15,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
-                  );
-                },
-              );
-              logInBox.put("userID", "");
-              await firebaseAuth.signOut();
-              await _firebaseMessaging.unsubscribeFromTopic('user_all');
-              await _firebaseMessaging.unsubscribeFromTopic('scholars');
-              await _firebaseMessaging.unsubscribeFromTopic('scholars_faci');
-              await _firebaseMessaging
-                  .unsubscribeFromTopic('scholars_non_faci');
-              await createHistory(
-                desc: "User logged out due to its status being inactive",
-                timeStamp: DateTime.now().microsecondsSinceEpoch.toString(),
-                userType: "scholar",
-                id: userID,
-              );
-            },
-          );
-        });
-      }
-    });
-  }
-
-  @override
   Widget build(BuildContext context) {
-    final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
-    DatabaseReference dbReference = FirebaseDatabase.instance
-        .ref()
-        .child("Users/Scholars/$userID/password");
+    final FirebaseMessaging firebaseMessaging = FirebaseMessaging.instance;
 
     return Container(
       padding: const EdgeInsets.fromLTRB(20, 20, 20, 5),
@@ -634,22 +377,26 @@ class _ProfileState extends State<Profile> {
                                   Future.delayed(const Duration(), (() {
                                     DialogLoading(subtext: "Logging out...")
                                         .buildLoadingScreen(context);
-                                  })).whenComplete(() {
+                                  })).whenComplete(() async {
                                     Future.delayed(const Duration(seconds: 3),
                                         () async {
+                                      scholarSubscription!.cancel();
+                                      scholarHasListened = false;
                                       logInBox.put("isLoggedIn", false);
                                       logInBox.put("hasTimedIn", false);
                                       logInBox.put("userName", "");
                                       logInBox.put("getTimeInLS", "");
                                       logInBox.put("dateTimedIn", "");
-                                      _firebaseMessaging
+                                      await firebaseMessaging
                                           .unsubscribeFromTopic('user_all');
-                                      _firebaseMessaging
+                                      await firebaseMessaging
                                           .unsubscribeFromTopic('scholars');
-                                      _firebaseMessaging.unsubscribeFromTopic(
-                                          'scholars_faci');
-                                      _firebaseMessaging.unsubscribeFromTopic(
-                                          'scholars_non_faci');
+                                      await firebaseMessaging
+                                          .unsubscribeFromTopic(
+                                              'scholars_faci');
+                                      await firebaseMessaging
+                                          .unsubscribeFromTopic(
+                                              'scholars_non_faci');
                                       await signOut();
                                       await createHistory(
                                         desc: "User logged out",
@@ -849,10 +596,10 @@ class _ProfileState extends State<Profile> {
 
   Future<List<Scholar>> getScholar() async {
     List<Scholar> myUser = [];
-    final DatabaseReference _userReference =
+    final DatabaseReference userReference =
         FirebaseDatabase.instance.ref().child('Users/Scholars/$userID');
     try {
-      await _userReference.get().then((snapshot) {
+      await userReference.get().then((snapshot) {
         Map<String, dynamic> myObj = jsonDecode(jsonEncode(snapshot.value));
         Scholar myScholar = Scholar.fromJson(myObj);
         userProfileListener = myScholar.profilePicture;

@@ -621,7 +621,6 @@ class _LogInInputsState extends State<LogInInputs> {
                                 _myLoginBox.put("userID", userID);
                                 _myLoginBox.put("userName", myHeadObj.name);
                                 _myLoginBox.put("getTimeInLS", "");
-                                _myLoginBox.put("hasListened", false);
 
                                 // Will now go to the Admin page
                                 // And literally replace any pages.

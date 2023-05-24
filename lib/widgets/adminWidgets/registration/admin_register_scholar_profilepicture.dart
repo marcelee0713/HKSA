@@ -26,7 +26,6 @@ class AdminProfilePictureScholar extends StatefulWidget {
 class _AdminProfilePictureScholarState
     extends State<AdminProfilePictureScholar> {
   FirebaseAuth firebaseAuth = FirebaseAuth.instance;
-  User? user;
 
   final myRegBox = Hive.box("myRegistrationBox");
   final logInBox = Hive.box("myLoginBox");
@@ -291,7 +290,6 @@ class _AdminProfilePictureScholarState
                           wholeDayVacantTime,
                           scholarType,
                           town,
-                          user!.uid,
                         )
                             .then(
                           (value) async {
@@ -341,9 +339,8 @@ class _AdminProfilePictureScholarState
 
   Future createUser({required String email, required String password}) async {
     try {
-      await firebaseAuth
-          .createUserWithEmailAndPassword(email: email, password: password)
-          .then((value) => user = value.user);
+      await firebaseAuth.createUserWithEmailAndPassword(
+          email: email, password: password);
     } on FirebaseAuthException catch (e) {
       throw e.message.toString();
     }

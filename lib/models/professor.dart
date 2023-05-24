@@ -21,7 +21,6 @@ class Professor {
   String status;
   String subject;
   String time;
-  String uid;
 
   Professor({
     required this.day,
@@ -40,7 +39,6 @@ class Professor {
     required this.status,
     required this.subject,
     required this.time,
-    required this.uid,
   });
 
   factory Professor.fromJson(Map<String, dynamic> json) => Professor(
@@ -60,7 +58,6 @@ class Professor {
         status: json["status"],
         subject: json["subject"],
         time: json["time"],
-        uid: json["uid"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -80,6 +77,5 @@ class Professor {
         "status": status,
         "subject": subject,
         "time": time,
-        "uid": uid,
       };
 }

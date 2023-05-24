@@ -287,7 +287,6 @@ class _RegisterInputsProfilePictureState
                           wholeDayVacantTime,
                           scholarType,
                           town,
-                          user!.uid,
                         )
                             .then(
                           (value) {
