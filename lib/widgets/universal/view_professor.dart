@@ -35,76 +35,76 @@ class _ProfessorProfileState extends State<ProfessorProfile> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: ColorPalette.accentWhite,
-      body: Container(
-        padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
-        color: ColorPalette.accentWhite,
-        child: FutureBuilder(
-          future: getProfessor(),
-          builder: (context, snapshot) {
-            if (!snapshot.hasData) {
-              return Center(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: const <Widget>[
-                    SpinKitCircle(
-                      color: ColorPalette.secondary,
-                      size: 100,
-                    ),
-                    SizedBox(height: 20),
-                    Text("Loading..."),
-                  ],
-                ),
-              );
-            }
-            if (snapshot.hasError) {
-              return Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: const [
-                    Icon(
-                      Icons.warning_rounded,
-                      size: 200,
-                      color: ColorPalette.errorColor,
-                    ),
-                    Text(
-                      'Something went wrong!',
-                      style: TextStyle(
-                        fontFamily: 'Inter',
-                        color: ColorPalette.accentBlack,
-                        fontWeight: FontWeight.bold,
+      body: Center(
+        child: Container(
+          padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+          color: ColorPalette.accentWhite,
+          child: FutureBuilder(
+            future: getProfessor(),
+            builder: (context, snapshot) {
+              if (!snapshot.hasData) {
+                return Center(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: const <Widget>[
+                      SpinKitCircle(
+                        color: ColorPalette.secondary,
+                        size: 100,
                       ),
-                    ),
-                    SizedBox(height: 5),
-                    Text(
-                      'Please try again later.',
-                      style: TextStyle(
-                        fontFamily: 'Inter',
-                        color: ColorPalette.accentBlack,
+                      SizedBox(height: 20),
+                      Text("Loading..."),
+                    ],
+                  ),
+                );
+              }
+              if (snapshot.hasError) {
+                return Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: const [
+                      Icon(
+                        Icons.warning_rounded,
+                        size: 200,
+                        color: ColorPalette.errorColor,
                       ),
-                    ),
-                  ],
-                ),
-              );
-            }
-            String emailVerified =
-                snapshot.data!.first.isEmailVerified == "true"
-                    ? "Email is verified"
-                    : "Phone number is not verified";
-            String phoneVerified =
-                snapshot.data!.first.isPhoneVerified == "true"
-                    ? "Phone number is verified"
-                    : "Phone number is not verified";
-            return ListView(
-              shrinkWrap: true,
-              children: [
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Center(
-                      child: Column(
+                      Text(
+                        'Something went wrong!',
+                        style: TextStyle(
+                          fontFamily: 'Inter',
+                          color: ColorPalette.accentBlack,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      SizedBox(height: 5),
+                      Text(
+                        'Please try again later.',
+                        style: TextStyle(
+                          fontFamily: 'Inter',
+                          color: ColorPalette.accentBlack,
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              }
+              String emailVerified =
+                  snapshot.data!.first.isEmailVerified == "true"
+                      ? "Email is verified"
+                      : "Email is not verified";
+              String phoneVerified =
+                  snapshot.data!.first.isPhoneVerified == "true"
+                      ? "Phone number is verified"
+                      : "Phone number is not verified";
+              return ListView(
+                shrinkWrap: true,
+                children: [
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Row(
                         children: [
                           SizedBox(
                             width: 150,
@@ -119,485 +119,547 @@ class _ProfessorProfileState extends State<ProfessorProfile> {
                               ),
                             ),
                           ),
-                          const SizedBox(
-                            height: 20,
-                          ),
-                          Text(
-                            snapshot.data!.first.name,
-                            style: const TextStyle(
-                              fontSize: 15,
-                              fontFamily: 'Inter',
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black,
+                          const SizedBox(width: 5),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    Tooltip(
+                                      triggerMode: TooltipTriggerMode.tap,
+                                      message: "Professor",
+                                      preferBelow: false,
+                                      waitDuration:
+                                          const Duration(milliseconds: 500),
+                                      height: 20,
+                                      textStyle: const TextStyle(
+                                        fontSize: 13,
+                                        fontFamily: 'Inter',
+                                        fontWeight: FontWeight.w300,
+                                        color: ColorPalette.accentWhite,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: ColorPalette.primary
+                                            .withOpacity(0.85),
+                                        borderRadius: const BorderRadius.all(
+                                          Radius.circular(5),
+                                        ),
+                                      ),
+                                      child: const Icon(
+                                          Icons.supervisor_account_outlined),
+                                    ),
+                                    const SizedBox(width: 5),
+                                    Expanded(
+                                      child: Text(
+                                        snapshot.data!.first.name,
+                                        style: const TextStyle(
+                                          fontSize: 15,
+                                          fontFamily: 'Inter',
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.black,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 2),
+                                Row(
+                                  children: [
+                                    Tooltip(
+                                      triggerMode: TooltipTriggerMode.tap,
+                                      message: phoneVerified,
+                                      preferBelow: false,
+                                      waitDuration:
+                                          const Duration(milliseconds: 500),
+                                      height: 20,
+                                      textStyle: const TextStyle(
+                                        fontSize: 13,
+                                        fontFamily: 'Inter',
+                                        fontWeight: FontWeight.w300,
+                                        color: ColorPalette.accentWhite,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: ColorPalette.primary
+                                            .withOpacity(0.85),
+                                        borderRadius: const BorderRadius.all(
+                                          Radius.circular(5),
+                                        ),
+                                      ),
+                                      child: const Icon(Icons.phone),
+                                    ),
+                                    const SizedBox(width: 5),
+                                    Text(
+                                      snapshot.data!.first.phonenumber,
+                                      style: const TextStyle(
+                                        fontSize: 13,
+                                        fontFamily: 'Inter',
+                                        fontWeight: FontWeight.w300,
+                                        color: Colors.black,
+                                      ),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 2),
+                                Row(
+                                  children: [
+                                    Tooltip(
+                                      triggerMode: TooltipTriggerMode.tap,
+                                      message: emailVerified,
+                                      preferBelow: false,
+                                      waitDuration:
+                                          const Duration(milliseconds: 500),
+                                      height: 20,
+                                      textStyle: const TextStyle(
+                                        fontSize: 13,
+                                        fontFamily: 'Inter',
+                                        fontWeight: FontWeight.w300,
+                                        color: ColorPalette.accentWhite,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: ColorPalette.primary
+                                            .withOpacity(0.85),
+                                        borderRadius: const BorderRadius.all(
+                                          Radius.circular(5),
+                                        ),
+                                      ),
+                                      child: const Icon(Icons.email_rounded),
+                                    ),
+                                    const SizedBox(width: 5),
+                                    Expanded(
+                                      child: Text(
+                                        snapshot.data!.first.email,
+                                        style: const TextStyle(
+                                          fontSize: 13,
+                                          fontFamily: 'Inter',
+                                          fontWeight: FontWeight.w300,
+                                          color: Colors.black,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
                             ),
-                            textAlign: TextAlign.center,
                           ),
-                          const SizedBox(
-                            height: 5,
-                          ),
-                          Text(
-                            snapshot.data!.first.phonenumber,
-                            style: const TextStyle(
-                              fontSize: 13,
-                              fontFamily: 'Inter',
-                              fontWeight: FontWeight.w300,
-                              color: Colors.black,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                          const SizedBox(
-                            height: 5,
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
+                        ],
+                      ),
+                      const SizedBox(height: 20),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Tooltip(
-                                triggerMode: TooltipTriggerMode.tap,
-                                message: emailVerified,
-                                preferBelow: false,
-                                waitDuration: const Duration(milliseconds: 500),
-                                height: 20,
-                                textStyle: const TextStyle(
-                                  fontSize: 13,
+                              const Text(
+                                "Professor ID:",
+                                style: TextStyle(
+                                  fontSize: 15,
                                   fontFamily: 'Inter',
-                                  fontWeight: FontWeight.w300,
-                                  color: ColorPalette.accentWhite,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.black,
                                 ),
-                                child: const Icon(Icons.email_rounded),
                               ),
-                              const SizedBox(width: 5),
-                              Tooltip(
-                                triggerMode: TooltipTriggerMode.tap,
-                                message: phoneVerified,
-                                preferBelow: false,
-                                waitDuration: const Duration(milliseconds: 500),
-                                height: 20,
-                                textStyle: const TextStyle(
+                              const SizedBox(
+                                height: 5,
+                              ),
+                              Text(
+                                snapshot.data!.first.professorId,
+                                style: const TextStyle(
                                   fontSize: 13,
                                   fontFamily: 'Inter',
                                   fontWeight: FontWeight.w300,
-                                  color: ColorPalette.accentWhite,
+                                  color: Colors.black,
                                 ),
-                                child: const Icon(Icons.phone),
                               ),
                             ],
                           ),
                           const SizedBox(
                             height: 20,
                           ),
-                        ],
-                      ),
-                    ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text(
-                              "Professor ID:",
-                              style: TextStyle(
-                                fontSize: 15,
-                                fontFamily: 'Inter',
-                                fontWeight: FontWeight.w600,
-                                color: Colors.black,
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                'Department:',
+                                style: TextStyle(
+                                  fontSize: 15,
+                                  fontFamily: 'Inter',
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.black,
+                                ),
                               ),
-                            ),
-                            const SizedBox(
-                              height: 5,
-                            ),
-                            Text(
-                              snapshot.data!.first.professorId,
-                              style: const TextStyle(
-                                fontSize: 13,
-                                fontFamily: 'Inter',
-                                fontWeight: FontWeight.w300,
-                                color: Colors.black,
+                              const SizedBox(
+                                height: 5,
                               ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(
-                          height: 20,
-                        ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text(
-                              'Email:',
-                              style: TextStyle(
-                                fontSize: 15,
-                                fontFamily: 'Inter',
-                                fontWeight: FontWeight.w600,
-                                color: Colors.black,
+                              Text(
+                                snapshot.data!.first.department,
+                                style: const TextStyle(
+                                  fontSize: 13,
+                                  fontFamily: 'Inter',
+                                  fontWeight: FontWeight.w300,
+                                  color: Colors.black,
+                                ),
                               ),
-                            ),
-                            const SizedBox(
-                              height: 5,
-                            ),
-                            Text(
-                              snapshot.data!.first.email,
-                              style: const TextStyle(
-                                fontSize: 13,
-                                fontFamily: 'Inter',
-                                fontWeight: FontWeight.w300,
-                                color: Colors.black,
+                            ],
+                          ),
+                          const SizedBox(
+                            height: 20,
+                          ),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                'Day:',
+                                style: TextStyle(
+                                  fontSize: 15,
+                                  fontFamily: 'Inter',
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.black,
+                                ),
                               ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(
-                          height: 20,
-                        ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text(
-                              'Department:',
-                              style: TextStyle(
-                                fontSize: 15,
-                                fontFamily: 'Inter',
-                                fontWeight: FontWeight.w600,
-                                color: Colors.black,
+                              const SizedBox(
+                                height: 5,
                               ),
-                            ),
-                            const SizedBox(
-                              height: 5,
-                            ),
-                            Text(
-                              snapshot.data!.first.department,
-                              style: const TextStyle(
-                                fontSize: 13,
-                                fontFamily: 'Inter',
-                                fontWeight: FontWeight.w300,
-                                color: Colors.black,
+                              Text(
+                                snapshot.data!.first.day,
+                                style: const TextStyle(
+                                  fontSize: 13,
+                                  fontFamily: 'Inter',
+                                  fontWeight: FontWeight.w300,
+                                  color: Colors.black,
+                                ),
                               ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(
-                          height: 20,
-                        ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text(
-                              'Day:',
-                              style: TextStyle(
-                                fontSize: 15,
-                                fontFamily: 'Inter',
-                                fontWeight: FontWeight.w600,
-                                color: Colors.black,
+                            ],
+                          ),
+                          const SizedBox(
+                            height: 20,
+                          ),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                'Time:',
+                                style: TextStyle(
+                                  fontSize: 15,
+                                  fontFamily: 'Inter',
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.black,
+                                ),
                               ),
-                            ),
-                            const SizedBox(
-                              height: 5,
-                            ),
-                            Text(
-                              snapshot.data!.first.day,
-                              style: const TextStyle(
-                                fontSize: 13,
-                                fontFamily: 'Inter',
-                                fontWeight: FontWeight.w300,
-                                color: Colors.black,
+                              const SizedBox(
+                                height: 5,
                               ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(
-                          height: 20,
-                        ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text(
-                              'Time:',
-                              style: TextStyle(
-                                fontSize: 15,
-                                fontFamily: 'Inter',
-                                fontWeight: FontWeight.w600,
-                                color: Colors.black,
+                              Text(
+                                snapshot.data!.first.time,
+                                style: const TextStyle(
+                                  fontSize: 13,
+                                  fontFamily: 'Inter',
+                                  fontWeight: FontWeight.w300,
+                                  color: Colors.black,
+                                ),
                               ),
-                            ),
-                            const SizedBox(
-                              height: 5,
-                            ),
-                            Text(
-                              snapshot.data!.first.time,
-                              style: const TextStyle(
-                                fontSize: 13,
-                                fontFamily: 'Inter',
-                                fontWeight: FontWeight.w300,
-                                color: Colors.black,
+                            ],
+                          ),
+                          const SizedBox(
+                            height: 20,
+                          ),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                'Room:',
+                                style: TextStyle(
+                                  fontSize: 15,
+                                  fontFamily: 'Inter',
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.black,
+                                ),
                               ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(
-                          height: 20,
-                        ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text(
-                              'Room:',
-                              style: TextStyle(
-                                fontSize: 15,
-                                fontFamily: 'Inter',
-                                fontWeight: FontWeight.w600,
-                                color: Colors.black,
+                              const SizedBox(
+                                height: 5,
                               ),
-                            ),
-                            const SizedBox(
-                              height: 5,
-                            ),
-                            Text(
-                              snapshot.data!.first.room,
-                              style: const TextStyle(
-                                fontSize: 13,
-                                fontFamily: 'Inter',
-                                fontWeight: FontWeight.w300,
-                                color: Colors.black,
+                              Text(
+                                snapshot.data!.first.room,
+                                style: const TextStyle(
+                                  fontSize: 13,
+                                  fontFamily: 'Inter',
+                                  fontWeight: FontWeight.w300,
+                                  color: Colors.black,
+                                ),
                               ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(
-                          height: 20,
-                        ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text(
-                              'Section:',
-                              style: TextStyle(
-                                fontSize: 15,
-                                fontFamily: 'Inter',
-                                fontWeight: FontWeight.w600,
-                                color: Colors.black,
+                            ],
+                          ),
+                          const SizedBox(
+                            height: 20,
+                          ),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                'Section:',
+                                style: TextStyle(
+                                  fontSize: 15,
+                                  fontFamily: 'Inter',
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.black,
+                                ),
                               ),
-                            ),
-                            const SizedBox(
-                              height: 5,
-                            ),
-                            Text(
-                              snapshot.data!.first.section,
-                              style: const TextStyle(
-                                fontSize: 13,
-                                fontFamily: 'Inter',
-                                fontWeight: FontWeight.w300,
-                                color: Colors.black,
+                              const SizedBox(
+                                height: 5,
                               ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(
-                          height: 20,
-                        ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text(
-                              'Subject:',
-                              style: TextStyle(
-                                fontSize: 15,
-                                fontFamily: 'Inter',
-                                fontWeight: FontWeight.w600,
-                                color: Colors.black,
+                              Text(
+                                snapshot.data!.first.section,
+                                style: const TextStyle(
+                                  fontSize: 13,
+                                  fontFamily: 'Inter',
+                                  fontWeight: FontWeight.w300,
+                                  color: Colors.black,
+                                ),
                               ),
-                            ),
-                            const SizedBox(
-                              height: 5,
-                            ),
-                            Text(
-                              snapshot.data!.first.subject,
-                              style: const TextStyle(
-                                fontSize: 13,
-                                fontFamily: 'Inter',
-                                fontWeight: FontWeight.w300,
-                                color: Colors.black,
+                            ],
+                          ),
+                          const SizedBox(
+                            height: 20,
+                          ),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                'Subject:',
+                                style: TextStyle(
+                                  fontSize: 15,
+                                  fontFamily: 'Inter',
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.black,
+                                ),
                               ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(
-                          height: 20,
-                        ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text(
-                              'Status:',
-                              style: TextStyle(
-                                fontSize: 15,
-                                fontFamily: 'Inter',
-                                fontWeight: FontWeight.w600,
-                                color: Colors.black,
+                              const SizedBox(
+                                height: 5,
                               ),
-                            ),
-                            const SizedBox(
-                              height: 5,
-                            ),
-                            Text(
-                              snapshot.data!.first.status.replaceAll(
-                                  snapshot.data!.first.status.substring(0, 1),
-                                  snapshot.data!.first.status
-                                      .substring(0, 1)
-                                      .toUpperCase()),
-                              style: const TextStyle(
-                                fontSize: 13,
-                                fontFamily: 'Inter',
-                                fontWeight: FontWeight.w300,
-                                color: Colors.black,
+                              Text(
+                                snapshot.data!.first.subject,
+                                style: const TextStyle(
+                                  fontSize: 13,
+                                  fontFamily: 'Inter',
+                                  fontWeight: FontWeight.w300,
+                                  color: Colors.black,
+                                ),
                               ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        userType == "head"
-                            ? Column(
-                                crossAxisAlignment: CrossAxisAlignment.stretch,
-                                children: [
-                                  Row(
-                                    children: [
-                                      Expanded(
-                                        child: ElevatedButton(
-                                          onPressed: () {
-                                            Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                builder: (context) => Inbox(
-                                                  receiverFullName:
-                                                      snapshot.data!.first.name,
-                                                  receiverID: snapshot
-                                                      .data!.first.professorId,
-                                                  receiverType: "professor",
+                            ],
+                          ),
+                          const SizedBox(
+                            height: 20,
+                          ),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                'Status:',
+                                style: TextStyle(
+                                  fontSize: 15,
+                                  fontFamily: 'Inter',
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.black,
+                                ),
+                              ),
+                              const SizedBox(
+                                height: 5,
+                              ),
+                              Text(
+                                snapshot.data!.first.status.replaceAll(
+                                    snapshot.data!.first.status.substring(0, 1),
+                                    snapshot.data!.first.status
+                                        .substring(0, 1)
+                                        .toUpperCase()),
+                                style: const TextStyle(
+                                  fontSize: 13,
+                                  fontFamily: 'Inter',
+                                  fontWeight: FontWeight.w300,
+                                  color: Colors.black,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          userType == "head"
+                              ? Column(
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.stretch,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        Expanded(
+                                          child: ElevatedButton(
+                                            onPressed: () {
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) => Inbox(
+                                                    receiverFullName: snapshot
+                                                        .data!.first.name,
+                                                    receiverID: snapshot.data!
+                                                        .first.professorId,
+                                                    receiverType: "professor",
+                                                  ),
                                                 ),
-                                              ),
-                                            );
-                                          },
-                                          style: ElevatedButton.styleFrom(
-                                            backgroundColor:
-                                                ColorPalette.primary,
-                                          ),
-                                          child: const Text(
-                                            "Message",
-                                            style: TextStyle(
-                                                fontFamily: 'Inter',
-                                                fontSize: 16,
-                                                fontWeight: FontWeight.w400,
-                                                color:
-                                                    ColorPalette.accentWhite),
+                                              );
+                                            },
+                                            style: ElevatedButton.styleFrom(
+                                              backgroundColor:
+                                                  ColorPalette.primary,
+                                            ),
+                                            child: const Text(
+                                              "Message",
+                                              style: TextStyle(
+                                                  fontFamily: 'Inter',
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.w400,
+                                                  color:
+                                                      ColorPalette.accentWhite),
+                                            ),
                                           ),
                                         ),
-                                      ),
-                                      const SizedBox(width: 5),
-                                      Expanded(
-                                        child: ElevatedButton(
-                                          onPressed: () {
-                                            Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                builder: (context) =>
-                                                    EditProfessor(
-                                                  userID: snapshot
-                                                      .data!.first.professorId,
-                                                  currentRoom:
-                                                      snapshot.data!.first.room,
-                                                  currentSection: snapshot
-                                                      .data!.first.section,
-                                                  currentSubject: snapshot
-                                                      .data!.first.subject,
+                                        const SizedBox(width: 5),
+                                        Expanded(
+                                          child: ElevatedButton(
+                                            onPressed: () {
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      EditProfessor(
+                                                    userID: snapshot.data!.first
+                                                        .professorId,
+                                                    currentRoom: snapshot
+                                                        .data!.first.room,
+                                                    currentSection: snapshot
+                                                        .data!.first.section,
+                                                    currentSubject: snapshot
+                                                        .data!.first.subject,
+                                                  ),
                                                 ),
-                                              ),
-                                            );
-                                          },
-                                          style: ElevatedButton.styleFrom(
-                                            backgroundColor:
-                                                ColorPalette.primary,
-                                          ),
-                                          child: const Text(
-                                            "Edit",
-                                            style: TextStyle(
-                                                fontFamily: 'Inter',
-                                                fontSize: 16,
-                                                fontWeight: FontWeight.w400,
-                                                color:
-                                                    ColorPalette.accentWhite),
+                                              );
+                                            },
+                                            style: ElevatedButton.styleFrom(
+                                              backgroundColor:
+                                                  ColorPalette.primary,
+                                            ),
+                                            child: const Text(
+                                              "Edit",
+                                              style: TextStyle(
+                                                  fontFamily: 'Inter',
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.w400,
+                                                  color:
+                                                      ColorPalette.accentWhite),
+                                            ),
                                           ),
                                         ),
-                                      ),
-                                    ],
-                                  ),
-                                  Row(
-                                    children: [
-                                      Expanded(
-                                        child: ElevatedButton(
-                                          onPressed: () {
-                                            Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                builder: (context) =>
-                                                    HistoryLogs(
-                                                  userID: widget.userID,
+                                      ],
+                                    ),
+                                    Row(
+                                      children: [
+                                        Expanded(
+                                          child: ElevatedButton(
+                                            onPressed: () {
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      HistoryLogs(
+                                                    userID: widget.userID,
+                                                  ),
                                                 ),
-                                              ),
-                                            );
-                                          },
-                                          style: ElevatedButton.styleFrom(
-                                            backgroundColor:
-                                                ColorPalette.primary,
-                                          ),
-                                          child: const Text(
-                                            "View History Logs",
-                                            textAlign: TextAlign.center,
-                                            style: TextStyle(
-                                                fontFamily: 'Inter',
-                                                fontSize: 16,
-                                                fontWeight: FontWeight.w400,
-                                                color:
-                                                    ColorPalette.accentWhite),
+                                              );
+                                            },
+                                            style: ElevatedButton.styleFrom(
+                                              backgroundColor:
+                                                  ColorPalette.primary,
+                                            ),
+                                            child: const Text(
+                                              "View History Logs",
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(
+                                                  fontFamily: 'Inter',
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.w400,
+                                                  color:
+                                                      ColorPalette.accentWhite),
+                                            ),
                                           ),
                                         ),
-                                      ),
-                                      const SizedBox(width: 5),
-                                      Expanded(
-                                        child: ElevatedButton(
-                                          onPressed: () {
-                                            DialogConfirm(
-                                              headertext:
-                                                  "Are you sure you want the reset history logs of this user?",
-                                              callback: () async {
-                                                Navigator.of(context,
-                                                        rootNavigator: true)
-                                                    .pop();
+                                        const SizedBox(width: 5),
+                                        Expanded(
+                                          child: ElevatedButton(
+                                            onPressed: () {
+                                              DialogConfirm(
+                                                headertext:
+                                                    "Are you sure you want to reset the history logs of this user?",
+                                                callback: () async {
+                                                  Navigator.of(context,
+                                                          rootNavigator: true)
+                                                      .pop();
 
-                                                DialogLoading(
-                                                        subtext: "Resetting...")
-                                                    .buildLoadingScreen(
-                                                        context);
+                                                  DialogLoading(
+                                                          subtext:
+                                                              "Resetting...")
+                                                      .buildLoadingScreen(
+                                                          context);
 
-                                                final DatabaseReference
-                                                    historyLogsReference =
-                                                    FirebaseDatabase.instance
-                                                        .ref()
-                                                        .child(
-                                                            'historylogs/${widget.userID}');
+                                                  final DatabaseReference
+                                                      historyLogsReference =
+                                                      FirebaseDatabase.instance
+                                                          .ref()
+                                                          .child(
+                                                              'historylogs/${widget.userID}');
 
-                                                await historyLogsReference
-                                                    .remove()
-                                                    .then(
-                                                  (value) async {
+                                                  await historyLogsReference
+                                                      .remove()
+                                                      .then(
+                                                    (value) async {
+                                                      Navigator.of(context,
+                                                              rootNavigator:
+                                                                  true)
+                                                          .pop();
+
+                                                      DialogSuccess(
+                                                        headertext: "Success",
+                                                        subtext:
+                                                            "You have successfully reset the History Logs of this user! ",
+                                                        textButton: "Close",
+                                                        callback: () {
+                                                          Navigator.of(context,
+                                                                  rootNavigator:
+                                                                      true)
+                                                              .pop();
+                                                        },
+                                                      ).buildSuccessScreen(
+                                                          context);
+
+                                                      await createHistory(
+                                                        desc:
+                                                            "Reset the History Logs of the Professor: ${snapshot.data!.first.name}(${snapshot.data!.first.professorId})",
+                                                        timeStamp: DateTime
+                                                                .now()
+                                                            .microsecondsSinceEpoch
+                                                            .toString(),
+                                                        userType: userType,
+                                                        id: userID,
+                                                      );
+                                                    },
+                                                  ).catchError((err) {
                                                     Navigator.of(context,
                                                             rootNavigator: true)
                                                         .pop();
 
-                                                    DialogSuccess(
-                                                      headertext: "Success",
+                                                    DialogUnsuccessful(
+                                                      headertext: "Error",
                                                       subtext:
-                                                          "You have successfully reset the History Logs of this user! ",
+                                                          "Please try again later!",
                                                       textButton: "Close",
                                                       callback: () {
                                                         Navigator.of(context,
@@ -605,265 +667,239 @@ class _ProfessorProfileState extends State<ProfessorProfile> {
                                                                     true)
                                                             .pop();
                                                       },
+                                                    ).buildUnsuccessfulScreen(
+                                                        context);
+                                                  });
+                                                },
+                                              ).buildConfirmScreen(context);
+                                            },
+                                            style: ElevatedButton.styleFrom(
+                                              backgroundColor:
+                                                  ColorPalette.errorColor,
+                                            ),
+                                            child: const Text(
+                                              "Reset History Logs",
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(
+                                                  fontFamily: 'Inter',
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.w400,
+                                                  color:
+                                                      ColorPalette.accentWhite),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    Row(
+                                      children: [
+                                        Expanded(
+                                          child: ElevatedButton(
+                                            onPressed: () {
+                                              DialogConfirm(
+                                                headertext:
+                                                    "User status will be active now, you sure?",
+                                                callback: () async {
+                                                  Navigator.of(context,
+                                                          rootNavigator: true)
+                                                      .pop();
+                                                  DialogLoading(
+                                                          subtext: "Loading...")
+                                                      .buildLoadingScreen(
+                                                          context);
+                                                  final DatabaseReference
+                                                      statusReference =
+                                                      FirebaseDatabase.instance
+                                                          .ref()
+                                                          .child(
+                                                              'Users/Professors/${widget.userID}/status');
+
+                                                  await statusReference
+                                                      .set("active")
+                                                      .then((value) async {
+                                                    Navigator.of(context,
+                                                            rootNavigator: true)
+                                                        .pop();
+                                                    DialogSuccess(
+                                                      headertext: "Success",
+                                                      subtext:
+                                                          "They can now log in and make changes in the app",
+                                                      textButton: "Close",
+                                                      callback: () =>
+                                                          Navigator.of(context,
+                                                                  rootNavigator:
+                                                                      true)
+                                                              .pop(),
                                                     ).buildSuccessScreen(
                                                         context);
-
                                                     await createHistory(
                                                       desc:
-                                                          "Reset the History Logs of the Professor: ${snapshot.data!.first.name}(${snapshot.data!.first.professorId})",
+                                                          "Made a Professor Active: ${snapshot.data!.first.name}(${snapshot.data!.first.professorId})",
                                                       timeStamp: DateTime.now()
                                                           .microsecondsSinceEpoch
                                                           .toString(),
                                                       userType: userType,
                                                       id: userID,
                                                     );
-                                                  },
-                                                ).catchError((err) {
-                                                  Navigator.of(context,
-                                                          rootNavigator: true)
-                                                      .pop();
-
-                                                  DialogUnsuccessful(
-                                                    headertext: "Error",
-                                                    subtext:
-                                                        "Please try again later!",
-                                                    textButton: "Close",
-                                                    callback: () {
-                                                      Navigator.of(context,
-                                                              rootNavigator:
-                                                                  true)
-                                                          .pop();
-                                                    },
-                                                  ).buildUnsuccessfulScreen(
-                                                      context);
-                                                });
-                                              },
-                                            ).buildConfirmScreen(context);
-                                          },
-                                          style: ElevatedButton.styleFrom(
-                                            backgroundColor:
-                                                ColorPalette.errorColor,
-                                          ),
-                                          child: const Text(
-                                            "Reset History Logs",
-                                            textAlign: TextAlign.center,
-                                            style: TextStyle(
-                                                fontFamily: 'Inter',
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.w400,
-                                                color:
-                                                    ColorPalette.accentWhite),
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  Row(
-                                    children: [
-                                      Expanded(
-                                        child: ElevatedButton(
-                                          onPressed: () {
-                                            DialogConfirm(
-                                              headertext:
-                                                  "User status will be active now, you sure?",
-                                              callback: () async {
-                                                Navigator.of(context,
-                                                        rootNavigator: true)
-                                                    .pop();
-                                                DialogLoading(
-                                                        subtext: "Loading...")
-                                                    .buildLoadingScreen(
-                                                        context);
-                                                final DatabaseReference
-                                                    statusReference =
-                                                    FirebaseDatabase.instance
-                                                        .ref()
-                                                        .child(
-                                                            'Users/Professors/${widget.userID}/status');
-
-                                                await statusReference
-                                                    .set("active")
-                                                    .then((value) async {
-                                                  Navigator.of(context,
-                                                          rootNavigator: true)
-                                                      .pop();
-                                                  DialogSuccess(
-                                                    headertext: "Success",
-                                                    subtext:
-                                                        "They can now log in and make changes in the app",
-                                                    textButton: "Close",
-                                                    callback: () =>
+                                                  }).catchError((e) {
+                                                    Navigator.of(context,
+                                                            rootNavigator: true)
+                                                        .pop();
+                                                    DialogUnsuccessful(
+                                                      headertext: "Error",
+                                                      subtext:
+                                                          "Please try again later!",
+                                                      textButton: "Close",
+                                                      callback: () {
                                                         Navigator.of(context,
                                                                 rootNavigator:
                                                                     true)
-                                                            .pop(),
-                                                  ).buildSuccessScreen(context);
-                                                  await createHistory(
-                                                    desc:
-                                                        "Made a Professor Active: ${snapshot.data!.first.name}(${snapshot.data!.first.professorId})",
-                                                    timeStamp: DateTime.now()
-                                                        .microsecondsSinceEpoch
-                                                        .toString(),
-                                                    userType: userType,
-                                                    id: userID,
-                                                  );
-                                                }).catchError((e) {
-                                                  Navigator.of(context,
-                                                          rootNavigator: true)
-                                                      .pop();
-                                                  DialogUnsuccessful(
-                                                    headertext: "Error",
-                                                    subtext:
-                                                        "Please try again later!",
-                                                    textButton: "Close",
-                                                    callback: () {
-                                                      Navigator.of(context,
-                                                              rootNavigator:
-                                                                  true)
-                                                          .pop();
-                                                    },
-                                                  ).buildUnsuccessfulScreen(
-                                                      context);
-                                                });
-                                              },
-                                            ).buildConfirmScreen(context);
-                                          },
-                                          style: ElevatedButton.styleFrom(
-                                            backgroundColor:
-                                                ColorPalette.errorColor,
-                                          ),
-                                          child: const Text(
-                                            "Reactivate",
-                                            style: TextStyle(
-                                                fontFamily: 'Inter',
-                                                fontSize: 16,
-                                                fontWeight: FontWeight.w400,
-                                                color:
-                                                    ColorPalette.accentWhite),
+                                                            .pop();
+                                                      },
+                                                    ).buildUnsuccessfulScreen(
+                                                        context);
+                                                  });
+                                                },
+                                              ).buildConfirmScreen(context);
+                                            },
+                                            style: ElevatedButton.styleFrom(
+                                              backgroundColor:
+                                                  ColorPalette.errorColor,
+                                            ),
+                                            child: const Text(
+                                              "Reactivate",
+                                              style: TextStyle(
+                                                  fontFamily: 'Inter',
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.w400,
+                                                  color:
+                                                      ColorPalette.accentWhite),
+                                            ),
                                           ),
                                         ),
-                                      ),
-                                      const SizedBox(width: 5),
-                                      Expanded(
-                                        child: ElevatedButton(
-                                          onPressed: () {
-                                            DialogConfirm(
-                                              headertext:
-                                                  "User will log out and can't log in. You sure?",
-                                              callback: () async {
-                                                Navigator.of(context,
-                                                        rootNavigator: true)
-                                                    .pop();
-                                                DialogLoading(
-                                                        subtext: "Loading...")
-                                                    .buildLoadingScreen(
-                                                        context);
-                                                final DatabaseReference
-                                                    statusReference =
-                                                    FirebaseDatabase.instance
-                                                        .ref()
-                                                        .child(
-                                                            'Users/Professors/${widget.userID}/status');
-
-                                                await statusReference
-                                                    .set("inactive")
-                                                    .then((value) async {
+                                        const SizedBox(width: 5),
+                                        Expanded(
+                                          child: ElevatedButton(
+                                            onPressed: () {
+                                              DialogConfirm(
+                                                headertext:
+                                                    "User will log out and can't log in. You sure?",
+                                                callback: () async {
                                                   Navigator.of(context,
                                                           rootNavigator: true)
                                                       .pop();
-                                                  DialogSuccess(
-                                                    headertext: "Success",
-                                                    subtext:
-                                                        "Again, it will log them out. If you wanna know when they logged out, go to its history logs.",
-                                                    textButton: "Close",
-                                                    callback: () =>
+                                                  DialogLoading(
+                                                          subtext: "Loading...")
+                                                      .buildLoadingScreen(
+                                                          context);
+                                                  final DatabaseReference
+                                                      statusReference =
+                                                      FirebaseDatabase.instance
+                                                          .ref()
+                                                          .child(
+                                                              'Users/Professors/${widget.userID}/status');
+
+                                                  await statusReference
+                                                      .set("inactive")
+                                                      .then((value) async {
+                                                    Navigator.of(context,
+                                                            rootNavigator: true)
+                                                        .pop();
+                                                    DialogSuccess(
+                                                      headertext: "Success",
+                                                      subtext:
+                                                          "Again, it will log them out. If you wanna know when they logged out, go to its history logs.",
+                                                      textButton: "Close",
+                                                      callback: () =>
+                                                          Navigator.of(context,
+                                                                  rootNavigator:
+                                                                      true)
+                                                              .pop(),
+                                                    ).buildSuccessScreen(
+                                                        context);
+                                                    await createHistory(
+                                                      desc:
+                                                          "Made a Professor Inactive: ${snapshot.data!.first.name}(${snapshot.data!.first.professorId})",
+                                                      timeStamp: DateTime.now()
+                                                          .microsecondsSinceEpoch
+                                                          .toString(),
+                                                      userType: userType,
+                                                      id: userID,
+                                                    );
+                                                  }).catchError((e) {
+                                                    Navigator.of(context,
+                                                            rootNavigator: true)
+                                                        .pop();
+                                                    DialogUnsuccessful(
+                                                      headertext: "Error",
+                                                      subtext:
+                                                          "Please try again later!",
+                                                      textButton: "Close",
+                                                      callback: () {
                                                         Navigator.of(context,
                                                                 rootNavigator:
                                                                     true)
-                                                            .pop(),
-                                                  ).buildSuccessScreen(context);
-                                                  await createHistory(
-                                                    desc:
-                                                        "Made a Professor Inactive: ${snapshot.data!.first.name}(${snapshot.data!.first.professorId})",
-                                                    timeStamp: DateTime.now()
-                                                        .microsecondsSinceEpoch
-                                                        .toString(),
-                                                    userType: userType,
-                                                    id: userID,
-                                                  );
-                                                }).catchError((e) {
-                                                  Navigator.of(context,
-                                                          rootNavigator: true)
-                                                      .pop();
-                                                  DialogUnsuccessful(
-                                                    headertext: "Error",
-                                                    subtext:
-                                                        "Please try again later!",
-                                                    textButton: "Close",
-                                                    callback: () {
-                                                      Navigator.of(context,
-                                                              rootNavigator:
-                                                                  true)
-                                                          .pop();
-                                                    },
-                                                  ).buildUnsuccessfulScreen(
-                                                      context);
-                                                });
-                                              },
-                                            ).buildConfirmScreen(context);
-                                          },
-                                          style: ElevatedButton.styleFrom(
-                                            backgroundColor:
-                                                ColorPalette.errorColor,
-                                          ),
-                                          child: const Text(
-                                            "Deactivate",
-                                            style: TextStyle(
-                                                fontFamily: 'Inter',
-                                                fontSize: 16,
-                                                fontWeight: FontWeight.w400,
-                                                color:
-                                                    ColorPalette.accentWhite),
+                                                            .pop();
+                                                      },
+                                                    ).buildUnsuccessfulScreen(
+                                                        context);
+                                                  });
+                                                },
+                                              ).buildConfirmScreen(context);
+                                            },
+                                            style: ElevatedButton.styleFrom(
+                                              backgroundColor:
+                                                  ColorPalette.errorColor,
+                                            ),
+                                            child: const Text(
+                                              "Deactivate",
+                                              style: TextStyle(
+                                                  fontFamily: 'Inter',
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.w400,
+                                                  color:
+                                                      ColorPalette.accentWhite),
+                                            ),
                                           ),
                                         ),
-                                      ),
-                                    ],
+                                      ],
+                                    ),
+                                    const SizedBox(height: 10),
+                                  ],
+                                )
+                              : ElevatedButton(
+                                  onPressed: () {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => Inbox(
+                                                  receiverFullName:
+                                                      snapshot.data!.first.name,
+                                                  receiverID: snapshot
+                                                      .data!.first.professorId,
+                                                  receiverType: "professor",
+                                                )));
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: ColorPalette.primary,
                                   ),
-                                  const SizedBox(height: 10),
-                                ],
-                              )
-                            : ElevatedButton(
-                                onPressed: () {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => Inbox(
-                                                receiverFullName:
-                                                    snapshot.data!.first.name,
-                                                receiverID: snapshot
-                                                    .data!.first.professorId,
-                                                receiverType: "professor",
-                                              )));
-                                },
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: ColorPalette.primary,
+                                  child: const Text(
+                                    "Message",
+                                    style: TextStyle(
+                                        fontFamily: 'Inter',
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w400,
+                                        color: ColorPalette.accentWhite),
+                                  ),
                                 ),
-                                child: const Text(
-                                  "Message",
-                                  style: TextStyle(
-                                      fontFamily: 'Inter',
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w400,
-                                      color: ColorPalette.accentWhite),
-                                ),
-                              ),
-                      ],
-                    ),
-                  ],
-                ),
-              ],
-            );
-          },
+                        ],
+                      ),
+                    ],
+                  ),
+                ],
+              );
+            },
+          ),
         ),
       ),
     );

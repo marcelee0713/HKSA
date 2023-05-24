@@ -87,6 +87,14 @@ class _AdminProfileState extends State<AdminProfile> {
                 ),
               );
             }
+            String emailVerified =
+                snapshot.data!.first.isEmailVerified == "true"
+                    ? "Your email is verified"
+                    : "Your email is not verified";
+            String phoneVerified =
+                snapshot.data!.first.isPhoneVerified == "true"
+                    ? "Your phone number is verified"
+                    : "Your phone number is not verified";
             return Stack(
               children: [
                 Builder(builder: (context) {
@@ -110,51 +118,216 @@ class _AdminProfileState extends State<AdminProfile> {
                   padding: const EdgeInsets.all(20),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      Center(
-                        child: Column(
-                          children: [
-                            SizedBox(
-                              width: 150,
-                              height: 150,
-                              child: AspectRatio(
-                                aspectRatio: 1 / 1,
-                                child: ClipOval(
-                                  child: FadeInImage.assetNetwork(
-                                      fit: BoxFit.cover,
-                                      placeholder: 'assets/images/loading.gif',
-                                      image: userProfileListener),
+                      Row(
+                        children: [
+                          SizedBox(
+                            width: 150,
+                            height: 150,
+                            child: AspectRatio(
+                              aspectRatio: 1 / 1,
+                              child: ClipOval(
+                                child: FadeInImage.assetNetwork(
+                                    fit: BoxFit.cover,
+                                    placeholder: 'assets/images/loading.gif',
+                                    image: userProfileListener),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 5),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    Tooltip(
+                                      triggerMode: TooltipTriggerMode.tap,
+                                      message:
+                                          snapshot.data!.first.isSuperAdmin ==
+                                                  "true"
+                                              ? "Super Admin"
+                                              : "Admin",
+                                      preferBelow: false,
+                                      waitDuration:
+                                          const Duration(milliseconds: 500),
+                                      height: 20,
+                                      textStyle: const TextStyle(
+                                        fontSize: 13,
+                                        fontFamily: 'Inter',
+                                        fontWeight: FontWeight.w300,
+                                        color: ColorPalette.accentWhite,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: ColorPalette.primary
+                                            .withOpacity(0.85),
+                                        borderRadius: const BorderRadius.all(
+                                          Radius.circular(5),
+                                        ),
+                                      ),
+                                      child: const Icon(
+                                          Icons.support_agent_rounded),
+                                    ),
+                                    const SizedBox(width: 5),
+                                    Flexible(
+                                      child: Text(
+                                        snapshot.data!.first.name,
+                                        style: const TextStyle(
+                                          fontSize: 15,
+                                          fontFamily: 'Inter',
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.black,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                              ),
+                                const SizedBox(height: 2),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    Tooltip(
+                                      triggerMode: TooltipTriggerMode.tap,
+                                      message: phoneVerified,
+                                      preferBelow: false,
+                                      waitDuration:
+                                          const Duration(milliseconds: 500),
+                                      height: 20,
+                                      textStyle: const TextStyle(
+                                        fontSize: 13,
+                                        fontFamily: 'Inter',
+                                        fontWeight: FontWeight.w300,
+                                        color: ColorPalette.accentWhite,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: ColorPalette.primary
+                                            .withOpacity(0.85),
+                                        borderRadius: const BorderRadius.all(
+                                          Radius.circular(5),
+                                        ),
+                                      ),
+                                      child: const Icon(Icons.phone),
+                                    ),
+                                    const SizedBox(width: 5),
+                                    Text(
+                                      snapshot.data!.first.phonenumber,
+                                      style: const TextStyle(
+                                        fontSize: 13,
+                                        fontFamily: 'Inter',
+                                        fontWeight: FontWeight.w300,
+                                        color: Colors.black,
+                                      ),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 2),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    Tooltip(
+                                      triggerMode: TooltipTriggerMode.tap,
+                                      message: emailVerified,
+                                      preferBelow: false,
+                                      waitDuration:
+                                          const Duration(milliseconds: 500),
+                                      height: 20,
+                                      textStyle: const TextStyle(
+                                        fontSize: 13,
+                                        fontFamily: 'Inter',
+                                        fontWeight: FontWeight.w300,
+                                        color: ColorPalette.accentWhite,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: ColorPalette.primary
+                                            .withOpacity(0.85),
+                                        borderRadius: const BorderRadius.all(
+                                          Radius.circular(5),
+                                        ),
+                                      ),
+                                      child: const Icon(Icons.email_rounded),
+                                    ),
+                                    const SizedBox(width: 5),
+                                    Flexible(
+                                      child: Text(
+                                        snapshot.data!.first.email,
+                                        style: const TextStyle(
+                                          fontSize: 13,
+                                          fontFamily: 'Inter',
+                                          fontWeight: FontWeight.w300,
+                                          color: Colors.black,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 2),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    Tooltip(
+                                      triggerMode: TooltipTriggerMode.tap,
+                                      message: "User ID",
+                                      preferBelow: false,
+                                      waitDuration:
+                                          const Duration(milliseconds: 500),
+                                      height: 20,
+                                      textStyle: const TextStyle(
+                                        fontSize: 13,
+                                        fontFamily: 'Inter',
+                                        fontWeight: FontWeight.w300,
+                                        color: ColorPalette.accentWhite,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: ColorPalette.primary
+                                            .withOpacity(0.85),
+                                        borderRadius: const BorderRadius.all(
+                                          Radius.circular(5),
+                                        ),
+                                      ),
+                                      child: const Icon(Icons.badge_rounded),
+                                    ),
+                                    const SizedBox(width: 5),
+                                    Flexible(
+                                      child: Text(
+                                        snapshot.data!.first.userId,
+                                        style: const TextStyle(
+                                          fontSize: 13,
+                                          fontFamily: 'Inter',
+                                          fontWeight: FontWeight.w300,
+                                          color: Colors.black,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
                             ),
-                            const SizedBox(
-                              height: 10,
-                            ),
-                            Text(
-                              snapshot.data!.first.name,
-                              style: const TextStyle(
-                                fontSize: 15,
-                                fontFamily: 'Inter',
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black,
-                              ),
-                              textAlign: TextAlign.center,
-                            ),
-                            Text(
-                              snapshot.data!.first.userId,
-                              style: const TextStyle(
-                                fontSize: 15,
-                                fontFamily: 'Inter',
-                                fontWeight: FontWeight.w400,
-                                color: Colors.black,
-                              ),
-                              textAlign: TextAlign.center,
-                            ),
-                          ],
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 10),
+                      const Text(
+                        "Welcome to your Profile!",
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontFamily: 'Inter',
+                          fontWeight: FontWeight.w700,
+                          color: Colors.black,
                         ),
                       ),
-                      const SizedBox(height: 20),
+                      const SizedBox(height: 2),
+                      const Text(
+                        "Well, here is the only thing you can do pretty much here.",
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontFamily: 'Inter',
+                          fontWeight: FontWeight.w300,
+                          color: Colors.black,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
                       Container(
                         height: 2,
                         color: ColorPalette.accentBlack,
@@ -319,14 +492,14 @@ class _AdminProfileState extends State<AdminProfile> {
 
   Future<List<Head>> getHead() async {
     List<Head> myUser = [];
-    final DatabaseReference _userReference =
+    final DatabaseReference userReference =
         FirebaseDatabase.instance.ref().child('Users/Head/$userID');
     try {
-      await _userReference.get().then((snapshot) {
+      await userReference.get().then((snapshot) {
         Map<String, dynamic> myObj = jsonDecode(jsonEncode(snapshot.value));
-        Head myScholar = Head.fromJson(myObj);
-        userProfileListener = myScholar.profilePicture;
-        myUser.add(myScholar);
+        Head myHead = Head.fromJson(myObj);
+        userProfileListener = myHead.profilePicture;
+        myUser.add(myHead);
       });
       return myUser;
     } catch (error) {

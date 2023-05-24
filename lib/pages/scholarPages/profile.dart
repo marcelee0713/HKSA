@@ -92,61 +92,161 @@ class _ProfileState extends State<Profile> {
               ),
             );
           }
+          String emailVerified = snapshot.data!.first.isEmailVerified == "true"
+              ? "Your email is verified"
+              : "Your email is not verified";
+          String phoneVerified = snapshot.data!.first.isPhoneVerified == "true"
+              ? "Your phone number is verified"
+              : "Your phone number is not verified";
           return ListView(
             shrinkWrap: true,
             children: [
               Column(
                 mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Center(
-                    child: Column(
-                      children: [
-                        SizedBox(
-                          width: 150,
-                          height: 150,
-                          child: AspectRatio(
-                            aspectRatio: 1 / 1,
-                            child: ClipOval(
-                              child: FadeInImage.assetNetwork(
-                                  fit: BoxFit.cover,
-                                  placeholder: 'assets/images/loading.gif',
-                                  image: userProfileListener),
+                  Row(
+                    children: [
+                      SizedBox(
+                        width: 150,
+                        height: 150,
+                        child: AspectRatio(
+                          aspectRatio: 1 / 1,
+                          child: ClipOval(
+                            child: FadeInImage.assetNetwork(
+                                fit: BoxFit.cover,
+                                placeholder: 'assets/images/loading.gif',
+                                image: userProfileListener),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 5),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Tooltip(
+                                  triggerMode: TooltipTriggerMode.tap,
+                                  message:
+                                      "Scholar | ${snapshot.data!.first.scholarType}",
+                                  preferBelow: false,
+                                  waitDuration:
+                                      const Duration(milliseconds: 500),
+                                  height: 20,
+                                  textStyle: const TextStyle(
+                                    fontSize: 13,
+                                    fontFamily: 'Inter',
+                                    fontWeight: FontWeight.w300,
+                                    color: ColorPalette.accentWhite,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color:
+                                        ColorPalette.primary.withOpacity(0.85),
+                                    borderRadius: const BorderRadius.all(
+                                      Radius.circular(5),
+                                    ),
+                                  ),
+                                  child: const Icon(Icons.school_rounded),
+                                ),
+                                const SizedBox(width: 5),
+                                Expanded(
+                                  child: Text(
+                                    snapshot.data!.first.name,
+                                    style: const TextStyle(
+                                      fontSize: 15,
+                                      fontFamily: 'Inter',
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
-                          ),
+                            const SizedBox(height: 2),
+                            Row(
+                              children: [
+                                Tooltip(
+                                  triggerMode: TooltipTriggerMode.tap,
+                                  message: phoneVerified,
+                                  preferBelow: false,
+                                  waitDuration:
+                                      const Duration(milliseconds: 500),
+                                  height: 20,
+                                  textStyle: const TextStyle(
+                                    fontSize: 13,
+                                    fontFamily: 'Inter',
+                                    fontWeight: FontWeight.w300,
+                                    color: ColorPalette.accentWhite,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color:
+                                        ColorPalette.primary.withOpacity(0.85),
+                                    borderRadius: const BorderRadius.all(
+                                      Radius.circular(5),
+                                    ),
+                                  ),
+                                  child: const Icon(Icons.phone),
+                                ),
+                                const SizedBox(width: 5),
+                                Text(
+                                  snapshot.data!.first.phonenumber,
+                                  style: const TextStyle(
+                                    fontSize: 13,
+                                    fontFamily: 'Inter',
+                                    fontWeight: FontWeight.w300,
+                                    color: Colors.black,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 2),
+                            Row(
+                              children: [
+                                Tooltip(
+                                  triggerMode: TooltipTriggerMode.tap,
+                                  message: emailVerified,
+                                  preferBelow: false,
+                                  waitDuration:
+                                      const Duration(milliseconds: 500),
+                                  height: 20,
+                                  textStyle: const TextStyle(
+                                    fontSize: 13,
+                                    fontFamily: 'Inter',
+                                    fontWeight: FontWeight.w300,
+                                    color: ColorPalette.accentWhite,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color:
+                                        ColorPalette.primary.withOpacity(0.85),
+                                    borderRadius: const BorderRadius.all(
+                                      Radius.circular(5),
+                                    ),
+                                  ),
+                                  child: const Icon(Icons.email_rounded),
+                                ),
+                                const SizedBox(width: 5),
+                                Expanded(
+                                  child: Text(
+                                    snapshot.data!.first.email,
+                                    style: const TextStyle(
+                                      fontSize: 13,
+                                      fontFamily: 'Inter',
+                                      fontWeight: FontWeight.w300,
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
                         ),
-                        const SizedBox(
-                          height: 20,
-                        ),
-                        Text(
-                          snapshot.data!.first.name,
-                          style: const TextStyle(
-                            fontSize: 15,
-                            fontFamily: 'Inter',
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                        const SizedBox(
-                          height: 5,
-                        ),
-                        Text(
-                          snapshot.data!.first.phonenumber,
-                          style: const TextStyle(
-                            fontSize: 13,
-                            fontFamily: 'Inter',
-                            fontWeight: FontWeight.w300,
-                            color: Colors.black,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                        const SizedBox(
-                          height: 20,
-                        ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
+                  const SizedBox(height: 20),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -167,35 +267,6 @@ class _ProfileState extends State<Profile> {
                           ),
                           Text(
                             snapshot.data!.first.studentNumber,
-                            style: const TextStyle(
-                              fontSize: 13,
-                              fontFamily: 'Inter',
-                              fontWeight: FontWeight.w300,
-                              color: Colors.black,
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text(
-                            'Email:',
-                            style: TextStyle(
-                              fontSize: 15,
-                              fontFamily: 'Inter',
-                              fontWeight: FontWeight.w600,
-                              color: Colors.black,
-                            ),
-                          ),
-                          const SizedBox(
-                            height: 5,
-                          ),
-                          Text(
-                            snapshot.data!.first.email,
                             style: const TextStyle(
                               fontSize: 13,
                               fontFamily: 'Inter',
@@ -362,75 +433,66 @@ class _ProfileState extends State<Profile> {
                     color: ColorPalette.accentBlack,
                   ),
                   const SizedBox(height: 10),
-                  Column(
-                    children: [
-                      SizedBox(
-                        child: InkWell(
-                          onTap: (() {
-                            DialogConfirm(
-                                headertext: "Are you sure you want to log out?",
-                                callback: () {
-                                  Navigator.of(context, rootNavigator: true)
-                                      .pop();
-                                  // Might be more soon
-                                  // This includes the time in
-                                  Future.delayed(const Duration(), (() {
-                                    DialogLoading(subtext: "Logging out...")
-                                        .buildLoadingScreen(context);
-                                  })).whenComplete(() async {
-                                    Future.delayed(const Duration(seconds: 3),
-                                        () async {
-                                      scholarSubscription!.cancel();
-                                      scholarHasListened = false;
-                                      logInBox.put("isLoggedIn", false);
-                                      logInBox.put("hasTimedIn", false);
-                                      logInBox.put("userName", "");
-                                      logInBox.put("getTimeInLS", "");
-                                      logInBox.put("dateTimedIn", "");
-                                      await firebaseMessaging
-                                          .unsubscribeFromTopic('user_all');
-                                      await firebaseMessaging
-                                          .unsubscribeFromTopic('scholars');
-                                      await firebaseMessaging
-                                          .unsubscribeFromTopic(
-                                              'scholars_faci');
-                                      await firebaseMessaging
-                                          .unsubscribeFromTopic(
-                                              'scholars_non_faci');
-                                      await signOut();
-                                      await createHistory(
-                                        desc: "User logged out",
-                                        timeStamp: DateTime.now()
-                                            .microsecondsSinceEpoch
-                                            .toString(),
-                                        userType: userType!,
-                                        id: userID,
-                                      );
-                                      logInBox.put("userType", "");
-                                      logInBox.put("userID", "");
-                                      // ignore: use_build_context_synchronously
-                                      Navigator.of(context).pushAndRemoveUntil(
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  const Login()),
-                                          (Route<dynamic> route) => false);
-                                    });
-                                  });
-                                }).buildConfirmScreen(context);
-                          }),
-                          child: const Text(
-                            "Log out",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontFamily: 'Inter',
-                              fontSize: 14,
-                              fontWeight: FontWeight.w400,
-                              color: ColorPalette.primary,
-                            ),
-                          ),
+                  SizedBox(
+                    child: InkWell(
+                      onTap: (() {
+                        DialogConfirm(
+                            headertext: "Are you sure you want to log out?",
+                            callback: () {
+                              Navigator.of(context, rootNavigator: true).pop();
+                              // Might be more soon
+                              // This includes the time in
+                              Future.delayed(const Duration(), (() {
+                                DialogLoading(subtext: "Logging out...")
+                                    .buildLoadingScreen(context);
+                              })).whenComplete(() async {
+                                Future.delayed(const Duration(seconds: 3),
+                                    () async {
+                                  scholarSubscription!.cancel();
+                                  scholarHasListened = false;
+                                  logInBox.put("isLoggedIn", false);
+                                  logInBox.put("hasTimedIn", false);
+                                  logInBox.put("userName", "");
+                                  logInBox.put("getTimeInLS", "");
+                                  logInBox.put("dateTimedIn", "");
+                                  await firebaseMessaging
+                                      .unsubscribeFromTopic('user_all');
+                                  await firebaseMessaging
+                                      .unsubscribeFromTopic('scholars');
+                                  await firebaseMessaging
+                                      .unsubscribeFromTopic('scholars_faci');
+                                  await firebaseMessaging.unsubscribeFromTopic(
+                                      'scholars_non_faci');
+                                  await signOut();
+                                  await createHistory(
+                                    desc: "User logged out",
+                                    timeStamp: DateTime.now()
+                                        .microsecondsSinceEpoch
+                                        .toString(),
+                                    userType: userType!,
+                                    id: userID,
+                                  );
+                                  logInBox.put("userType", "");
+                                  logInBox.put("userID", "");
+                                  // ignore: use_build_context_synchronously
+                                  Navigator.of(context).pushAndRemoveUntil(
+                                      MaterialPageRoute(
+                                          builder: (context) => const Login()),
+                                      (Route<dynamic> route) => false);
+                                });
+                              });
+                            }).buildConfirmScreen(context);
+                      }),
+                      child: const Text(
+                        "Log out",
+                        style: TextStyle(
+                          fontFamily: 'Inter',
+                          fontSize: 14,
+                          fontWeight: FontWeight.w400,
+                          color: ColorPalette.primary,
                         ),
                       ),
-                    ],
+                    ),
                   ),
                   const SizedBox(height: 8),
                   InkWell(

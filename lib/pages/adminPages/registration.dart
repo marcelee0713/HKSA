@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:hksa/constant/colors.dart';
+import 'package:hksa/pages/adminPages/home.dart';
 import 'package:hksa/widgets/adminWidgets/nav_drawer.dart';
+import 'package:hksa/widgets/adminWidgets/registration/admin_register_head.dart';
 import 'package:hksa/widgets/adminWidgets/registration/admin_register_professor.dart';
 import 'package:hksa/widgets/adminWidgets/registration/admin_register_scholar.dart';
 
@@ -114,6 +116,31 @@ class _AdminRegistrationState extends State<AdminRegistration> {
                     ),
                   ],
                 ),
+                isSuperAdmin
+                    ? Container(
+                        margin: const EdgeInsets.only(top: 5),
+                        width: 200,
+                        height: 50,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        const AdminRegisterHeadPage()));
+                          },
+                          child: const Text(
+                            "ADMINISTRATOR",
+                            style: TextStyle(
+                              color: ColorPalette.accentWhite,
+                              fontFamily: 'Inter',
+                              fontWeight: FontWeight.w700,
+                              fontSize: 16.5,
+                            ),
+                          ),
+                        ),
+                      )
+                    : const SizedBox(),
               ],
             ),
           ),

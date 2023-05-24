@@ -93,61 +93,161 @@ class _ProfProfileState extends State<ProfProfile> {
               ),
             );
           }
+          String emailVerified = snapshot.data!.first.isEmailVerified == "true"
+              ? "Email is verified"
+              : "Email is not verified";
+          String phoneVerified = snapshot.data!.first.isPhoneVerified == "true"
+              ? "Phone number is verified"
+              : "Phone number is not verified";
           return ListView(
             shrinkWrap: true,
             children: [
               Column(
                 mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Center(
-                    child: Column(
-                      children: [
-                        SizedBox(
-                          width: 150,
-                          height: 150,
-                          child: AspectRatio(
-                            aspectRatio: 1 / 1,
-                            child: ClipOval(
-                              child: FadeInImage.assetNetwork(
-                                  fit: BoxFit.cover,
-                                  placeholder: 'assets/images/loading.gif',
-                                  image: snapshot.data!.first.profilePicture),
+                  Row(
+                    children: [
+                      SizedBox(
+                        width: 150,
+                        height: 150,
+                        child: AspectRatio(
+                          aspectRatio: 1 / 1,
+                          child: ClipOval(
+                            child: FadeInImage.assetNetwork(
+                                fit: BoxFit.cover,
+                                placeholder: 'assets/images/loading.gif',
+                                image: snapshot.data!.first.profilePicture),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 5),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Tooltip(
+                                  triggerMode: TooltipTriggerMode.tap,
+                                  message: "Professor",
+                                  preferBelow: false,
+                                  waitDuration:
+                                      const Duration(milliseconds: 500),
+                                  height: 20,
+                                  textStyle: const TextStyle(
+                                    fontSize: 13,
+                                    fontFamily: 'Inter',
+                                    fontWeight: FontWeight.w300,
+                                    color: ColorPalette.accentWhite,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color:
+                                        ColorPalette.primary.withOpacity(0.85),
+                                    borderRadius: const BorderRadius.all(
+                                      Radius.circular(5),
+                                    ),
+                                  ),
+                                  child: const Icon(
+                                      Icons.supervisor_account_outlined),
+                                ),
+                                const SizedBox(width: 5),
+                                Expanded(
+                                  child: Text(
+                                    snapshot.data!.first.name,
+                                    style: const TextStyle(
+                                      fontSize: 15,
+                                      fontFamily: 'Inter',
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
-                          ),
+                            const SizedBox(height: 2),
+                            Row(
+                              children: [
+                                Tooltip(
+                                  triggerMode: TooltipTriggerMode.tap,
+                                  message: phoneVerified,
+                                  preferBelow: false,
+                                  waitDuration:
+                                      const Duration(milliseconds: 500),
+                                  height: 20,
+                                  textStyle: const TextStyle(
+                                    fontSize: 13,
+                                    fontFamily: 'Inter',
+                                    fontWeight: FontWeight.w300,
+                                    color: ColorPalette.accentWhite,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color:
+                                        ColorPalette.primary.withOpacity(0.85),
+                                    borderRadius: const BorderRadius.all(
+                                      Radius.circular(5),
+                                    ),
+                                  ),
+                                  child: const Icon(Icons.phone),
+                                ),
+                                const SizedBox(width: 5),
+                                Text(
+                                  snapshot.data!.first.phonenumber,
+                                  style: const TextStyle(
+                                    fontSize: 13,
+                                    fontFamily: 'Inter',
+                                    fontWeight: FontWeight.w300,
+                                    color: Colors.black,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 2),
+                            Row(
+                              children: [
+                                Tooltip(
+                                  triggerMode: TooltipTriggerMode.tap,
+                                  message: emailVerified,
+                                  preferBelow: false,
+                                  waitDuration:
+                                      const Duration(milliseconds: 500),
+                                  height: 20,
+                                  textStyle: const TextStyle(
+                                    fontSize: 13,
+                                    fontFamily: 'Inter',
+                                    fontWeight: FontWeight.w300,
+                                    color: ColorPalette.accentWhite,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color:
+                                        ColorPalette.primary.withOpacity(0.85),
+                                    borderRadius: const BorderRadius.all(
+                                      Radius.circular(5),
+                                    ),
+                                  ),
+                                  child: const Icon(Icons.email_rounded),
+                                ),
+                                const SizedBox(width: 5),
+                                Expanded(
+                                  child: Text(
+                                    snapshot.data!.first.email,
+                                    style: const TextStyle(
+                                      fontSize: 13,
+                                      fontFamily: 'Inter',
+                                      fontWeight: FontWeight.w300,
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
                         ),
-                        const SizedBox(
-                          height: 20,
-                        ),
-                        Text(
-                          snapshot.data!.first.name,
-                          style: const TextStyle(
-                            fontSize: 15,
-                            fontFamily: 'Inter',
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                        const SizedBox(
-                          height: 5,
-                        ),
-                        Text(
-                          snapshot.data!.first.phonenumber,
-                          style: const TextStyle(
-                            fontSize: 13,
-                            fontFamily: 'Inter',
-                            fontWeight: FontWeight.w300,
-                            color: Colors.black,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                        const SizedBox(
-                          height: 20,
-                        ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
+                  const SizedBox(height: 20),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -168,35 +268,6 @@ class _ProfProfileState extends State<ProfProfile> {
                           ),
                           Text(
                             snapshot.data!.first.professorId,
-                            style: const TextStyle(
-                              fontSize: 13,
-                              fontFamily: 'Inter',
-                              fontWeight: FontWeight.w300,
-                              color: Colors.black,
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text(
-                            'Email:',
-                            style: TextStyle(
-                              fontSize: 15,
-                              fontFamily: 'Inter',
-                              fontWeight: FontWeight.w600,
-                              color: Colors.black,
-                            ),
-                          ),
-                          const SizedBox(
-                            height: 5,
-                          ),
-                          Text(
-                            snapshot.data!.first.email,
                             style: const TextStyle(
                               fontSize: 13,
                               fontFamily: 'Inter',

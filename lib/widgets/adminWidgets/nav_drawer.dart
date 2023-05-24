@@ -1,9 +1,12 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:hksa/constant/colors.dart';
+import 'package:hksa/constant/string.dart';
+import 'package:hksa/models/head.dart';
 import 'package:hksa/pages/adminPages/chart.dart';
 import 'package:hksa/pages/adminPages/contact.dart';
 import 'package:hksa/pages/adminPages/home.dart';
@@ -22,11 +25,33 @@ class NavDraw extends StatefulWidget {
 }
 
 int selectedIndex = 0;
+bool headGetTheProfileOnce = true;
 
 class _NavDrawState extends State<NavDraw> {
   final logInBox = Hive.box("myLoginBox");
   late var userName = logInBox.get("userName");
   late var userID = logInBox.get("userID");
+  String userProfileListener = HKSAStrings.pfpPlaceholder;
+
+  @override
+  void initState() {
+    getPfp();
+    super.initState();
+  }
+
+  Future getPfp() async {
+    final DatabaseReference userReference =
+        FirebaseDatabase.instance.ref().child('Users/Head/$userID');
+
+    await userReference.get().then((snapshot) {
+      Map<String, dynamic> myObj = jsonDecode(jsonEncode(snapshot.value));
+      Head myHead = Head.fromJson(myObj);
+      setState(() {
+        userProfileListener = myHead.profilePicture;
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Drawer(
@@ -40,10 +65,23 @@ class _NavDrawState extends State<NavDraw> {
               child: Column(
                 children: [
                   Container(
-                    height: 140,
+                    width: 150,
+                    height: 150,
                     decoration: const BoxDecoration(
-                        image: DecorationImage(
-                            image: AssetImage('assets/images/logo.png'))),
+                        color: ColorPalette.secondary,
+                        borderRadius: BorderRadius.all(Radius.circular(99))),
+                    child: AspectRatio(
+                      aspectRatio: 1 / 1,
+                      child: ClipOval(
+                        child: FadeInImage.assetNetwork(
+                            fit: BoxFit.cover,
+                            placeholder: 'assets/images/loading.gif',
+                            // ignore: prefer_if_null_operators
+                            image: userProfileListener.isNotEmpty
+                                ? userProfileListener
+                                : HKSAStrings.pfpPlaceholder),
+                      ),
+                    ),
                   ),
                   const SizedBox(height: 8),
                   Column(
@@ -177,7 +215,12 @@ class _NavDrawState extends State<NavDraw> {
                       // Might be more soon
                       // This includes the time in
                       headSubscription!.cancel();
+                      isSuperAdminSubscription!.cancel();
+
+                      sawItAlready = true;
                       headHasListened = false;
+                      isSuperAdmin = false;
+                      headGetTheProfileOnce = true;
                       Future.delayed(const Duration(), (() {
                         DialogLoading(subtext: "Logging out...")
                             .buildLoadingScreen(context);

@@ -11,6 +11,7 @@ import 'package:hksa/models/professor.dart';
 import 'package:hksa/pages/adminPages/registration.dart';
 import 'package:hksa/widgets/adminWidgets/nav_drawer.dart';
 import 'package:hksa/widgets/dialogs/dialog_loading.dart';
+import 'package:hksa/widgets/dialogs/dialog_register_confirm_head.dart';
 import 'package:hksa/widgets/dialogs/dialog_success.dart';
 import 'package:hksa/widgets/dialogs/dialog_unsuccessful.dart';
 import 'package:hksa/widgets/scholarWidgets/home/home_inputs.dart';
@@ -64,7 +65,7 @@ class _AdminRegisterProfessorInputsState
 
   @override
   Widget build(BuildContext context) {
-    final DatabaseReference _dbReference =
+    final DatabaseReference dbReference =
         FirebaseDatabase.instance.ref().child("Users/Professors/");
     return Form(
       key: _formKey,
@@ -726,6 +727,7 @@ class _AdminRegisterProfessorInputsState
               const SizedBox(width: 2),
               Expanded(
                 child: TextFormField(
+                  enabled: false,
                   validator: (value) {
                     if (_inputControllerEmail.text != "" &&
                         !_inputControllerEmail.text.contains("@phinmaed.com")) {
@@ -745,6 +747,10 @@ class _AdminRegisterProfessorInputsState
                       borderRadius: BorderRadius.circular(10.0),
                     ),
                     focusedBorder: OutlineInputBorder(
+                      borderSide: const BorderSide(color: Colors.transparent),
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                    disabledBorder: OutlineInputBorder(
                       borderSide: const BorderSide(color: Colors.transparent),
                       borderRadius: BorderRadius.circular(10.0),
                     ),
@@ -962,7 +968,7 @@ class _AdminRegisterProfessorInputsState
                 backgroundColor:
                     MaterialStateProperty.all<Color>(ColorPalette.primary),
               ),
-              onPressed: () async {
+              onPressed: () {
                 if (!_formKey.currentState!.validate()) {
                   return;
                 }
@@ -1005,149 +1011,178 @@ class _AdminRegisterProfessorInputsState
                 String? day = dayValue;
                 String? time = timeValue;
 
-                await _dbReference.get().then((snapshot) {
-                  for (final data in snapshot.children) {
-                    Map<String, dynamic> myObj =
-                        jsonDecode(jsonEncode(data.value));
-                    Professor myProfObj = Professor.fromJson(myObj);
-                    if (data.key == professorID) {
-                      userExist = true;
-                    }
-                    if (myProfObj.email == email) {
-                      duplicateEmail = true;
-                    }
-                    if (myProfObj.phonenumber == phoneNumber) {
-                      duplicatePhoneNumber = true;
-                    }
-                  }
-                }).then(
-                  (value) async {
-                    if (userExist) {
-                      Navigator.of(context, rootNavigator: true).pop();
-                      DialogUnsuccessful(
-                        headertext: "Account already exist!",
-                        subtext:
-                            "If you think this is wrong. Please contact or go to the CSDL Department immediately!",
-                        textButton: "Close",
-                        callback: (() =>
-                            Navigator.of(context, rootNavigator: true).pop()),
-                      ).buildUnsuccessfulScreen(context);
-                      return;
-                    }
+                List<String> inputs = [
+                  "Full Name: $fullName",
+                  "UserID: $professorID",
+                  "Email: $email",
+                  "Phone Number: $phoneNumber",
+                  "Signature: $signature",
+                  "Subject Code: $subject",
+                  "Section: $section",
+                  "Room: $room",
+                  "Day: $day",
+                  "Time: $time",
+                ];
 
-                    if (duplicateEmail) {
-                      Navigator.of(context, rootNavigator: true).pop();
-                      DialogUnsuccessful(
-                        headertext: "Email already exist!",
-                        subtext:
-                            "If you think this is wrong. Please contact or go to the CSDL Department immediately!",
-                        textButton: "Close",
-                        callback: (() =>
-                            Navigator.of(context, rootNavigator: true).pop()),
-                      ).buildUnsuccessfulScreen(context);
-                      return;
-                    }
-
-                    if (duplicatePhoneNumber) {
-                      Navigator.of(context, rootNavigator: true).pop();
-                      DialogUnsuccessful(
-                        headertext: "Phone number already exist!",
-                        subtext:
-                            "If you think this is wrong. Please contact or go to the CSDL Department immediately!",
-                        textButton: "Close",
-                        callback: (() =>
-                            Navigator.of(context, rootNavigator: true).pop()),
-                      ).buildUnsuccessfulScreen(context);
-                      return;
-                    }
-
-                    if (!userExist &&
-                        !duplicateEmail &&
-                        !duplicatePhoneNumber) {
-                      await createUser(email: email, password: password).then(
+                DialogConfirmRegistration(
+                    headertext: "We need your confirmation!",
+                    subtext:
+                        "Please double check if have any typos or missing inputs!",
+                    inputs: inputs,
+                    callback: () async {
+                      await dbReference.get().then((snapshot) {
+                        for (final data in snapshot.children) {
+                          Map<String, dynamic> myObj =
+                              jsonDecode(jsonEncode(data.value));
+                          Professor myProfObj = Professor.fromJson(myObj);
+                          if (data.key == professorID) {
+                            userExist = true;
+                          }
+                          if (myProfObj.email == email) {
+                            duplicateEmail = true;
+                          }
+                          if (myProfObj.phonenumber == phoneNumber) {
+                            duplicatePhoneNumber = true;
+                          }
+                        }
+                      }).then(
                         (value) async {
-                          Professor scholarObj = Professor(
-                            status: 'active',
-                            department: department.toString(),
-                            email: email,
-                            name: fullName,
-                            phonenumber: phoneNumber,
-                            professorId: professorID,
-                            signaturecode: signature,
-                            profilePicture: HKSAStrings.pfpPlaceholder,
-                            day: day.toString(),
-                            room: room.toString(),
-                            section: section.toString(),
-                            subject: subject.toString(),
-                            time: time.toString(),
-                            listeningTo: "",
-                            isEmailVerified: 'false',
-                            isPhoneVerified: 'false',
-                          );
+                          if (userExist) {
+                            Navigator.of(context, rootNavigator: true).pop();
+                            DialogUnsuccessful(
+                              headertext: "Account already exist!",
+                              subtext:
+                                  "If you think this is wrong. Please contact or go to the CSDL Department immediately!",
+                              textButton: "Close",
+                              callback: (() =>
+                                  Navigator.of(context, rootNavigator: true)
+                                      .pop()),
+                            ).buildUnsuccessfulScreen(context);
+                            return;
+                          }
 
-                          await _dbReference
-                              .child(professorID)
-                              .set(scholarObj.toJson())
-                              .then(
-                            (value) async {
-                              Navigator.of(context, rootNavigator: true).pop();
-                              DialogSuccess(
-                                headertext: "Successfully Registered!",
-                                subtext: "You have registered a professor!",
-                                textButton: "Go back",
-                                callback: () async {
-                                  setState(() {
-                                    selectedIndex = 3;
-                                  });
-                                  // Will replace literally every page, that includes dialogs and others.
-                                  Navigator.of(context).pushAndRemoveUntil(
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            const AdminRegistration()),
-                                    (Route<dynamic> route) => false,
-                                  );
-                                },
-                              ).buildSuccessScreen(context);
-                              await createHistory(
-                                desc:
-                                    "Create a Professor: $fullName($professorID)",
-                                timeStamp: DateTime.now()
-                                    .microsecondsSinceEpoch
-                                    .toString(),
-                                userType: userType,
-                                id: userID,
-                              );
-                            },
-                          ).catchError(
-                            (err) {
-                              Navigator.of(context, rootNavigator: true).pop();
-                              DialogUnsuccessful(
-                                headertext: "Error",
-                                subtext: "Please try again later!",
-                                textButton: "Close",
-                                callback: () =>
+                          if (duplicateEmail) {
+                            Navigator.of(context, rootNavigator: true).pop();
+                            DialogUnsuccessful(
+                              headertext: "Email already exist!",
+                              subtext:
+                                  "If you think this is wrong. Please contact or go to the CSDL Department immediately!",
+                              textButton: "Close",
+                              callback: (() =>
+                                  Navigator.of(context, rootNavigator: true)
+                                      .pop()),
+                            ).buildUnsuccessfulScreen(context);
+                            return;
+                          }
+
+                          if (duplicatePhoneNumber) {
+                            Navigator.of(context, rootNavigator: true).pop();
+                            DialogUnsuccessful(
+                              headertext: "Phone number already exist!",
+                              subtext:
+                                  "If you think this is wrong. Please contact or go to the CSDL Department immediately!",
+                              textButton: "Close",
+                              callback: (() =>
+                                  Navigator.of(context, rootNavigator: true)
+                                      .pop()),
+                            ).buildUnsuccessfulScreen(context);
+                            return;
+                          }
+
+                          if (!userExist &&
+                              !duplicateEmail &&
+                              !duplicatePhoneNumber) {
+                            await createUser(email: email, password: password)
+                                .then(
+                              (value) async {
+                                Professor profObj = Professor(
+                                  status: 'active',
+                                  department: department.toString(),
+                                  email: email,
+                                  name: fullName,
+                                  phonenumber: phoneNumber,
+                                  professorId: professorID,
+                                  signaturecode: signature,
+                                  profilePicture: HKSAStrings.pfpPlaceholder,
+                                  day: day.toString(),
+                                  room: room.toString(),
+                                  section: section.toString(),
+                                  subject: subject.toString(),
+                                  time: time.toString(),
+                                  listeningTo: "",
+                                  isEmailVerified: 'false',
+                                  isPhoneVerified: 'false',
+                                );
+
+                                await dbReference
+                                    .child(professorID)
+                                    .set(profObj.toJson())
+                                    .then(
+                                  (value) async {
                                     Navigator.of(context, rootNavigator: true)
-                                        .pop(),
-                              ).buildUnsuccessfulScreen(context);
-                            },
-                          );
-                        },
-                      ).catchError(
-                        (err) {
-                          Navigator.of(context, rootNavigator: true).pop();
-                          DialogUnsuccessful(
-                            headertext: "Error",
-                            subtext: err.toString(),
-                            textButton: "Close",
-                            callback: () =>
+                                        .pop();
+                                    DialogSuccess(
+                                      headertext: "Successfully Registered!",
+                                      subtext:
+                                          "You have registered a professor!",
+                                      textButton: "Go back",
+                                      callback: () async {
+                                        setState(() {
+                                          selectedIndex = 3;
+                                        });
+                                        // Will replace literally every page, that includes dialogs and others.
+                                        Navigator.of(context)
+                                            .pushAndRemoveUntil(
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  const AdminRegistration()),
+                                          (Route<dynamic> route) => false,
+                                        );
+                                      },
+                                    ).buildSuccessScreen(context);
+                                    await createHistory(
+                                      desc:
+                                          "Create a Professor: $fullName($professorID)",
+                                      timeStamp: DateTime.now()
+                                          .microsecondsSinceEpoch
+                                          .toString(),
+                                      userType: userType,
+                                      id: userID,
+                                    );
+                                  },
+                                ).catchError(
+                                  (err) {
+                                    Navigator.of(context, rootNavigator: true)
+                                        .pop();
+                                    DialogUnsuccessful(
+                                      headertext: "Error",
+                                      subtext: "Please try again later!",
+                                      textButton: "Close",
+                                      callback: () => Navigator.of(context,
+                                              rootNavigator: true)
+                                          .pop(),
+                                    ).buildUnsuccessfulScreen(context);
+                                  },
+                                );
+                              },
+                            ).catchError(
+                              (err) {
                                 Navigator.of(context, rootNavigator: true)
-                                    .pop(),
-                          ).buildUnsuccessfulScreen(context);
+                                    .pop();
+                                DialogUnsuccessful(
+                                  headertext: "Error",
+                                  subtext: err.toString(),
+                                  textButton: "Close",
+                                  callback: () =>
+                                      Navigator.of(context, rootNavigator: true)
+                                          .pop(),
+                                ).buildUnsuccessfulScreen(context);
+                              },
+                            );
+                          }
                         },
                       );
-                    }
-                  },
-                );
+                    }).buildConfirmRegistration(context);
               },
               child: const Text(
                 "Sign up",

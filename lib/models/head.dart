@@ -11,6 +11,7 @@ class Head {
   String listeningTo;
   String isEmailVerified;
   String isPhoneVerified;
+  String isSuperAdmin;
   String phonenumber;
   String status;
   String email;
@@ -22,6 +23,7 @@ class Head {
     required this.listeningTo,
     required this.isEmailVerified,
     required this.isPhoneVerified,
+    required this.isSuperAdmin,
     required this.phonenumber,
     required this.status,
     required this.email,
@@ -34,6 +36,7 @@ class Head {
         listeningTo: json["listeningTo"],
         isEmailVerified: json["isEmailVerified"],
         isPhoneVerified: json["isPhoneVerified"],
+        isSuperAdmin: json["isSuperAdmin"],
         phonenumber: json["phonenumber"],
         status: json["status"],
         email: json["email"],
@@ -46,6 +49,7 @@ class Head {
         "listeningTo": listeningTo,
         "isEmailVerified": isEmailVerified,
         "isPhoneVerified": isPhoneVerified,
+        "isSuperAdmin": isSuperAdmin,
         "phonenumber": phonenumber,
         "status": status,
         "email": email,

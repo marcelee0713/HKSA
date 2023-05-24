@@ -433,7 +433,11 @@ class _EditScholarState extends State<EditScholar> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 TextFormField(
-                                  enabled: false,
+                                  enabled:
+                                      snapshot.data!.first.isEmailVerified ==
+                                              "false"
+                                          ? true
+                                          : false,
                                   controller: _inputControllerEmail,
                                   validator: (value) {
                                     // Email RegEx Validation
@@ -480,7 +484,10 @@ class _EditScholarState extends State<EditScholar> {
                                 ),
                                 const SizedBox(height: 2),
                                 SelectableText(
-                                  "Email was ${snapshot.data!.first.email}",
+                                  snapshot.data!.first.isEmailVerified ==
+                                          "false"
+                                      ? "Email was ${snapshot.data!.first.email}"
+                                      : "Email is verified no need to edit.",
                                   style: const TextStyle(
                                     fontFamily: 'Inter',
                                     fontSize: 11,

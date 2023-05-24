@@ -418,6 +418,11 @@ class _EditProfessorState extends State<EditProfessor> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 TextFormField(
+                                  enabled:
+                                      snapshot.data!.first.isEmailVerified ==
+                                              "false"
+                                          ? true
+                                          : false,
                                   controller: _inputControllerEmail,
                                   validator: (value) {
                                     // Email RegEx Validation
@@ -451,6 +456,11 @@ class _EditProfessorState extends State<EditProfessor> {
                                           color: Colors.transparent),
                                       borderRadius: BorderRadius.circular(10.0),
                                     ),
+                                    disabledBorder: OutlineInputBorder(
+                                      borderSide: const BorderSide(
+                                          color: Colors.transparent),
+                                      borderRadius: BorderRadius.circular(10.0),
+                                    ),
                                     filled: true,
                                     fillColor: ColorPalette.accentDarkWhite,
                                     hintStyle: const TextStyle(
@@ -468,7 +478,10 @@ class _EditProfessorState extends State<EditProfessor> {
                                 ),
                                 const SizedBox(height: 2),
                                 SelectableText(
-                                  "Email was ${snapshot.data!.first.email}",
+                                  snapshot.data!.first.isEmailVerified ==
+                                          "false"
+                                      ? "Email was ${snapshot.data!.first.email}"
+                                      : "Email is verified no need to edit.",
                                   style: const TextStyle(
                                     fontFamily: 'Inter',
                                     fontSize: 11,

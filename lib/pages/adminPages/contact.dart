@@ -3,9 +3,11 @@ import 'dart:convert';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:hive/hive.dart';
 import 'package:hksa/constant/colors.dart';
 import 'package:hksa/constant/string.dart';
 import 'package:hksa/models/chat.dart';
+import 'package:hksa/models/head.dart';
 import 'package:hksa/models/professor.dart';
 import 'package:hksa/models/scholar.dart';
 import 'package:hksa/widgets/adminWidgets/contact/announce.dart';
@@ -20,6 +22,8 @@ class AdminContacts extends StatefulWidget {
 }
 
 class _AdminContactsState extends State<AdminContacts> {
+  final logInBox = Hive.box("myLoginBox");
+  late var userID = logInBox.get("userID");
   // For Searching
   String searchname = "";
   String searchid = "";
@@ -30,6 +34,8 @@ class _AdminContactsState extends State<AdminContacts> {
       FirebaseDatabase.instance.ref().child("Users/Scholars/");
   final DatabaseReference _profReference =
       FirebaseDatabase.instance.ref().child("Users/Professors/");
+  final DatabaseReference _headReference =
+      FirebaseDatabase.instance.ref().child("Users/Head/");
 
   // For DropDown
   String? value = "All";
@@ -437,6 +443,22 @@ class _AdminContactsState extends State<AdminContacts> {
   Future<List<Chat>> getAll() async {
     List<Chat> myAppList = [];
     try {
+      _headReference.get().then((snapshot) {
+        for (final data in snapshot.children) {
+          Map<String, dynamic> myObj = jsonDecode(jsonEncode(data.value));
+          Head myHeadObj = Head.fromJson(myObj);
+          if (myHeadObj.userId != userID) {
+            Chat myChatObj = Chat(
+              name: myHeadObj.name,
+              userId: myHeadObj.userId,
+              pfp: myHeadObj.profilePicture,
+              userType: "head",
+              isIncomplete: "false",
+            );
+            myAppList.add(myChatObj);
+          }
+        }
+      });
       await _scholarReference.get().then(
         (snapshot) {
           for (final data in snapshot.children) {

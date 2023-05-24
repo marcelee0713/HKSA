@@ -766,7 +766,7 @@ class _LogInInputsState extends State<LogInInputs> {
   DropdownMenuItem<String> buildMenuItem(String item) => DropdownMenuItem(
         value: item,
         child: Text(
-          item,
+          item == "Head" ? "$item/Administator" : item,
           style: const TextStyle(
             fontFamily: 'Inter',
             fontWeight: FontWeight.w700,
