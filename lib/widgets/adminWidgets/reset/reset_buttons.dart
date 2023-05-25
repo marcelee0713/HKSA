@@ -9,6 +9,7 @@ import 'package:hksa/widgets/adminWidgets/reset/reset_schedule_header.dart';
 import 'package:hksa/widgets/dialogs/dialog_confirm.dart';
 import 'package:hksa/widgets/dialogs/dialog_loading.dart';
 import 'package:hksa/widgets/dialogs/dialog_success.dart';
+import 'package:hksa/widgets/dialogs/dialog_unsuccessful.dart';
 import 'package:hksa/widgets/scholarWidgets/home/home_inputs.dart';
 
 class ResetButtons extends StatefulWidget {
@@ -48,9 +49,28 @@ class _ResetButtonsState extends State<ResetButtons> {
                   DialogLoading(subtext: "Resetting everything...")
                       .buildLoadingScreen(context);
 
-                  await resetDTRLogs();
-                  await resetHours();
+                  await resetDTRLogs().catchError((e) {
+                    Navigator.of(context, rootNavigator: true).pop();
+                    DialogUnsuccessful(
+                      headertext: "Error",
+                      subtext: e.toString(),
+                      textButton: "Close",
+                      callback: () =>
+                          Navigator.of(context, rootNavigator: true).pop(),
+                    ).buildUnsuccessfulScreen(context);
+                  });
+                  await resetHours().catchError((e) {
+                    Navigator.of(context, rootNavigator: true).pop();
+                    DialogUnsuccessful(
+                      headertext: "Error",
+                      subtext: e.toString(),
+                      textButton: "Close",
+                      callback: () =>
+                          Navigator.of(context, rootNavigator: true).pop(),
+                    ).buildUnsuccessfulScreen(context);
+                  });
                   await resetHistoryLogs().then((value) async {
+                    Navigator.of(context, rootNavigator: true).pop();
                     DialogSuccess(
                       headertext: "Success!",
                       subtext:
@@ -68,6 +88,15 @@ class _ResetButtonsState extends State<ResetButtons> {
                       userType: userType,
                       id: userID,
                     );
+                  }).catchError((e) {
+                    Navigator.of(context, rootNavigator: true).pop();
+                    DialogUnsuccessful(
+                      headertext: "Error",
+                      subtext: e.toString(),
+                      textButton: "Close",
+                      callback: () =>
+                          Navigator.of(context, rootNavigator: true).pop(),
+                    ).buildUnsuccessfulScreen(context);
                   });
                 },
               ).buildConfirmScreen(context);
@@ -98,11 +127,11 @@ class _ResetButtonsState extends State<ResetButtons> {
             onPressed: () {
               DialogConfirm(
                 headertext: "This will reset every scholar's DTR logs.",
-                callback: () {
+                callback: () async {
                   Navigator.of(context, rootNavigator: true).pop();
                   DialogLoading(subtext: "Resetting DTR logs...")
                       .buildLoadingScreen(context);
-                  resetDTRLogs().then(
+                  await resetDTRLogs().then(
                     (value) {
                       Future.delayed(
                         const Duration(seconds: 2),
@@ -128,7 +157,16 @@ class _ResetButtonsState extends State<ResetButtons> {
                         },
                       );
                     },
-                  );
+                  ).catchError((e) {
+                    Navigator.of(context, rootNavigator: true).pop();
+                    DialogUnsuccessful(
+                      headertext: "Error",
+                      subtext: e.toString(),
+                      textButton: "Close",
+                      callback: () =>
+                          Navigator.of(context, rootNavigator: true).pop(),
+                    ).buildUnsuccessfulScreen(context);
+                  });
                 },
               ).buildConfirmScreen(context);
             },
@@ -158,11 +196,11 @@ class _ResetButtonsState extends State<ResetButtons> {
             onPressed: () {
               DialogConfirm(
                 headertext: "This will reset every users's History logs.",
-                callback: () {
+                callback: () async {
                   Navigator.of(context, rootNavigator: true).pop();
                   DialogLoading(subtext: "Resetting DTR logs...")
                       .buildLoadingScreen(context);
-                  resetDTRLogs().then(
+                  await resetHistoryLogs().then(
                     (value) {
                       Future.delayed(
                         const Duration(seconds: 2),
@@ -188,7 +226,16 @@ class _ResetButtonsState extends State<ResetButtons> {
                         },
                       );
                     },
-                  );
+                  ).catchError((e) {
+                    Navigator.of(context, rootNavigator: true).pop();
+                    DialogUnsuccessful(
+                      headertext: "Error",
+                      subtext: e.toString(),
+                      textButton: "Close",
+                      callback: () =>
+                          Navigator.of(context, rootNavigator: true).pop(),
+                    ).buildUnsuccessfulScreen(context);
+                  });
                 },
               ).buildConfirmScreen(context);
             },
@@ -218,12 +265,12 @@ class _ResetButtonsState extends State<ResetButtons> {
             onPressed: () {
               DialogConfirm(
                 headertext: "This will reset every scholar's total hours.",
-                callback: () {
+                callback: () async {
                   Navigator.of(context, rootNavigator: true).pop();
                   DialogLoading(subtext: "Resetting total hours...")
                       .buildLoadingScreen(context);
 
-                  resetHours().then(
+                  await resetHours().then(
                     (value) {
                       Future.delayed(
                         const Duration(seconds: 2),
@@ -250,7 +297,16 @@ class _ResetButtonsState extends State<ResetButtons> {
                         },
                       );
                     },
-                  );
+                  ).catchError((e) {
+                    Navigator.of(context, rootNavigator: true).pop();
+                    DialogUnsuccessful(
+                      headertext: "Error",
+                      subtext: e.toString(),
+                      textButton: "Close",
+                      callback: () =>
+                          Navigator.of(context, rootNavigator: true).pop(),
+                    ).buildUnsuccessfulScreen(context);
+                  });
                 },
               ).buildConfirmScreen(context);
             },
@@ -285,12 +341,12 @@ class _ResetButtonsState extends State<ResetButtons> {
               DialogConfirm(
                 headertext:
                     "This will reset every scholar's schedule information",
-                callback: () {
+                callback: () async {
                   Navigator.of(context, rootNavigator: true).pop();
                   DialogLoading(subtext: "Resetting total hours...")
                       .buildLoadingScreen(context);
 
-                  resetScholarsSchedules().then(
+                  await resetScholarsSchedules().then(
                     (value) {
                       Future.delayed(
                         const Duration(seconds: 2),
@@ -317,7 +373,16 @@ class _ResetButtonsState extends State<ResetButtons> {
                         },
                       );
                     },
-                  );
+                  ).catchError((e) {
+                    Navigator.of(context, rootNavigator: true).pop();
+                    DialogUnsuccessful(
+                      headertext: "Error",
+                      subtext: e.toString(),
+                      textButton: "Close",
+                      callback: () =>
+                          Navigator.of(context, rootNavigator: true).pop(),
+                    ).buildUnsuccessfulScreen(context);
+                  });
                 },
               ).buildConfirmScreen(context);
             },

@@ -647,6 +647,10 @@ class _ProfProfileState extends State<ProfProfile> {
                           if (result == null) {
                             return;
                           }
+
+                          // ignore: use_build_context_synchronously
+                          DialogLoading(subtext: "Changing...")
+                              .buildLoadingScreen(context);
                           await changePassword(newPassword: result).then(
                             (value) async {
                               Navigator.of(context, rootNavigator: true).pop();

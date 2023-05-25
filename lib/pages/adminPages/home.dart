@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:hive/hive.dart';
 import 'package:hksa/constant/colors.dart';
 import 'package:hksa/main.dart';
@@ -12,6 +13,7 @@ import 'package:hksa/widgets/adminWidgets/home/home_content.dart';
 import 'package:hksa/widgets/adminWidgets/home/home_header.dart';
 import 'package:hksa/widgets/adminWidgets/nav_drawer.dart';
 import 'package:hksa/widgets/dialogs/dialog_loading.dart';
+import 'package:hksa/widgets/dialogs/dialog_unsuccessful.dart';
 import 'package:hksa/widgets/scholarWidgets/home/home_inputs.dart';
 
 bool headHasListened = false;
@@ -38,6 +40,18 @@ class _HomeAdminState extends State<HomeAdmin> {
     FirebaseAuth firebaseAuth = FirebaseAuth.instance;
     firebaseMessaging.subscribeToTopic('user_all');
     firebaseMessaging.subscribeToTopic('admin');
+
+    if (firebaseAuth.currentUser == null) {
+      SchedulerBinding.instance.addPostFrameCallback((_) {
+        DialogUnsuccessful(
+          headertext: "Warning!",
+          subtext:
+              "Please re log in! It can create issues not to you but also others!",
+          textButton: "Close",
+          callback: () => Navigator.of(context, rootNavigator: true).pop(),
+        ).buildUnsuccessfulScreen(context);
+      });
+    }
 
     if (!headHasListened) {
       DatabaseReference listenRef =

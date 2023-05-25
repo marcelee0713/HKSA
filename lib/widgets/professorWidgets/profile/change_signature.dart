@@ -272,7 +272,7 @@ class _ChangeProfessorSignatureState extends State<ChangeProfessorSignature> {
                                   }
                                   await createHistory(
                                           desc:
-                                              "User changed password from ${_inputControllerOldSignature.text} to ${_inputControllerCfrmSignature.text}",
+                                              "User changed signature from ${_inputControllerOldSignature.text} to ${_inputControllerCfrmSignature.text}",
                                           timeStamp: DateTime.now()
                                               .microsecondsSinceEpoch
                                               .toString(),
@@ -283,8 +283,6 @@ class _ChangeProfessorSignatureState extends State<ChangeProfessorSignature> {
                                     _inputControllerNewSignature.text = "";
                                     _inputControllerCfrmSignature.text = "";
                                     Navigator.pop(context, result);
-                                    DialogLoading(subtext: "Changing...")
-                                        .buildLoadingScreen(context);
                                   }).catchError(
                                     // ignore: invalid_return_type_for_catch_error
                                     (error) => {

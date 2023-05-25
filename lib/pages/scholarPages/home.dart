@@ -13,6 +13,7 @@ import 'package:hksa/pages/scholarPages/chart.dart';
 import 'package:hksa/pages/scholarPages/schedule.dart';
 import 'package:hksa/widgets/dialogs/dialog_loading.dart';
 import 'package:hksa/widgets/dialogs/dialog_old_dtr.dart';
+import 'package:hksa/widgets/dialogs/dialog_unsuccessful.dart';
 import 'package:hksa/widgets/scholarWidgets/home/home_inputs.dart';
 import 'messages.dart';
 import 'dtr.dart';
@@ -71,6 +72,18 @@ class _HomeScholarState extends State<HomeScholar> {
                 callback: () =>
                     Navigator.of(context, rootNavigator: true).pop())
             .buildReminder(context);
+      });
+    }
+
+    if (firebaseAuth.currentUser == null) {
+      SchedulerBinding.instance.addPostFrameCallback((_) {
+        DialogUnsuccessful(
+          headertext: "Warning!",
+          subtext:
+              "Please re log in! It can create issues not to you but also others!",
+          textButton: "Close",
+          callback: () => Navigator.of(context, rootNavigator: true).pop(),
+        ).buildUnsuccessfulScreen(context);
       });
     }
 

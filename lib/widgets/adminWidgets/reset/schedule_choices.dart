@@ -332,7 +332,7 @@ class _ScheduleChoicesState extends State<ScheduleChoices> {
                                   ).pop();
                                   DialogUnsuccessful(
                                     headertext: "Error",
-                                    subtext: "Please try again later!",
+                                    subtext: error.toString(),
                                     textButton: "Close",
                                     callback: () => Navigator.of(
                                       context,
@@ -431,7 +431,7 @@ class _ScheduleChoicesState extends State<ScheduleChoices> {
                                         .pop();
                                     DialogUnsuccessful(
                                       headertext: "Error",
-                                      subtext: "Please try again later!",
+                                      subtext: err.toString(),
                                       textButton: "Close",
                                       callback: () => Navigator.of(
                                         context,
@@ -694,7 +694,7 @@ class _ScheduleChoicesState extends State<ScheduleChoices> {
                                   ).pop();
                                   DialogUnsuccessful(
                                     headertext: "Error",
-                                    subtext: "Please try again later!",
+                                    subtext: error.toString(),
                                     textButton: "Close",
                                     callback: () => Navigator.of(
                                       context,
@@ -793,7 +793,7 @@ class _ScheduleChoicesState extends State<ScheduleChoices> {
                                         .pop();
                                     DialogUnsuccessful(
                                       headertext: "Error",
-                                      subtext: "Please try again later!",
+                                      subtext: err.toString(),
                                       textButton: "Close",
                                       callback: () => Navigator.of(
                                         context,
@@ -1058,7 +1058,7 @@ class _ScheduleChoicesState extends State<ScheduleChoices> {
                                   ).pop();
                                   DialogUnsuccessful(
                                     headertext: "Error",
-                                    subtext: "Please try again later!",
+                                    subtext: error.toString(),
                                     textButton: "Close",
                                     callback: () => Navigator.of(
                                       context,
@@ -1159,7 +1159,7 @@ class _ScheduleChoicesState extends State<ScheduleChoices> {
                                         .pop();
                                     DialogUnsuccessful(
                                       headertext: "Error",
-                                      subtext: "Please try again later!",
+                                      subtext: err.toString(),
                                       textButton: "Close",
                                       callback: () => Navigator.of(
                                         context,

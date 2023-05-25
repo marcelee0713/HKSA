@@ -746,6 +746,7 @@ class _ProfessorProfileState extends State<ProfessorProfile> {
                                                       userType: userType,
                                                       id: userID,
                                                     );
+                                                    setState(() {});
                                                   }).catchError((e) {
                                                     Navigator.of(context,
                                                             rootNavigator: true)
@@ -831,6 +832,7 @@ class _ProfessorProfileState extends State<ProfessorProfile> {
                                                       userType: userType,
                                                       id: userID,
                                                     );
+                                                    setState(() {});
                                                   }).catchError((e) {
                                                     Navigator.of(context,
                                                             rootNavigator: true)

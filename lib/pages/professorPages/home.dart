@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:hive/hive.dart';
 import 'package:hksa/constant/colors.dart';
 import 'package:hksa/main.dart';
@@ -13,6 +14,8 @@ import 'package:hksa/pages/professorPages/message.dart';
 import 'package:hksa/pages/professorPages/profile.dart';
 import 'package:hksa/widgets/dialogs/dialog_loading.dart';
 import 'package:hksa/widgets/scholarWidgets/home/home_inputs.dart';
+
+import '../../widgets/dialogs/dialog_unsuccessful.dart';
 
 class HomeProfessor extends StatefulWidget {
   const HomeProfessor({super.key});
@@ -39,6 +42,18 @@ class _HomeProfessorState extends State<HomeProfessor> {
   void initState() {
     firebaseMessaging.subscribeToTopic('user_all');
     firebaseMessaging.subscribeToTopic('professors');
+
+    if (firebaseAuth.currentUser == null) {
+      SchedulerBinding.instance.addPostFrameCallback((_) {
+        DialogUnsuccessful(
+          headertext: "Warning!",
+          subtext:
+              "Please re log in! It can create issues not to you but also others!",
+          textButton: "Close",
+          callback: () => Navigator.of(context, rootNavigator: true).pop(),
+        ).buildUnsuccessfulScreen(context);
+      });
+    }
 
     if (!professorHasListened) {
       DatabaseReference listenRef = FirebaseDatabase.instance
