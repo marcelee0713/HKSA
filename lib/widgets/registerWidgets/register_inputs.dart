@@ -642,6 +642,31 @@ class _RegisterInputsState extends State<RegisterInputs> {
                   ],
                 )
               : const SizedBox(height: 18),
+          const Align(
+            alignment: Alignment.centerLeft,
+            child: Text(
+              "Credentials:",
+              style: TextStyle(
+                color: ColorPalette.primary,
+                fontSize: 20,
+                fontFamily: 'Inter',
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ),
+          const Align(
+            alignment: Alignment.centerLeft,
+            child: Text(
+              "Please enter your credentials. Don't input @phinmaed.com on the Username field.",
+              style: TextStyle(
+                color: ColorPalette.primary,
+                fontSize: 14,
+                fontFamily: 'Inter',
+                fontWeight: FontWeight.w300,
+              ),
+            ),
+          ),
+          const SizedBox(height: 10),
           Row(
             children: [
               Expanded(
@@ -649,11 +674,19 @@ class _RegisterInputsState extends State<RegisterInputs> {
                   controller: _inputControllerEmail,
                   maxLength: 40,
                   validator: (value) {
-                    const myString = "@phinmaed.com";
-                    if (!value!.contains(myString) && value.isNotEmpty) {
+                    String myValue = value!;
+                    bool valid = true;
+                    for (final i in HKSAStrings.emailValidation) {
+                      if (myValue.contains(i)) {
+                        valid = false;
+                        break;
+                      }
+                    }
+
+                    if (valid && value.isNotEmpty) {
                       return null;
-                    } else if (value.contains(myString) && value.isNotEmpty) {
-                      return "Please remove $myString on this input";
+                    } else if (!valid && value.isNotEmpty) {
+                      return "Please remove phinmaed.com";
                     } else {
                       return "Invalid Input";
                     }
@@ -661,7 +694,10 @@ class _RegisterInputsState extends State<RegisterInputs> {
                   keyboardType: TextInputType.text,
                   decoration: InputDecoration(
                     counterText: "",
-                    errorStyle: TextStyle(color: ColorPalette.errorColor),
+                    errorStyle: const TextStyle(
+                      color: ColorPalette.errorColor,
+                      fontFamily: 'Inter',
+                    ),
                     enabledBorder: OutlineInputBorder(
                       borderSide: const BorderSide(color: Colors.transparent),
                       borderRadius: BorderRadius.circular(10.0),
@@ -707,13 +743,22 @@ class _RegisterInputsState extends State<RegisterInputs> {
               const SizedBox(width: 2),
               Expanded(
                 child: TextFormField(
+                  enabled: false,
                   validator: (value) {
-                    if (_inputControllerEmail.text != "" &&
-                        !_inputControllerEmail.text.contains("@phinmaed.com")) {
+                    String myValue = _inputControllerEmail.text;
+                    bool valid = true;
+                    String validator = "";
+                    for (final i in HKSAStrings.emailValidation) {
+                      if (myValue.contains(i)) {
+                        valid = false;
+                        validator = i;
+                        break;
+                      }
+                    }
+                    if (valid && myValue.isNotEmpty) {
                       return null;
-                    } else if (_inputControllerEmail.text
-                        .contains("@phinmaed.com")) {
-                      return "@phinmaed.com";
+                    } else if (!valid && myValue.isNotEmpty) {
+                      return validator;
                     } else {
                       return "";
                     }
@@ -721,6 +766,7 @@ class _RegisterInputsState extends State<RegisterInputs> {
                   controller: _inputControllerEmailDomain,
                   keyboardType: TextInputType.emailAddress,
                   decoration: InputDecoration(
+                    errorStyle: const TextStyle(color: ColorPalette.errorColor),
                     enabledBorder: OutlineInputBorder(
                       borderSide: const BorderSide(color: Colors.transparent),
                       borderRadius: BorderRadius.circular(10.0),
@@ -728,6 +774,19 @@ class _RegisterInputsState extends State<RegisterInputs> {
                     focusedBorder: OutlineInputBorder(
                       borderSide: const BorderSide(color: Colors.transparent),
                       borderRadius: BorderRadius.circular(10.0),
+                    ),
+                    disabledBorder: OutlineInputBorder(
+                      borderSide: const BorderSide(color: Colors.transparent),
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                    errorBorder: const UnderlineInputBorder(
+                      borderSide: BorderSide(
+                        width: 1,
+                        color: ColorPalette.errorColor,
+                      ),
+                      borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(5),
+                          topRight: Radius.circular(5)),
                     ),
                     filled: true,
                     fillColor: ColorPalette.accentDarkWhite,

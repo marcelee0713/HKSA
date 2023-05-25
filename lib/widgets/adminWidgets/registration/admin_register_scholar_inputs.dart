@@ -644,6 +644,31 @@ class _AdminRegisterScholarInputsState
                   ],
                 )
               : const SizedBox(height: 18),
+          const Align(
+            alignment: Alignment.centerLeft,
+            child: Text(
+              "Credentials:",
+              style: TextStyle(
+                color: ColorPalette.primary,
+                fontSize: 20,
+                fontFamily: 'Inter',
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ),
+          const Align(
+            alignment: Alignment.centerLeft,
+            child: Text(
+              "Please enter their credentials. Don't input @phinmaed.com on the Username field.",
+              style: TextStyle(
+                color: ColorPalette.primary,
+                fontSize: 14,
+                fontFamily: 'Inter',
+                fontWeight: FontWeight.w300,
+              ),
+            ),
+          ),
+          const SizedBox(height: 10),
           Row(
             children: [
               Expanded(
@@ -651,11 +676,19 @@ class _AdminRegisterScholarInputsState
                   controller: _inputControllerEmail,
                   maxLength: 40,
                   validator: (value) {
-                    const myString = "@phinmaed.com";
-                    if (!value!.contains(myString) && value.isNotEmpty) {
+                    String myValue = value!;
+                    bool valid = true;
+                    for (final i in HKSAStrings.emailValidation) {
+                      if (myValue.contains(i)) {
+                        valid = false;
+                        break;
+                      }
+                    }
+
+                    if (valid && value.isNotEmpty) {
                       return null;
-                    } else if (value.contains(myString) && value.isNotEmpty) {
-                      return "Please remove $myString on this input";
+                    } else if (!valid && value.isNotEmpty) {
+                      return "Please remove phinmaed.com";
                     } else {
                       return "Invalid Input";
                     }
@@ -710,12 +743,20 @@ class _AdminRegisterScholarInputsState
               Expanded(
                 child: TextFormField(
                   validator: (value) {
-                    if (_inputControllerEmail.text != "" &&
-                        !_inputControllerEmail.text.contains("@phinmaed.com")) {
+                    String myValue = _inputControllerEmail.text;
+                    bool valid = true;
+                    String validator = "";
+                    for (final i in HKSAStrings.emailValidation) {
+                      if (myValue.contains(i)) {
+                        valid = false;
+                        validator = i;
+                        break;
+                      }
+                    }
+                    if (valid && myValue.isNotEmpty) {
                       return null;
-                    } else if (_inputControllerEmail.text
-                        .contains("@phinmaed.com")) {
-                      return "@phinmaed.com";
+                    } else if (!valid && myValue.isNotEmpty) {
+                      return validator;
                     } else {
                       return "";
                     }

@@ -273,7 +273,7 @@ class _AdminRegisterHeadPageState extends State<AdminRegisterHeadPage> {
                   const Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
-                      "Log in Information:",
+                      "Credentials:",
                       style: TextStyle(
                         color: ColorPalette.primary,
                         fontSize: 20,
@@ -302,13 +302,19 @@ class _AdminRegisterHeadPageState extends State<AdminRegisterHeadPage> {
                           controller: _inputControllerEmail,
                           maxLength: 40,
                           validator: (value) {
-                            const myString = "@phinmaed.com";
-                            if (!value!.contains(myString) &&
-                                value.isNotEmpty) {
+                            String myValue = value!;
+                            bool valid = true;
+                            for (final i in HKSAStrings.emailValidation) {
+                              if (myValue.contains(i)) {
+                                valid = false;
+                                break;
+                              }
+                            }
+
+                            if (valid && value.isNotEmpty) {
                               return null;
-                            } else if (value.contains(myString) &&
-                                value.isNotEmpty) {
-                              return "Please remove $myString on this input";
+                            } else if (!valid && value.isNotEmpty) {
+                              return "Please remove phinmaed.com";
                             } else {
                               return "Invalid Input";
                             }
@@ -367,13 +373,20 @@ class _AdminRegisterHeadPageState extends State<AdminRegisterHeadPage> {
                         child: TextFormField(
                           enabled: false,
                           validator: (value) {
-                            if (_inputControllerEmail.text != "" &&
-                                !_inputControllerEmail.text
-                                    .contains("@phinmaed.com")) {
+                            String myValue = _inputControllerEmail.text;
+                            bool valid = true;
+                            String validator = "";
+                            for (final i in HKSAStrings.emailValidation) {
+                              if (myValue.contains(i)) {
+                                valid = false;
+                                validator = i;
+                                break;
+                              }
+                            }
+                            if (valid && myValue.isNotEmpty) {
                               return null;
-                            } else if (_inputControllerEmail.text
-                                .contains("@phinmaed.com")) {
-                              return "@phinmaed.com";
+                            } else if (!valid && myValue.isNotEmpty) {
+                              return validator;
                             } else {
                               return "";
                             }
@@ -381,6 +394,10 @@ class _AdminRegisterHeadPageState extends State<AdminRegisterHeadPage> {
                           controller: _inputControllerEmailDomain,
                           keyboardType: TextInputType.emailAddress,
                           decoration: InputDecoration(
+                            errorStyle: const TextStyle(
+                              color: ColorPalette.errorColor,
+                              fontFamily: 'Inter',
+                            ),
                             enabledBorder: OutlineInputBorder(
                               borderSide:
                                   const BorderSide(color: Colors.transparent),
@@ -395,6 +412,15 @@ class _AdminRegisterHeadPageState extends State<AdminRegisterHeadPage> {
                               borderSide:
                                   const BorderSide(color: Colors.transparent),
                               borderRadius: BorderRadius.circular(10.0),
+                            ),
+                            errorBorder: const UnderlineInputBorder(
+                              borderRadius: BorderRadius.vertical(
+                                  top: Radius.circular(5)),
+                              borderSide: BorderSide(
+                                color: ColorPalette.errorColor,
+                                width: 1,
+                                style: BorderStyle.solid,
+                              ),
                             ),
                             filled: true,
                             fillColor: ColorPalette.accentDarkWhite,
