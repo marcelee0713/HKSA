@@ -43,7 +43,8 @@ class _AdminContactsState extends State<AdminContacts> {
   String? dayValue;
   String? townValue;
 
-  final filteringOptions = ["All", "Professors"];
+  final filteringOptions = ["All", "Professors", "Admins"];
+  final adminFilteringOptions = ["All", "Admins"];
 
   @override
   Widget build(BuildContext context) {
@@ -166,6 +167,10 @@ class _AdminContactsState extends State<AdminContacts> {
                             .toList(),
                         onChanged: ((value) => setState(() {
                               this.value = value;
+                              if (value == "All" || value == "Admins") {
+                                timeValue = null;
+                                dayValue = null;
+                              }
                               if (filteringOptions.contains(value)) {
                                 townValue = null;
                               }
@@ -219,86 +224,90 @@ class _AdminContactsState extends State<AdminContacts> {
               ],
             ),
             const SizedBox(height: 5),
-            Row(
-              children: [
-                Expanded(
-                  child: Container(
-                    height: 30,
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 10, vertical: 0.5),
-                    decoration: const BoxDecoration(
-                      borderRadius: BorderRadius.only(
-                        bottomLeft: Radius.circular(10),
-                      ),
-                      color: ColorPalette.accentDarkWhite,
-                    ),
-                    child: DropdownButtonHideUnderline(
-                      child: DropdownButton(
-                        hint: const Text(
-                          "Enter Vacant Time",
-                          style: TextStyle(
-                            fontFamily: 'Inter',
-                            fontSize: 14,
-                            fontStyle: FontStyle.italic,
-                            fontWeight: FontWeight.w300,
+            !adminFilteringOptions.contains(value)
+                ? Row(
+                    children: [
+                      Expanded(
+                        child: Container(
+                          height: 30,
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 10, vertical: 0.5),
+                          decoration: const BoxDecoration(
+                            borderRadius: BorderRadius.only(
+                              bottomLeft: Radius.circular(10),
+                            ),
+                            color: ColorPalette.accentDarkWhite,
+                          ),
+                          child: DropdownButtonHideUnderline(
+                            child: DropdownButton(
+                              hint: const Text(
+                                "Enter Vacant Time",
+                                style: TextStyle(
+                                  fontFamily: 'Inter',
+                                  fontSize: 14,
+                                  fontStyle: FontStyle.italic,
+                                  fontWeight: FontWeight.w300,
+                                ),
+                              ),
+                              isExpanded: true,
+                              iconSize: 32,
+                              icon: const Icon(
+                                Icons.arrow_drop_down,
+                                color: ColorPalette.primary,
+                              ),
+                              value: timeValue,
+                              items: HKSAStrings.vacanttime
+                                  .map(buildMenuItem)
+                                  .toList(),
+                              onChanged: ((timeValue) => setState(() {
+                                    this.timeValue = timeValue ?? "";
+                                  })),
+                            ),
                           ),
                         ),
-                        isExpanded: true,
-                        iconSize: 32,
-                        icon: const Icon(
-                          Icons.arrow_drop_down,
-                          color: ColorPalette.primary,
-                        ),
-                        value: timeValue,
-                        items:
-                            HKSAStrings.vacanttime.map(buildMenuItem).toList(),
-                        onChanged: ((timeValue) => setState(() {
-                              this.timeValue = timeValue ?? "";
-                            })),
                       ),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 5),
-                Expanded(
-                  child: Container(
-                    height: 30,
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 10, vertical: 0.5),
-                    decoration: const BoxDecoration(
-                      borderRadius:
-                          BorderRadius.only(bottomRight: Radius.circular(10)),
-                      color: ColorPalette.accentDarkWhite,
-                    ),
-                    child: DropdownButtonHideUnderline(
-                      child: DropdownButton(
-                        hint: const Text(
-                          "Enter Vacant Day",
-                          style: TextStyle(
-                            fontFamily: 'Inter',
-                            fontSize: 14,
-                            fontStyle: FontStyle.italic,
-                            fontWeight: FontWeight.w300,
+                      const SizedBox(width: 5),
+                      Expanded(
+                        child: Container(
+                          height: 30,
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 10, vertical: 0.5),
+                          decoration: const BoxDecoration(
+                            borderRadius: BorderRadius.only(
+                                bottomRight: Radius.circular(10)),
+                            color: ColorPalette.accentDarkWhite,
+                          ),
+                          child: DropdownButtonHideUnderline(
+                            child: DropdownButton(
+                              hint: const Text(
+                                "Enter Vacant Day",
+                                style: TextStyle(
+                                  fontFamily: 'Inter',
+                                  fontSize: 14,
+                                  fontStyle: FontStyle.italic,
+                                  fontWeight: FontWeight.w300,
+                                ),
+                              ),
+                              isExpanded: true,
+                              iconSize: 32,
+                              icon: const Icon(
+                                Icons.arrow_drop_down,
+                                color: ColorPalette.primary,
+                              ),
+                              value: dayValue,
+                              items: HKSAStrings.vacantday
+                                  .map(buildMenuItem)
+                                  .toList(),
+                              onChanged: ((dayValue) => setState(() {
+                                    this.dayValue = dayValue ?? "";
+                                  })),
+                            ),
                           ),
                         ),
-                        isExpanded: true,
-                        iconSize: 32,
-                        icon: const Icon(
-                          Icons.arrow_drop_down,
-                          color: ColorPalette.primary,
-                        ),
-                        value: dayValue,
-                        items:
-                            HKSAStrings.vacantday.map(buildMenuItem).toList(),
-                        onChanged: ((dayValue) => setState(() {
-                              this.dayValue = dayValue ?? "";
-                            })),
                       ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
+                    ],
+                  )
+                : const SizedBox(),
             const SizedBox(height: 5),
             Container(height: 1, color: ColorPalette.primary),
             Expanded(
@@ -386,6 +395,10 @@ class _AdminContactsState extends State<AdminContacts> {
                     );
                   }
 
+                  snapshot.data!.sort(
+                    (a, b) => a.name.compareTo(b.name),
+                  );
+
                   return ListView.builder(
                     padding: const EdgeInsets.all(0),
                     shrinkWrap: true,
@@ -436,6 +449,8 @@ class _AdminContactsState extends State<AdminContacts> {
       return getFinishedScholar();
     } else if (value == 'Unfinished') {
       return getUnfinishedScholar();
+    } else if (value == "Admins") {
+      return getAdmins();
     }
     return getAll();
   }
@@ -1178,6 +1193,33 @@ class _AdminContactsState extends State<AdminContacts> {
                 userId: myProfessorObj.professorId,
                 pfp: myProfessorObj.profilePicture,
                 userType: "professor",
+                isIncomplete: "false",
+              );
+              myAppList.add(myChatObj);
+            }
+          }
+        },
+      );
+      return myAppList;
+    } catch (error) {
+      rethrow;
+    }
+  }
+
+  Future<List<Chat>> getAdmins() async {
+    List<Chat> myAppList = [];
+    try {
+      await _headReference.get().then(
+        (snapshot) {
+          for (final data in snapshot.children) {
+            Map<String, dynamic> myObj = jsonDecode(jsonEncode(data.value));
+            Head myHeadObj = Head.fromJson(myObj);
+            if (myHeadObj.userId != userID) {
+              Chat myChatObj = Chat(
+                name: myHeadObj.name,
+                userId: myHeadObj.userId,
+                pfp: myHeadObj.profilePicture,
+                userType: "head",
                 isIncomplete: "false",
               );
               myAppList.add(myChatObj);

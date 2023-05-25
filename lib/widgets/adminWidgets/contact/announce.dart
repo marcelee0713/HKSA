@@ -35,6 +35,8 @@ class _AnnounceState extends State<Announce> {
       FirebaseDatabase.instance.ref().child("Users/Scholars/");
   final DatabaseReference _profReference =
       FirebaseDatabase.instance.ref().child("Users/Professors/");
+  final DatabaseReference _headReference =
+      FirebaseDatabase.instance.ref().child("Users/Head/");
 
   final logInBox = Hive.box("myLoginBox");
 
@@ -308,6 +310,8 @@ class _AnnounceState extends State<Announce> {
                                 userValue = 'scholars_non_faci';
                               } else if (userTypeValue == "Professors") {
                                 userValue = 'professors';
+                              } else if (userTypeValue == "Admins") {
+                                userValue = 'admin';
                               }
                               await sendNotificationToTopic(
                                 userValue,
@@ -334,6 +338,23 @@ class _AnnounceState extends State<Announce> {
                                     },
                                   );
 
+                                  await _headReference.get().then(
+                                    (snapshot) async {
+                                      for (final id in snapshot.children) {
+                                        String headId = id.key.toString();
+                                        String recieverUserType = "head";
+                                        if (headId != userID) {
+                                          await checkInbox(
+                                              recieverUserType, headId);
+                                          await sendMessage(
+                                              message: fullMessage,
+                                              receiverID: headId,
+                                              receiverUserType:
+                                                  recieverUserType);
+                                        }
+                                      }
+                                    },
+                                  );
                                   await _profReference.get().then(
                                     (snapshot) async {
                                       for (final professorsId
@@ -432,6 +453,24 @@ class _AnnounceState extends State<Announce> {
                                             message: fullMessage,
                                             receiverID: professorID,
                                             receiverUserType: recieverUserType);
+                                      }
+                                    },
+                                  );
+                                } else if (userTypeValue == "Admins") {
+                                  await _headReference.get().then(
+                                    (snapshot) async {
+                                      for (final id in snapshot.children) {
+                                        String headId = id.key.toString();
+                                        String recieverUserType = "head";
+                                        if (headId != userID) {
+                                          await checkInbox(
+                                              recieverUserType, headId);
+                                          await sendMessage(
+                                              message: fullMessage,
+                                              receiverID: headId,
+                                              receiverUserType:
+                                                  recieverUserType);
+                                        }
                                       }
                                     },
                                   );
@@ -544,7 +583,12 @@ class _AnnounceState extends State<Announce> {
         .collection(userID)
         .doc(Timestamp.now().seconds.toString());
 
-    final json = {'message': message, 'date': formattedDate, 'sender': userID};
+    final json = {
+      'message': message,
+      'date': formattedDate,
+      'sender': userID,
+      'read': 'false'
+    };
 
     // SET THIS USER
     await sendMessage.set(json);

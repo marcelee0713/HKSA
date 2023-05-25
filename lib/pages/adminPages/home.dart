@@ -36,6 +36,9 @@ class _HomeAdminState extends State<HomeAdmin> {
   void initState() {
     final FirebaseMessaging firebaseMessaging = FirebaseMessaging.instance;
     FirebaseAuth firebaseAuth = FirebaseAuth.instance;
+    firebaseMessaging.subscribeToTopic('user_all');
+    firebaseMessaging.subscribeToTopic('admin');
+
     if (!headHasListened) {
       DatabaseReference listenRef =
           FirebaseDatabase.instance.ref().child("Users/Head/$userID/status");
@@ -156,7 +159,6 @@ class _HomeAdminState extends State<HomeAdmin> {
                   },
                 );
                 logInBox.put("userID", "");
-                await firebaseAuth.signOut();
                 await chatRef.set("");
                 await firebaseMessaging.unsubscribeFromTopic('user_all');
                 await firebaseMessaging.unsubscribeFromTopic('admin');
@@ -166,6 +168,7 @@ class _HomeAdminState extends State<HomeAdmin> {
                   userType: "Head",
                   id: userID,
                 );
+                await firebaseAuth.signOut();
               },
             );
           });

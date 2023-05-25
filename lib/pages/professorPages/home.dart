@@ -157,7 +157,6 @@ class _HomeProfessorState extends State<HomeProfessor> {
                   },
                 );
                 logInBox.put("userID", "");
-                await firebaseAuth.signOut();
                 await chatRef.set("");
                 await firebaseMessaging.unsubscribeFromTopic('user_all');
                 await firebaseMessaging.unsubscribeFromTopic('professors');
@@ -167,6 +166,7 @@ class _HomeProfessorState extends State<HomeProfessor> {
                   userType: "Scholar",
                   id: userID,
                 );
+                await firebaseAuth.signOut();
               },
             );
           });

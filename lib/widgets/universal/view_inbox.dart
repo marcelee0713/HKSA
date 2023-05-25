@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
@@ -84,12 +83,6 @@ class _InboxState extends State<Inbox> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-    CollectionReference inboxReference = FirebaseFirestore.instance
-        .collection("users")
-        .doc(userType)
-        .collection(userID)
-        .doc("inbox")
-        .collection(widget.receiverID);
     // TO-DO
     // Both user should have firestore collection inbox
     // Create them immediately or only create them when they send a message
@@ -415,8 +408,6 @@ class _InboxState extends State<Inbox> with WidgetsBindingObserver {
         .doc(Timestamp.now().seconds.toString());
 
     String read = await receiverIsListening();
-
-    debugPrint("did it read? :" + read);
 
     final json = {
       'message': message,

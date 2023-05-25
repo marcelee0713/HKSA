@@ -1,7 +1,9 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:hksa/constant/colors.dart';
@@ -31,6 +33,7 @@ class _NavDrawState extends State<NavDraw> {
   late var userName = logInBox.get("userName");
   late var userID = logInBox.get("userID");
   String userProfileListener = "";
+  final FirebaseMessaging firebaseMessaging = FirebaseMessaging.instance;
 
   @override
   void initState() {
@@ -208,22 +211,18 @@ class _NavDrawState extends State<NavDraw> {
                     headertext: "Are you sure you want to log out?",
                     callback: () {
                       Navigator.of(context, rootNavigator: true).pop();
-                      // Might be more soon
-                      // This includes the time in
-                      headSubscription!.cancel();
-                      isSuperAdminSubscription!.cancel();
-
-                      sawItAlready = true;
-                      headHasListened = false;
-                      isSuperAdmin = false;
                       Future.delayed(const Duration(), (() {
                         DialogLoading(subtext: "Logging out...")
                             .buildLoadingScreen(context);
                       })).whenComplete(() {
                         Future.delayed(const Duration(seconds: 3), () async {
+                          headSubscription!.cancel();
+                          isSuperAdminSubscription!.cancel();
+                          sawItAlready = true;
+                          headHasListened = false;
+                          isSuperAdmin = false;
                           logInBox.put("isLoggedIn", false);
                           logInBox.put("hasTimedIn", false);
-
                           logInBox.put("userName", "");
                           logInBox.put("getTimeInLS", "");
                           logInBox.put("dateTimedIn", "");
@@ -235,6 +234,10 @@ class _NavDrawState extends State<NavDraw> {
 
                           logInBox.put("userID", "");
                           logInBox.put("userType", "");
+                          await firebaseMessaging.unsubscribeFromTopic('admin');
+                          await firebaseMessaging
+                              .unsubscribeFromTopic('user_all');
+
                           await createHistory(
                             desc: "User logged out",
                             timeStamp: DateTime.now()
@@ -243,6 +246,7 @@ class _NavDrawState extends State<NavDraw> {
                             userType: "head",
                             id: userID,
                           );
+                          await FirebaseAuth.instance.signOut();
                         });
                       });
                     }).buildConfirmScreen(context);

@@ -473,7 +473,6 @@ class _ProfileState extends State<Profile> {
                                       .unsubscribeFromTopic('scholars_faci');
                                   await firebaseMessaging.unsubscribeFromTopic(
                                       'scholars_non_faci');
-                                  await signOut();
                                   await createHistory(
                                     desc: "User logged out",
                                     timeStamp: DateTime.now()
@@ -482,6 +481,7 @@ class _ProfileState extends State<Profile> {
                                     userType: userType!,
                                     id: userID,
                                   );
+                                  await signOut();
                                   logInBox.put("userType", "");
                                   logInBox.put("userID", "");
                                   // ignore: use_build_context_synchronously

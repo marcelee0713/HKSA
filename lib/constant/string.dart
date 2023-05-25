@@ -120,12 +120,13 @@ class HKSAStrings {
   ];
   static const closedquestions = ['Yes', 'No'];
   static const dtrInfo =
-      "For your information, you can not time in or out if you are NOT between 7:30 AM to 8:00 PM. It also won't record your DTR logs even though you had timed in.";
+      "For your information, you can not time in or out if you are NOT between 7:00 AM to 8:00 PM. It also won't record your DTR logs even though you had timed in.";
   static const signatureInfo = "Do not share your signature code to anyone!";
   static const pfpPlaceholder =
       "https://firebasestorage.googleapis.com/v0/b/hksa-3f5d4.appspot.com/o/placeholder%2Fuser-circle-svgrepo-com.png?alt=media&token=6d3e9450-20be-4ba6-aa2e-0fbece3ef967";
   static const contactsCategories = [
     'All',
+    'Admins',
     'Scholars',
     'Scholars (Faci)',
     'Scholars (Non-Faci)',
@@ -139,6 +140,7 @@ class HKSAStrings {
   static const hoursStatus = ['true', 'false'];
   static const announcementUserType = [
     'All',
+    'Admins',
     'Scholars',
     'Scholars (Faci)',
     'Scholars (Non-Faci)',
