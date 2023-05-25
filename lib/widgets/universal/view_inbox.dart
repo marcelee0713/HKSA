@@ -248,10 +248,18 @@ class _InboxState extends State<Inbox> with WidgetsBindingObserver {
                           shrinkWrap: true,
                           itemCount: snapshot.data?.docs.length,
                           itemBuilder: (context, index) {
-                            return MessageBox(
+                            return Tooltip(
+                              message: snapshot.data!.docs[index]['date'],
+                              onTriggered: () {
+                                debugPrint("Hello?");
+                              },
+                              child: MessageBox(
                                 message: snapshot.data!.docs[index]['message'],
                                 date: snapshot.data!.docs[index]['date'],
-                                sender: snapshot.data!.docs[index]['sender']);
+                                sender: snapshot.data!.docs[index]['sender'],
+                                seen: snapshot.data!.docs[index]['read'],
+                              ),
+                            );
                           },
                         );
                       },

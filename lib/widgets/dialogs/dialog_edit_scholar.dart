@@ -1347,7 +1347,7 @@ class _EditScholarState extends State<EditScholar> {
                                                 ),
                                                 const SizedBox(height: 2),
                                                 Text(
-                                                  "Assgined Prof on Day 1 was ${snapshot.data!.first.assignedProfD1}",
+                                                  "Assigned Prof on Day 1 was ${snapshot.data!.first.assignedProfD1}",
                                                   style: const TextStyle(
                                                     fontFamily: 'Inter',
                                                     fontSize: 11,
@@ -1493,7 +1493,7 @@ class _EditScholarState extends State<EditScholar> {
                                                 ),
                                                 const SizedBox(height: 2),
                                                 Text(
-                                                  "Assgined Prof on Day 2 was ${snapshot.data!.first.assignedProfD2}",
+                                                  "Assi Prof on Day 2 was ${snapshot.data!.first.assignedProfD2}",
                                                   style: const TextStyle(
                                                     fontFamily: 'Inter',
                                                     fontSize: 11,
@@ -1640,7 +1640,7 @@ class _EditScholarState extends State<EditScholar> {
                                                 ),
                                                 const SizedBox(height: 2),
                                                 Text(
-                                                  "Assgined Prof on Whole Day was ${snapshot.data!.first.assignedProfWd}",
+                                                  "Assi Prof on Whole Day was ${snapshot.data!.first.assignedProfWd}",
                                                   style: const TextStyle(
                                                     fontFamily: 'Inter',
                                                     fontSize: 11,
