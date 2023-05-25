@@ -526,8 +526,9 @@ class _ProfessorProfileState extends State<ProfessorProfile> {
                                         const SizedBox(width: 5),
                                         Expanded(
                                           child: ElevatedButton(
-                                            onPressed: () {
-                                              Navigator.push(
+                                            onPressed: () async {
+                                              final result =
+                                                  await Navigator.push(
                                                 context,
                                                 MaterialPageRoute(
                                                   builder: (context) =>
@@ -543,6 +544,10 @@ class _ProfessorProfileState extends State<ProfessorProfile> {
                                                   ),
                                                 ),
                                               );
+
+                                              if (result.toString() == "null") {
+                                                setState(() {});
+                                              }
                                             },
                                             style: ElevatedButton.styleFrom(
                                               backgroundColor:

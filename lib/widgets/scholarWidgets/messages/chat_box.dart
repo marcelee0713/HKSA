@@ -1,8 +1,10 @@
 import 'dart:convert';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:hksa/constant/colors.dart';
 import 'package:hksa/models/professor.dart';
@@ -36,8 +38,13 @@ class _ChatBoxState extends State<ChatBox> {
   late var userType = logInBox.get("userType");
   bool hasConflicts = false;
   bool profHasConflicts = false;
+
+  String inc = "";
+  String userPfpUrl = "";
   @override
   void initState() {
+    inc = widget.isIncomplete;
+    userPfpUrl = widget.pfpUrl;
     getStatus(); // For Scholars
     super.initState();
   }
@@ -45,23 +52,44 @@ class _ChatBoxState extends State<ChatBox> {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () {
+      onTap: () async {
         if (widget.userType == "professor") {
-          Navigator.push(
+          final result = await Navigator.push(
               context,
               MaterialPageRoute(
                   builder: (context) =>
                       ProfessorProfile(userID: widget.userId)));
+
+          if (result != null) {
+            setState(() {
+              userPfpUrl = result[0].toString();
+            });
+          }
         } else if (widget.userType == "head") {
-          Navigator.push(
+          final result = await Navigator.push(
               context,
               MaterialPageRoute(
                   builder: (context) => HeadProfile(userID: widget.userId)));
+          if (result != null) {
+            setState(() {
+              userPfpUrl = result[0].toString();
+            });
+          }
         } else if (widget.userType == "scholar") {
-          Navigator.push(
+          final result = await Navigator.push(
               context,
               MaterialPageRoute(
                   builder: (context) => ScholarProfile(userID: widget.userId)));
+          if (result != null) {
+            setState(() {
+              userPfpUrl = result[0].toString();
+              if (result[1] == "Faci") {
+                inc = widget.isIncomplete;
+              } else {
+                inc = result[1];
+              }
+            });
+          }
         }
       },
       child: Stack(
@@ -86,10 +114,22 @@ class _ChatBoxState extends State<ChatBox> {
                       child: AspectRatio(
                         aspectRatio: 1 / 1,
                         child: ClipOval(
-                          child: FadeInImage.assetNetwork(
-                              fit: BoxFit.cover,
-                              placeholder: 'assets/images/loading.gif',
-                              image: widget.pfpUrl),
+                          child: CachedNetworkImage(
+                            imageUrl: userPfpUrl,
+                            placeholder: (context, url) => const SpinKitCircle(
+                              color: ColorPalette.primary,
+                              size: 30,
+                            ),
+                            imageBuilder: (context, imageProvider) => Container(
+                              decoration: BoxDecoration(
+                                image: DecorationImage(
+                                  image: imageProvider,
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                            ),
+                            useOldImageOnUrlChange: false,
+                          ),
                         ),
                       ),
                     ),
@@ -223,7 +263,7 @@ class _ChatBoxState extends State<ChatBox> {
     if (widget.userType == "scholar") {
       return Row(
         children: [
-          widget.isIncomplete == "true"
+          inc == "true"
               ? const Text(
                   "INC",
                   style: TextStyle(
@@ -234,7 +274,7 @@ class _ChatBoxState extends State<ChatBox> {
                   ),
                 )
               : const SizedBox(),
-          hasConflicts && widget.isIncomplete == "true"
+          hasConflicts && inc == "true"
               ? const Text(
                   " | ",
                   style: TextStyle(

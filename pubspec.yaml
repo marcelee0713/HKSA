@@ -58,6 +58,7 @@ dependencies:
   pinput: ^2.2.31
   timer_button_fork: ^3.0.2
   firebase_analytics: ^10.1.4
+  cached_network_image: ^3.2.3
 
 dev_dependencies:
   flutter_test:

@@ -31,18 +31,19 @@ class EditScholar extends StatefulWidget {
   final String studentWholeDay;
   final String studentTime1;
   final String studentTime2;
-  const EditScholar(
-      {super.key,
-      required this.userID,
-      required this.day1ProfID,
-      required this.day2ProfID,
-      required this.wdProfID,
-      required this.scholarType,
-      required this.studentDay1,
-      required this.studentDay2,
-      required this.studentWholeDay,
-      required this.studentTime1,
-      required this.studentTime2});
+  const EditScholar({
+    super.key,
+    required this.userID,
+    required this.day1ProfID,
+    required this.day2ProfID,
+    required this.wdProfID,
+    required this.scholarType,
+    required this.studentDay1,
+    required this.studentDay2,
+    required this.studentWholeDay,
+    required this.studentTime1,
+    required this.studentTime2,
+  });
 
   @override
   State<EditScholar> createState() => _EditScholarState();
@@ -148,112 +149,80 @@ class _EditScholarState extends State<EditScholar> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: ColorPalette.accentWhite,
-      body: Center(
-        child: ListView(
-          shrinkWrap: true,
-          children: [
-            Container(
-              padding: const EdgeInsets.all(20),
-              color: ColorPalette.accentWhite,
-              child: FutureBuilder(
-                future: getScholar(),
-                builder: (context, snapshot) {
-                  if (!snapshot.hasData) {
-                    return Center(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: const <Widget>[
-                          SpinKitCircle(
-                            color: ColorPalette.secondary,
-                            size: 100,
-                          ),
-                          SizedBox(height: 20),
-                          Text("Loading..."),
-                        ],
-                      ),
-                    );
-                  }
-                  if (snapshot.hasError) {
-                    return Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: const [
-                          Icon(
-                            Icons.warning_rounded,
-                            size: 200,
-                            color: ColorPalette.errorColor,
-                          ),
-                          Text(
-                            'Something went wrong!',
-                            style: TextStyle(
-                              fontFamily: 'Inter',
-                              color: ColorPalette.accentBlack,
-                              fontWeight: FontWeight.bold,
+    return WillPopScope(
+      onWillPop: () async {
+        return true;
+      },
+      child: Scaffold(
+        backgroundColor: ColorPalette.accentWhite,
+        body: Center(
+          child: ListView(
+            shrinkWrap: true,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(20),
+                color: ColorPalette.accentWhite,
+                child: FutureBuilder(
+                  future: getScholar(),
+                  builder: (context, snapshot) {
+                    if (!snapshot.hasData) {
+                      return Center(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: const <Widget>[
+                            SpinKitCircle(
+                              color: ColorPalette.secondary,
+                              size: 100,
                             ),
-                          ),
-                          SizedBox(height: 5),
-                          Text(
-                            'Please try again later.',
-                            style: TextStyle(
-                              fontFamily: 'Inter',
-                              color: ColorPalette.accentBlack,
+                            SizedBox(height: 20),
+                            Text("Loading..."),
+                          ],
+                        ),
+                      );
+                    }
+                    if (snapshot.hasError) {
+                      return Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: const [
+                            Icon(
+                              Icons.warning_rounded,
+                              size: 200,
+                              color: ColorPalette.errorColor,
                             ),
-                          ),
-                        ],
-                      ),
-                    );
-                  }
-                  return Form(
-                    key: _formKey,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text(
-                              "You are now editing:",
+                            Text(
+                              'Something went wrong!',
                               style: TextStyle(
-                                color: ColorPalette.primary,
-                                fontSize: 20,
                                 fontFamily: 'Inter',
-                                fontWeight: FontWeight.w700,
+                                color: ColorPalette.accentBlack,
+                                fontWeight: FontWeight.bold,
                               ),
                             ),
+                            SizedBox(height: 5),
                             Text(
-                              snapshot.data!.first.name,
-                              style: const TextStyle(
-                                color: ColorPalette.primary,
-                                fontSize: 14,
+                              'Please try again later.',
+                              style: TextStyle(
                                 fontFamily: 'Inter',
-                                fontWeight: FontWeight.w300,
-                              ),
-                            ),
-                            Text(
-                              snapshot.data!.first.studentNumber,
-                              style: const TextStyle(
-                                color: ColorPalette.primary,
-                                fontSize: 14,
-                                fontFamily: 'Inter',
-                                fontWeight: FontWeight.w300,
+                                color: ColorPalette.accentBlack,
                               ),
                             ),
                           ],
                         ),
-                        const SizedBox(height: 2),
-                        Container(height: 1, color: ColorPalette.primary),
-                        const SizedBox(height: 15),
-                        Column(
-                          children: [
-                            const Align(
-                              alignment: Alignment.centerLeft,
-                              child: Text(
-                                "Basic Information:",
+                      );
+                    }
+                    return Form(
+                      key: _formKey,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                "You are now editing:",
                                 style: TextStyle(
                                   color: ColorPalette.primary,
                                   fontSize: 20,
@@ -261,82 +230,238 @@ class _EditScholarState extends State<EditScholar> {
                                   fontWeight: FontWeight.w700,
                                 ),
                               ),
-                            ),
-                            const SizedBox(height: 10),
-                            TextFormField(
-                              enabled: false,
-                              controller: _inputControllerStudentNumberID,
-                              maxLength: 20,
-                              validator: (value) {
-                                final bool studentIdValid =
-                                    RegExp(r"^[0-9-]+$").hasMatch(value!);
-                                if (studentIdValid && value.length >= 10) {
-                                  return null;
-                                } else if (value.length <= 9 &&
-                                    value.isNotEmpty) {
-                                  return "Input is too short.";
-                                } else if (value.isEmpty) {
-                                  return "Enter Input.";
-                                } else {
-                                  return "Enter valid school ID.";
-                                }
-                              },
-                              keyboardType: TextInputType.number,
-                              decoration: InputDecoration(
-                                counterText: "",
-                                disabledBorder: OutlineInputBorder(
-                                  borderSide: const BorderSide(
-                                      color: Colors.transparent),
-                                  borderRadius: BorderRadius.circular(10.0),
-                                ),
-                                enabledBorder: OutlineInputBorder(
-                                  borderSide: const BorderSide(
-                                      color: Colors.transparent),
-                                  borderRadius: BorderRadius.circular(10.0),
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderSide: const BorderSide(
-                                      color: Colors.transparent),
-                                  borderRadius: BorderRadius.circular(10.0),
-                                ),
-                                filled: true,
-                                fillColor: ColorPalette.accentDarkWhite,
-                                hintStyle: const TextStyle(
+                              Text(
+                                snapshot.data!.first.name,
+                                style: const TextStyle(
+                                  color: ColorPalette.primary,
+                                  fontSize: 14,
+                                  fontFamily: 'Inter',
                                   fontWeight: FontWeight.w300,
-                                  fontStyle: FontStyle.italic,
                                 ),
-                                hintText: "Student Number (XX-XNXX-XXXXX)",
                               ),
-                              style: const TextStyle(
-                                color: ColorPalette.primary,
-                                fontFamily: 'Inter',
-                                fontSize: 14,
-                                fontWeight: FontWeight.w700,
+                              Text(
+                                snapshot.data!.first.studentNumber,
+                                style: const TextStyle(
+                                  color: ColorPalette.primary,
+                                  fontSize: 14,
+                                  fontFamily: 'Inter',
+                                  fontWeight: FontWeight.w300,
+                                ),
                               ),
-                            ),
-                            const SizedBox(height: 18),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                TextFormField(
-                                  controller: _inputControllerName,
-                                  validator: (value) {
-                                    if (value!.isNotEmpty) {
-                                      return null;
-                                    } else {
-                                      return "Enter your name.";
-                                    }
-                                  },
-                                  keyboardType: TextInputType.name,
-                                  decoration: InputDecoration(
-                                      suffixIcon: IconButton(
-                                        onPressed: () {
-                                          setState(() {
-                                            _inputControllerName.text =
-                                                snapshot.data!.first.name;
-                                          });
-                                        },
-                                        icon: const Icon(Icons.undo),
+                            ],
+                          ),
+                          const SizedBox(height: 2),
+                          Container(height: 1, color: ColorPalette.primary),
+                          const SizedBox(height: 15),
+                          Column(
+                            children: [
+                              const Align(
+                                alignment: Alignment.centerLeft,
+                                child: Text(
+                                  "Basic Information:",
+                                  style: TextStyle(
+                                    color: ColorPalette.primary,
+                                    fontSize: 20,
+                                    fontFamily: 'Inter',
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(height: 10),
+                              TextFormField(
+                                enabled: false,
+                                controller: _inputControllerStudentNumberID,
+                                maxLength: 20,
+                                validator: (value) {
+                                  final bool studentIdValid =
+                                      RegExp(r"^[0-9-]+$").hasMatch(value!);
+                                  if (studentIdValid && value.length >= 10) {
+                                    return null;
+                                  } else if (value.length <= 9 &&
+                                      value.isNotEmpty) {
+                                    return "Input is too short.";
+                                  } else if (value.isEmpty) {
+                                    return "Enter Input.";
+                                  } else {
+                                    return "Enter valid school ID.";
+                                  }
+                                },
+                                keyboardType: TextInputType.number,
+                                decoration: InputDecoration(
+                                  counterText: "",
+                                  disabledBorder: OutlineInputBorder(
+                                    borderSide: const BorderSide(
+                                        color: Colors.transparent),
+                                    borderRadius: BorderRadius.circular(10.0),
+                                  ),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderSide: const BorderSide(
+                                        color: Colors.transparent),
+                                    borderRadius: BorderRadius.circular(10.0),
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderSide: const BorderSide(
+                                        color: Colors.transparent),
+                                    borderRadius: BorderRadius.circular(10.0),
+                                  ),
+                                  filled: true,
+                                  fillColor: ColorPalette.accentDarkWhite,
+                                  hintStyle: const TextStyle(
+                                    fontWeight: FontWeight.w300,
+                                    fontStyle: FontStyle.italic,
+                                  ),
+                                  hintText: "Student Number (XX-XNXX-XXXXX)",
+                                ),
+                                style: const TextStyle(
+                                  color: ColorPalette.primary,
+                                  fontFamily: 'Inter',
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                              const SizedBox(height: 18),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  TextFormField(
+                                    controller: _inputControllerName,
+                                    validator: (value) {
+                                      if (value!.isNotEmpty) {
+                                        return null;
+                                      } else {
+                                        return "Enter your name.";
+                                      }
+                                    },
+                                    keyboardType: TextInputType.name,
+                                    decoration: InputDecoration(
+                                        suffixIcon: IconButton(
+                                          onPressed: () {
+                                            setState(() {
+                                              _inputControllerName.text =
+                                                  snapshot.data!.first.name;
+                                            });
+                                          },
+                                          icon: const Icon(Icons.undo),
+                                        ),
+                                        enabledBorder: OutlineInputBorder(
+                                          borderSide: const BorderSide(
+                                              color: Colors.transparent),
+                                          borderRadius:
+                                              BorderRadius.circular(10.0),
+                                        ),
+                                        focusedBorder: OutlineInputBorder(
+                                          borderSide: const BorderSide(
+                                              color: Colors.transparent),
+                                          borderRadius:
+                                              BorderRadius.circular(10.0),
+                                        ),
+                                        filled: true,
+                                        fillColor: ColorPalette.accentDarkWhite,
+                                        hintStyle: const TextStyle(
+                                          fontWeight: FontWeight.w300,
+                                          fontStyle: FontStyle.italic,
+                                        ),
+                                        hintText: "Name"),
+                                    style: const TextStyle(
+                                      color: ColorPalette.primary,
+                                      fontFamily: 'Inter',
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 2),
+                                  SelectableText(
+                                    "Name was ${snapshot.data!.first.name}",
+                                    style: const TextStyle(
+                                      fontFamily: 'Inter',
+                                      fontSize: 11,
+                                      fontStyle: FontStyle.italic,
+                                      fontWeight: FontWeight.w300,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 18),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 12, vertical: 4),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(10),
+                                      color: ColorPalette.accentDarkWhite,
+                                    ),
+                                    child: DropdownButtonHideUnderline(
+                                      child: DropdownButton(
+                                        hint: const Text(
+                                          "Courses",
+                                          style: TextStyle(
+                                            fontFamily: 'Inter',
+                                            fontSize: 14,
+                                            fontStyle: FontStyle.italic,
+                                            fontWeight: FontWeight.w300,
+                                          ),
+                                        ),
+                                        value: coursesValue,
+                                        isExpanded: true,
+                                        iconSize: 32,
+                                        icon: const Icon(
+                                          Icons.arrow_drop_down,
+                                          color: ColorPalette.primary,
+                                        ),
+                                        items: HKSAStrings.courses
+                                            .map(buildMenuItemCourses)
+                                            .toList(),
+                                        onChanged: ((coursesValue) =>
+                                            setState(() {
+                                              this.coursesValue =
+                                                  coursesValue ?? "";
+                                            })),
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 2),
+                                  Text(
+                                    "Course was ${snapshot.data!.first.course}",
+                                    style: const TextStyle(
+                                      fontFamily: 'Inter',
+                                      fontSize: 11,
+                                      fontStyle: FontStyle.italic,
+                                      fontWeight: FontWeight.w300,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 18),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  TextFormField(
+                                    enabled:
+                                        snapshot.data!.first.isEmailVerified ==
+                                                "false"
+                                            ? true
+                                            : false,
+                                    controller: _inputControllerEmail,
+                                    validator: (value) {
+                                      // Email RegEx Validation
+                                      final bool emailValid = RegExp(
+                                              r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+                                          .hasMatch(value!);
+                                      if (value.isNotEmpty && emailValid) {
+                                        return null;
+                                      } else {
+                                        return "Invalid input.";
+                                      }
+                                    },
+                                    keyboardType: TextInputType.emailAddress,
+                                    decoration: InputDecoration(
+                                      disabledBorder: OutlineInputBorder(
+                                        borderSide: const BorderSide(
+                                            color: Colors.transparent),
+                                        borderRadius:
+                                            BorderRadius.circular(10.0),
                                       ),
                                       enabledBorder: OutlineInputBorder(
                                         borderSide: const BorderSide(
@@ -356,1575 +481,1526 @@ class _EditScholarState extends State<EditScholar> {
                                         fontWeight: FontWeight.w300,
                                         fontStyle: FontStyle.italic,
                                       ),
-                                      hintText: "Name"),
-                                  style: const TextStyle(
-                                    color: ColorPalette.primary,
-                                    fontFamily: 'Inter',
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w700,
-                                  ),
-                                ),
-                                const SizedBox(height: 2),
-                                SelectableText(
-                                  "Name was ${snapshot.data!.first.name}",
-                                  style: const TextStyle(
-                                    fontFamily: 'Inter',
-                                    fontSize: 11,
-                                    fontStyle: FontStyle.italic,
-                                    fontWeight: FontWeight.w300,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 18),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Container(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 12, vertical: 4),
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(10),
-                                    color: ColorPalette.accentDarkWhite,
-                                  ),
-                                  child: DropdownButtonHideUnderline(
-                                    child: DropdownButton(
-                                      hint: const Text(
-                                        "Courses",
-                                        style: TextStyle(
-                                          fontFamily: 'Inter',
-                                          fontSize: 14,
-                                          fontStyle: FontStyle.italic,
-                                          fontWeight: FontWeight.w300,
-                                        ),
-                                      ),
-                                      value: coursesValue,
-                                      isExpanded: true,
-                                      iconSize: 32,
-                                      icon: const Icon(
-                                        Icons.arrow_drop_down,
-                                        color: ColorPalette.primary,
-                                      ),
-                                      items: HKSAStrings.courses
-                                          .map(buildMenuItemCourses)
-                                          .toList(),
-                                      onChanged: ((coursesValue) =>
-                                          setState(() {
-                                            this.coursesValue =
-                                                coursesValue ?? "";
-                                          })),
+                                      hintText: "Email",
+                                    ),
+                                    style: const TextStyle(
+                                      color: ColorPalette.primary,
+                                      fontFamily: 'Inter',
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w700,
                                     ),
                                   ),
-                                ),
-                                const SizedBox(height: 2),
-                                Text(
-                                  "Course was ${snapshot.data!.first.course}",
-                                  style: const TextStyle(
-                                    fontFamily: 'Inter',
-                                    fontSize: 11,
-                                    fontStyle: FontStyle.italic,
-                                    fontWeight: FontWeight.w300,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 18),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                TextFormField(
-                                  enabled:
-                                      snapshot.data!.first.isEmailVerified ==
-                                              "false"
-                                          ? true
-                                          : false,
-                                  controller: _inputControllerEmail,
-                                  validator: (value) {
-                                    // Email RegEx Validation
-                                    final bool emailValid = RegExp(
-                                            r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
-                                        .hasMatch(value!);
-                                    if (value.isNotEmpty && emailValid) {
-                                      return null;
-                                    } else {
-                                      return "Invalid input.";
-                                    }
-                                  },
-                                  keyboardType: TextInputType.emailAddress,
-                                  decoration: InputDecoration(
-                                    disabledBorder: OutlineInputBorder(
-                                      borderSide: const BorderSide(
-                                          color: Colors.transparent),
-                                      borderRadius: BorderRadius.circular(10.0),
-                                    ),
-                                    enabledBorder: OutlineInputBorder(
-                                      borderSide: const BorderSide(
-                                          color: Colors.transparent),
-                                      borderRadius: BorderRadius.circular(10.0),
-                                    ),
-                                    focusedBorder: OutlineInputBorder(
-                                      borderSide: const BorderSide(
-                                          color: Colors.transparent),
-                                      borderRadius: BorderRadius.circular(10.0),
-                                    ),
-                                    filled: true,
-                                    fillColor: ColorPalette.accentDarkWhite,
-                                    hintStyle: const TextStyle(
-                                      fontWeight: FontWeight.w300,
+                                  const SizedBox(height: 2),
+                                  SelectableText(
+                                    snapshot.data!.first.isEmailVerified ==
+                                            "false"
+                                        ? "Email was ${snapshot.data!.first.email}"
+                                        : "Email is verified no need to edit.",
+                                    style: const TextStyle(
+                                      fontFamily: 'Inter',
+                                      fontSize: 11,
                                       fontStyle: FontStyle.italic,
-                                    ),
-                                    hintText: "Email",
-                                  ),
-                                  style: const TextStyle(
-                                    color: ColorPalette.primary,
-                                    fontFamily: 'Inter',
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w700,
-                                  ),
-                                ),
-                                const SizedBox(height: 2),
-                                SelectableText(
-                                  snapshot.data!.first.isEmailVerified ==
-                                          "false"
-                                      ? "Email was ${snapshot.data!.first.email}"
-                                      : "Email is verified no need to edit.",
-                                  style: const TextStyle(
-                                    fontFamily: 'Inter',
-                                    fontSize: 11,
-                                    fontStyle: FontStyle.italic,
-                                    fontWeight: FontWeight.w300,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 18),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                TextFormField(
-                                  controller: _inputControllerPhoneNumber,
-                                  maxLength: 11,
-                                  validator: (value) {
-                                    final bool phoneValid =
-                                        RegExp(r"^(09|\+639)\d{9}$")
-                                            .hasMatch(value!);
-                                    if (phoneValid) {
-                                      return null;
-                                    } else if (value.length <= 11 &&
-                                        !phoneValid) {
-                                      return "Invalid input.";
-                                    } else if (value.length <= 10 &&
-                                        value.isNotEmpty) {
-                                      return "Input is too short.";
-                                    } else {
-                                      return "Enter an input.";
-                                    }
-                                  },
-                                  keyboardType: TextInputType.phone,
-                                  decoration: InputDecoration(
-                                    suffixIcon: IconButton(
-                                      onPressed: () {
-                                        setState(() {
-                                          _inputControllerPhoneNumber.text =
-                                              snapshot.data!.first.phonenumber;
-                                        });
-                                      },
-                                      icon: const Icon(Icons.undo),
-                                    ),
-                                    counterText: "",
-                                    enabledBorder: OutlineInputBorder(
-                                      borderSide: const BorderSide(
-                                          color: Colors.transparent),
-                                      borderRadius: BorderRadius.circular(10.0),
-                                    ),
-                                    focusedBorder: OutlineInputBorder(
-                                      borderSide: const BorderSide(
-                                          color: Colors.transparent),
-                                      borderRadius: BorderRadius.circular(10.0),
-                                    ),
-                                    filled: true,
-                                    fillColor: ColorPalette.accentDarkWhite,
-                                    hintStyle: const TextStyle(
                                       fontWeight: FontWeight.w300,
-                                      fontStyle: FontStyle.italic,
-                                    ),
-                                    hintText: "Phone Number",
-                                  ),
-                                  style: const TextStyle(
-                                    color: ColorPalette.primary,
-                                    fontFamily: 'Inter',
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w700,
-                                  ),
-                                ),
-                                const SizedBox(height: 2),
-                                SelectableText(
-                                  "Phone Number was ${snapshot.data!.first.phonenumber}",
-                                  style: const TextStyle(
-                                    fontFamily: 'Inter',
-                                    fontSize: 11,
-                                    fontStyle: FontStyle.italic,
-                                    fontWeight: FontWeight.w300,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 18),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Container(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 12, vertical: 4),
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(10),
-                                    color: ColorPalette.accentDarkWhite,
-                                  ),
-                                  child: DropdownButtonHideUnderline(
-                                    child: DropdownButton(
-                                      hint: const Text(
-                                        "Town",
-                                        style: TextStyle(
-                                          fontFamily: 'Inter',
-                                          fontSize: 14,
-                                          fontStyle: FontStyle.italic,
-                                          fontWeight: FontWeight.w300,
-                                        ),
-                                      ),
-                                      value: townValue,
-                                      isExpanded: true,
-                                      iconSize: 32,
-                                      icon: const Icon(
-                                        Icons.arrow_drop_down,
-                                        color: ColorPalette.primary,
-                                      ),
-                                      items: HKSAStrings.towns
-                                          .map(buildMenuItemTown)
-                                          .toList(),
-                                      onChanged: ((townValue) => setState(() {
-                                            this.townValue = townValue ?? "";
-                                          })),
                                     ),
                                   ),
-                                ),
-                                const SizedBox(height: 2),
-                                Text(
-                                  "Town was ${snapshot.data!.first.town}",
-                                  style: const TextStyle(
-                                    fontFamily: 'Inter',
-                                    fontSize: 11,
-                                    fontStyle: FontStyle.italic,
-                                    fontWeight: FontWeight.w300,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 18),
-                            Container(height: 1, color: ColorPalette.primary),
-                            const SizedBox(height: 15),
-                            const Align(
-                              alignment: Alignment.centerLeft,
-                              child: Text(
-                                "Dependent Information:",
-                                style: TextStyle(
-                                  color: ColorPalette.primary,
-                                  fontSize: 20,
-                                  fontFamily: 'Inter',
-                                  fontWeight: FontWeight.w700,
-                                ),
+                                ],
                               ),
-                            ),
-                            const Align(
-                              alignment: Alignment.centerLeft,
-                              child: Text(
-                                "Please be careful modifying these informations! Since they rely on other information also.",
-                                style: TextStyle(
-                                  color: ColorPalette.primary,
-                                  fontSize: 14,
-                                  fontFamily: 'Inter',
-                                  fontWeight: FontWeight.w300,
-                                ),
-                              ),
-                            ),
-                            const SizedBox(height: 10),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Container(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 12, vertical: 4),
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(10),
-                                    color: ColorPalette.accentDarkWhite,
-                                  ),
-                                  child: DropdownButtonHideUnderline(
-                                    child: DropdownButton(
-                                      hint: const Text(
-                                        "HK Type",
-                                        style: TextStyle(
-                                          fontFamily: 'Inter',
-                                          fontSize: 14,
-                                          fontStyle: FontStyle.italic,
-                                          fontWeight: FontWeight.w300,
-                                        ),
-                                      ),
-                                      value: hkTypeValue,
-                                      isExpanded: true,
-                                      iconSize: 32,
-                                      icon: const Icon(
-                                        Icons.arrow_drop_down,
-                                        color: ColorPalette.primary,
-                                      ),
-                                      items: HKSAStrings.hkTypes
-                                          .map(buildMenuItemHKTypes)
-                                          .toList(),
-                                      onChanged: ((hkTypeValue) => setState(() {
-                                            this.hkTypeValue =
-                                                hkTypeValue ?? "";
-                                          })),
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(height: 2),
-                                Text(
-                                  "HK Type was ${snapshot.data!.first.hkType}",
-                                  style: const TextStyle(
-                                    fontFamily: 'Inter',
-                                    fontSize: 11,
-                                    fontStyle: FontStyle.italic,
-                                    fontWeight: FontWeight.w300,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 18),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Container(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 12, vertical: 4),
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(10),
-                                    color: ColorPalette.accentDarkWhite,
-                                  ),
-                                  child: DropdownButtonHideUnderline(
-                                    child: DropdownButton(
-                                      hint: const Text(
-                                        "Scholar Type",
-                                        style: TextStyle(
-                                          fontFamily: 'Inter',
-                                          fontSize: 14,
-                                          fontStyle: FontStyle.italic,
-                                          fontWeight: FontWeight.w300,
-                                        ),
-                                      ),
-                                      value: scholarTypeValue,
-                                      isExpanded: true,
-                                      iconSize: 32,
-                                      icon: const Icon(
-                                        Icons.arrow_drop_down,
-                                        color: ColorPalette.primary,
-                                      ),
-                                      items: HKSAStrings.facitype
-                                          .map(buildMenuItemTown)
-                                          .toList(),
-                                      onChanged: ((scholarTypeValue) =>
+                              const SizedBox(height: 18),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  TextFormField(
+                                    controller: _inputControllerPhoneNumber,
+                                    maxLength: 11,
+                                    validator: (value) {
+                                      final bool phoneValid =
+                                          RegExp(r"^(09|\+639)\d{9}$")
+                                              .hasMatch(value!);
+                                      if (phoneValid) {
+                                        return null;
+                                      } else if (value.length <= 11 &&
+                                          !phoneValid) {
+                                        return "Invalid input.";
+                                      } else if (value.length <= 10 &&
+                                          value.isNotEmpty) {
+                                        return "Input is too short.";
+                                      } else {
+                                        return "Enter an input.";
+                                      }
+                                    },
+                                    keyboardType: TextInputType.phone,
+                                    decoration: InputDecoration(
+                                      suffixIcon: IconButton(
+                                        onPressed: () {
                                           setState(() {
-                                            this.scholarTypeValue =
-                                                scholarTypeValue ?? "";
-                                          })),
+                                            _inputControllerPhoneNumber.text =
+                                                snapshot
+                                                    .data!.first.phonenumber;
+                                          });
+                                        },
+                                        icon: const Icon(Icons.undo),
+                                      ),
+                                      counterText: "",
+                                      enabledBorder: OutlineInputBorder(
+                                        borderSide: const BorderSide(
+                                            color: Colors.transparent),
+                                        borderRadius:
+                                            BorderRadius.circular(10.0),
+                                      ),
+                                      focusedBorder: OutlineInputBorder(
+                                        borderSide: const BorderSide(
+                                            color: Colors.transparent),
+                                        borderRadius:
+                                            BorderRadius.circular(10.0),
+                                      ),
+                                      filled: true,
+                                      fillColor: ColorPalette.accentDarkWhite,
+                                      hintStyle: const TextStyle(
+                                        fontWeight: FontWeight.w300,
+                                        fontStyle: FontStyle.italic,
+                                      ),
+                                      hintText: "Phone Number",
+                                    ),
+                                    style: const TextStyle(
+                                      color: ColorPalette.primary,
+                                      fontFamily: 'Inter',
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w700,
                                     ),
                                   ),
-                                ),
-                                const SizedBox(height: 2),
-                                Text(
-                                  "Scholar Type was ${snapshot.data!.first.scholarType}",
-                                  style: const TextStyle(
-                                    fontFamily: 'Inter',
-                                    fontSize: 11,
-                                    fontStyle: FontStyle.italic,
-                                    fontWeight: FontWeight.w300,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 18),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                TextFormField(
-                                  controller: _inputControllerHours,
-                                  maxLength: 3,
-                                  validator: (value) {
-                                    final bool hoursValid =
-                                        RegExp(r"^[0-9]+$").hasMatch(value!);
-                                    if (hoursValid && value.isNotEmpty) {
-                                      return null;
-                                    } else {
-                                      return "Enter an input.";
-                                    }
-                                  },
-                                  keyboardType: TextInputType.number,
-                                  decoration: InputDecoration(
-                                    suffixIcon: IconButton(
-                                      onPressed: () {
-                                        setState(() {
-                                          _inputControllerHours.text =
-                                              snapshot.data!.first.hours;
-                                        });
-                                      },
-                                      icon: const Icon(Icons.undo),
-                                    ),
-                                    counterText: "",
-                                    enabledBorder: OutlineInputBorder(
-                                      borderSide: const BorderSide(
-                                          color: Colors.transparent),
-                                      borderRadius: BorderRadius.circular(10.0),
-                                    ),
-                                    focusedBorder: OutlineInputBorder(
-                                      borderSide: const BorderSide(
-                                          color: Colors.transparent),
-                                      borderRadius: BorderRadius.circular(10.0),
-                                    ),
-                                    filled: true,
-                                    fillColor: ColorPalette.accentDarkWhite,
-                                    hintStyle: const TextStyle(
-                                      fontWeight: FontWeight.w300,
+                                  const SizedBox(height: 2),
+                                  SelectableText(
+                                    "Phone Number was ${snapshot.data!.first.phonenumber}",
+                                    style: const TextStyle(
+                                      fontFamily: 'Inter',
+                                      fontSize: 11,
                                       fontStyle: FontStyle.italic,
+                                      fontWeight: FontWeight.w300,
                                     ),
-                                    hintText: "Hours",
                                   ),
-                                  style: const TextStyle(
-                                    color: ColorPalette.primary,
-                                    fontFamily: 'Inter',
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w700,
-                                  ),
-                                ),
-                                const SizedBox(height: 2),
-                                SelectableText(
-                                  "Total Hours was ${snapshot.data!.first.hours}",
-                                  style: const TextStyle(
-                                    fontFamily: 'Inter',
-                                    fontSize: 11,
-                                    fontStyle: FontStyle.italic,
-                                    fontWeight: FontWeight.w300,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            scholarTypeValue == "Faci"
-                                ? Column(
-                                    children: [
-                                      const SizedBox(height: 18),
-                                      Container(
-                                          height: 1,
-                                          color: ColorPalette.primary),
-                                      const SizedBox(height: 15),
-                                      const Align(
-                                        alignment: Alignment.centerLeft,
-                                        child: Text(
-                                          "Schedule Information:",
+                                ],
+                              ),
+                              const SizedBox(height: 18),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 12, vertical: 4),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(10),
+                                      color: ColorPalette.accentDarkWhite,
+                                    ),
+                                    child: DropdownButtonHideUnderline(
+                                      child: DropdownButton(
+                                        hint: const Text(
+                                          "Town",
                                           style: TextStyle(
-                                            color: ColorPalette.primary,
-                                            fontSize: 20,
                                             fontFamily: 'Inter',
-                                            fontWeight: FontWeight.w700,
-                                          ),
-                                        ),
-                                      ),
-                                      const Align(
-                                        alignment: Alignment.centerLeft,
-                                        child: Text(
-                                          "You can only see and change the information if the scholar is Faci.",
-                                          style: TextStyle(
-                                            color: ColorPalette.primary,
                                             fontSize: 14,
-                                            fontFamily: 'Inter',
+                                            fontStyle: FontStyle.italic,
                                             fontWeight: FontWeight.w300,
                                           ),
                                         ),
-                                      ),
-                                      const SizedBox(height: 10),
-                                      Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Container(
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 12, vertical: 4),
-                                            decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(10),
-                                              color:
-                                                  ColorPalette.accentDarkWhite,
-                                            ),
-                                            child: DropdownButtonHideUnderline(
-                                              child: DropdownButton(
-                                                hint: const Text(
-                                                  "On Site Day 1",
-                                                  style: TextStyle(
-                                                    fontFamily: 'Inter',
-                                                    fontSize: 14,
-                                                    fontStyle: FontStyle.italic,
-                                                    fontWeight: FontWeight.w300,
-                                                  ),
-                                                ),
-                                                value: onSiteDay1Value,
-                                                isExpanded: true,
-                                                iconSize: 32,
-                                                icon: const Icon(
-                                                  Icons.arrow_drop_down,
-                                                  color: ColorPalette.primary,
-                                                ),
-                                                items: HKSAStrings.onsite
-                                                    .map(
-                                                        buildMenuItemOnSiteDay1)
-                                                    .toList(),
-                                                onChanged: ((onSiteDay1Value) =>
-                                                    setState(() {
-                                                      this.onSiteDay1Value =
-                                                          onSiteDay1Value ?? "";
-                                                      assignedProfDay1 = null;
-                                                    })),
-                                              ),
-                                            ),
-                                          ),
-                                          const SizedBox(height: 2),
-                                          Text(
-                                            "On Site Day 1 was ${snapshot.data!.first.onSiteDay1}",
-                                            style: const TextStyle(
-                                              fontFamily: 'Inter',
-                                              fontSize: 11,
-                                              fontStyle: FontStyle.italic,
-                                              fontWeight: FontWeight.w300,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      const SizedBox(height: 18),
-                                      Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Container(
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 12, vertical: 4),
-                                            decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(10),
-                                              color:
-                                                  ColorPalette.accentDarkWhite,
-                                            ),
-                                            child: DropdownButtonHideUnderline(
-                                              child: DropdownButton(
-                                                hint: const Text(
-                                                  "On Site Day 2",
-                                                  style: TextStyle(
-                                                    fontFamily: 'Inter',
-                                                    fontSize: 14,
-                                                    fontStyle: FontStyle.italic,
-                                                    fontWeight: FontWeight.w300,
-                                                  ),
-                                                ),
-                                                value: onSiteDay2Value,
-                                                isExpanded: true,
-                                                iconSize: 32,
-                                                icon: const Icon(
-                                                  Icons.arrow_drop_down,
-                                                  color: ColorPalette.primary,
-                                                ),
-                                                items: HKSAStrings.onsite
-                                                    .map(
-                                                        buildMenuItemOnSiteDay2)
-                                                    .toList(),
-                                                onChanged: ((onSiteDay2Value) =>
-                                                    setState(() {
-                                                      this.onSiteDay2Value =
-                                                          onSiteDay2Value ?? "";
-                                                      assignedProfDay2 = null;
-                                                    })),
-                                              ),
-                                            ),
-                                          ),
-                                          const SizedBox(height: 2),
-                                          Text(
-                                            "On Site Day 2 was ${snapshot.data!.first.onSiteDay2}",
-                                            style: const TextStyle(
-                                              fontFamily: 'Inter',
-                                              fontSize: 11,
-                                              fontStyle: FontStyle.italic,
-                                              fontWeight: FontWeight.w300,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      const SizedBox(height: 18),
-                                      Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Container(
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 12, vertical: 4),
-                                            decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(10),
-                                              color:
-                                                  ColorPalette.accentDarkWhite,
-                                            ),
-                                            child: DropdownButtonHideUnderline(
-                                              child: DropdownButton(
-                                                hint: const Text(
-                                                  "Whole Day On Site",
-                                                  style: TextStyle(
-                                                    fontFamily: 'Inter',
-                                                    fontSize: 14,
-                                                    fontStyle: FontStyle.italic,
-                                                    fontWeight: FontWeight.w300,
-                                                  ),
-                                                ),
-                                                value: wholeDayValue,
-                                                isExpanded: true,
-                                                iconSize: 32,
-                                                icon: const Icon(
-                                                  Icons.arrow_drop_down,
-                                                  color: ColorPalette.primary,
-                                                ),
-                                                items: HKSAStrings.onsite
-                                                    .map(
-                                                        buildMenuItemOnSiteWholeDay)
-                                                    .toList(),
-                                                onChanged: ((wholeDayValue) =>
-                                                    setState(() {
-                                                      this.wholeDayValue =
-                                                          wholeDayValue ?? "";
-                                                      assignedProfWholeDay =
-                                                          null;
-                                                    })),
-                                              ),
-                                            ),
-                                          ),
-                                          const SizedBox(height: 2),
-                                          Text(
-                                            "Whole day On Site was ${snapshot.data!.first.wholeDayVacantTime}",
-                                            style: const TextStyle(
-                                              fontFamily: 'Inter',
-                                              fontSize: 11,
-                                              fontStyle: FontStyle.italic,
-                                              fontWeight: FontWeight.w300,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      const SizedBox(height: 18),
-                                      Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Container(
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 12, vertical: 4),
-                                            decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(10),
-                                              color:
-                                                  ColorPalette.accentDarkWhite,
-                                            ),
-                                            child: DropdownButtonHideUnderline(
-                                              child: DropdownButton(
-                                                hint: const Text(
-                                                  "Vacant Time Day 1",
-                                                  style: TextStyle(
-                                                    fontFamily: 'Inter',
-                                                    fontSize: 14,
-                                                    fontStyle: FontStyle.italic,
-                                                    fontWeight: FontWeight.w300,
-                                                  ),
-                                                ),
-                                                value: vacantTimeDay1Value,
-                                                isExpanded: true,
-                                                iconSize: 32,
-                                                icon: const Icon(
-                                                  Icons.arrow_drop_down,
-                                                  color: ColorPalette.primary,
-                                                ),
-                                                items: HKSAStrings.vacanttime
-                                                    .map(
-                                                        buildMenuItemVacantTimeDay1)
-                                                    .toList(),
-                                                onChanged:
-                                                    ((vacantTimeDay1Value) =>
-                                                        setState(() {
-                                                          this.vacantTimeDay1Value =
-                                                              vacantTimeDay1Value ??
-                                                                  "";
-                                                          assignedProfDay1 =
-                                                              null;
-                                                        })),
-                                              ),
-                                            ),
-                                          ),
-                                          const SizedBox(height: 2),
-                                          Text(
-                                            "Vacant Time Day 1 was ${snapshot.data!.first.vacantTimeDay1}",
-                                            style: const TextStyle(
-                                              fontFamily: 'Inter',
-                                              fontSize: 11,
-                                              fontStyle: FontStyle.italic,
-                                              fontWeight: FontWeight.w300,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      const SizedBox(height: 18),
-                                      Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Container(
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 12, vertical: 4),
-                                            decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(10),
-                                              color:
-                                                  ColorPalette.accentDarkWhite,
-                                            ),
-                                            child: DropdownButtonHideUnderline(
-                                              child: DropdownButton(
-                                                hint: const Text(
-                                                  "Vacant Time Day 2",
-                                                  style: TextStyle(
-                                                    fontFamily: 'Inter',
-                                                    fontSize: 14,
-                                                    fontStyle: FontStyle.italic,
-                                                    fontWeight: FontWeight.w300,
-                                                  ),
-                                                ),
-                                                value: vacantTimeDay2Value,
-                                                isExpanded: true,
-                                                iconSize: 32,
-                                                icon: const Icon(
-                                                  Icons.arrow_drop_down,
-                                                  color: ColorPalette.primary,
-                                                ),
-                                                items: HKSAStrings.vacanttime
-                                                    .map(
-                                                        buildMenuItemVacantTimeDay2)
-                                                    .toList(),
-                                                onChanged:
-                                                    ((vacantTimeDay2Value) =>
-                                                        setState(() {
-                                                          this.vacantTimeDay2Value =
-                                                              vacantTimeDay2Value ??
-                                                                  "";
-                                                          assignedProfDay2 =
-                                                              null;
-                                                        })),
-                                              ),
-                                            ),
-                                          ),
-                                          const SizedBox(height: 2),
-                                          Text(
-                                            "Vacant Time Day 2 was ${snapshot.data!.first.vacantTimeDay2}",
-                                            style: const TextStyle(
-                                              fontFamily: 'Inter',
-                                              fontSize: 11,
-                                              fontStyle: FontStyle.italic,
-                                              fontWeight: FontWeight.w300,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      const SizedBox(height: 18),
-                                      Container(
-                                          height: 1,
-                                          color: ColorPalette.primary),
-                                      const SizedBox(height: 15),
-                                      const Align(
-                                        alignment: Alignment.centerLeft,
-                                        child: Text(
-                                          "Assigned Professors:",
-                                          style: TextStyle(
-                                            color: ColorPalette.primary,
-                                            fontSize: 20,
-                                            fontFamily: 'Inter',
-                                            fontWeight: FontWeight.w700,
-                                          ),
+                                        value: townValue,
+                                        isExpanded: true,
+                                        iconSize: 32,
+                                        icon: const Icon(
+                                          Icons.arrow_drop_down,
+                                          color: ColorPalette.primary,
                                         ),
+                                        items: HKSAStrings.towns
+                                            .map(buildMenuItemTown)
+                                            .toList(),
+                                        onChanged: ((townValue) => setState(() {
+                                              this.townValue = townValue ?? "";
+                                            })),
                                       ),
-                                      const Align(
-                                        alignment: Alignment.centerLeft,
-                                        child: Text(
-                                          "This depends on the Faci's Schedule Infromation.",
+                                    ),
+                                  ),
+                                  const SizedBox(height: 2),
+                                  Text(
+                                    "Town was ${snapshot.data!.first.town}",
+                                    style: const TextStyle(
+                                      fontFamily: 'Inter',
+                                      fontSize: 11,
+                                      fontStyle: FontStyle.italic,
+                                      fontWeight: FontWeight.w300,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 18),
+                              Container(height: 1, color: ColorPalette.primary),
+                              const SizedBox(height: 15),
+                              const Align(
+                                alignment: Alignment.centerLeft,
+                                child: Text(
+                                  "Dependent Information:",
+                                  style: TextStyle(
+                                    color: ColorPalette.primary,
+                                    fontSize: 20,
+                                    fontFamily: 'Inter',
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                              ),
+                              const Align(
+                                alignment: Alignment.centerLeft,
+                                child: Text(
+                                  "Please be careful modifying these informations! Since they rely on other information also.",
+                                  style: TextStyle(
+                                    color: ColorPalette.primary,
+                                    fontSize: 14,
+                                    fontFamily: 'Inter',
+                                    fontWeight: FontWeight.w300,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(height: 10),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 12, vertical: 4),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(10),
+                                      color: ColorPalette.accentDarkWhite,
+                                    ),
+                                    child: DropdownButtonHideUnderline(
+                                      child: DropdownButton(
+                                        hint: const Text(
+                                          "HK Type",
                                           style: TextStyle(
-                                            color: ColorPalette.primary,
-                                            fontSize: 14,
                                             fontFamily: 'Inter',
+                                            fontSize: 14,
+                                            fontStyle: FontStyle.italic,
                                             fontWeight: FontWeight.w300,
                                           ),
                                         ),
+                                        value: hkTypeValue,
+                                        isExpanded: true,
+                                        iconSize: 32,
+                                        icon: const Icon(
+                                          Icons.arrow_drop_down,
+                                          color: ColorPalette.primary,
+                                        ),
+                                        items: HKSAStrings.hkTypes
+                                            .map(buildMenuItemHKTypes)
+                                            .toList(),
+                                        onChanged: ((hkTypeValue) =>
+                                            setState(() {
+                                              this.hkTypeValue =
+                                                  hkTypeValue ?? "";
+                                            })),
                                       ),
-                                      const SizedBox(height: 10),
-                                      FutureBuilder(
-                                        future: getProfessors(
-                                            scholarOnSiteDay1:
-                                                onSiteDay1Value.toString(),
-                                            scholarOnSiteDay2:
-                                                onSiteDay2Value.toString(),
-                                            scholarOnSiteWholeDay:
-                                                wholeDayValue.toString(),
-                                            scholarVacantTimeDay1:
-                                                vacantTimeDay1Value.toString(),
-                                            scholarVacantTimeDay2:
-                                                vacantTimeDay2Value.toString()),
-                                        builder: (context, prof1Snapshot) {
-                                          professorNameForDay1.clear();
-                                          List<String> professorsValueForDay1 =
-                                              [];
-                                          if (prof1Snapshot.data?['profDay1'] !=
-                                              null) {
-                                            List<ProfScheduleMatch> profDay1 =
-                                                prof1Snapshot.data?['profDay1'];
-                                            for (var i = 0;
-                                                i < profDay1.length;
-                                                i++) {
-                                              professorNameForDay1[profDay1[i]
-                                                  .id] = profDay1[i].name;
-
-                                              professorsValueForDay1
-                                                  .add(profDay1[i].id);
-                                            }
-                                          }
-                                          if (!prof1Snapshot.hasData) {
-                                            return Column(
-                                              children: const [
-                                                SpinKitThreeBounce(
-                                                  color: ColorPalette.secondary,
-                                                  size: 15,
-                                                ),
-                                                Text(
-                                                  'Matching Day 1...',
-                                                  style: TextStyle(
+                                    ),
+                                  ),
+                                  const SizedBox(height: 2),
+                                  Text(
+                                    "HK Type was ${snapshot.data!.first.hkType}",
+                                    style: const TextStyle(
+                                      fontFamily: 'Inter',
+                                      fontSize: 11,
+                                      fontStyle: FontStyle.italic,
+                                      fontWeight: FontWeight.w300,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 18),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 12, vertical: 4),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(10),
+                                      color: ColorPalette.accentDarkWhite,
+                                    ),
+                                    child: DropdownButtonHideUnderline(
+                                      child: DropdownButton(
+                                        hint: const Text(
+                                          "Scholar Type",
+                                          style: TextStyle(
+                                            fontFamily: 'Inter',
+                                            fontSize: 14,
+                                            fontStyle: FontStyle.italic,
+                                            fontWeight: FontWeight.w300,
+                                          ),
+                                        ),
+                                        value: scholarTypeValue,
+                                        isExpanded: true,
+                                        iconSize: 32,
+                                        icon: const Icon(
+                                          Icons.arrow_drop_down,
+                                          color: ColorPalette.primary,
+                                        ),
+                                        items: HKSAStrings.facitype
+                                            .map(buildMenuItemTown)
+                                            .toList(),
+                                        onChanged: ((scholarTypeValue) =>
+                                            setState(() {
+                                              this.scholarTypeValue =
+                                                  scholarTypeValue ?? "";
+                                            })),
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 2),
+                                  Text(
+                                    "Scholar Type was ${snapshot.data!.first.scholarType}",
+                                    style: const TextStyle(
+                                      fontFamily: 'Inter',
+                                      fontSize: 11,
+                                      fontStyle: FontStyle.italic,
+                                      fontWeight: FontWeight.w300,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 18),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  TextFormField(
+                                    controller: _inputControllerHours,
+                                    maxLength: 3,
+                                    validator: (value) {
+                                      final bool hoursValid =
+                                          RegExp(r"^[0-9]+$").hasMatch(value!);
+                                      if (hoursValid && value.isNotEmpty) {
+                                        return null;
+                                      } else {
+                                        return "Enter an input.";
+                                      }
+                                    },
+                                    keyboardType: TextInputType.number,
+                                    decoration: InputDecoration(
+                                      suffixIcon: IconButton(
+                                        onPressed: () {
+                                          setState(() {
+                                            _inputControllerHours.text =
+                                                snapshot.data!.first.hours;
+                                          });
+                                        },
+                                        icon: const Icon(Icons.undo),
+                                      ),
+                                      counterText: "",
+                                      enabledBorder: OutlineInputBorder(
+                                        borderSide: const BorderSide(
+                                            color: Colors.transparent),
+                                        borderRadius:
+                                            BorderRadius.circular(10.0),
+                                      ),
+                                      focusedBorder: OutlineInputBorder(
+                                        borderSide: const BorderSide(
+                                            color: Colors.transparent),
+                                        borderRadius:
+                                            BorderRadius.circular(10.0),
+                                      ),
+                                      filled: true,
+                                      fillColor: ColorPalette.accentDarkWhite,
+                                      hintStyle: const TextStyle(
+                                        fontWeight: FontWeight.w300,
+                                        fontStyle: FontStyle.italic,
+                                      ),
+                                      hintText: "Hours",
+                                    ),
+                                    style: const TextStyle(
+                                      color: ColorPalette.primary,
+                                      fontFamily: 'Inter',
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 2),
+                                  SelectableText(
+                                    "Total Hours was ${snapshot.data!.first.hours}",
+                                    style: const TextStyle(
+                                      fontFamily: 'Inter',
+                                      fontSize: 11,
+                                      fontStyle: FontStyle.italic,
+                                      fontWeight: FontWeight.w300,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              scholarTypeValue == "Faci"
+                                  ? Column(
+                                      children: [
+                                        const SizedBox(height: 18),
+                                        Container(
+                                            height: 1,
+                                            color: ColorPalette.primary),
+                                        const SizedBox(height: 15),
+                                        const Align(
+                                          alignment: Alignment.centerLeft,
+                                          child: Text(
+                                            "Schedule Information:",
+                                            style: TextStyle(
+                                              color: ColorPalette.primary,
+                                              fontSize: 20,
+                                              fontFamily: 'Inter',
+                                              fontWeight: FontWeight.w700,
+                                            ),
+                                          ),
+                                        ),
+                                        const Align(
+                                          alignment: Alignment.centerLeft,
+                                          child: Text(
+                                            "You can only see and change the information if the scholar is Faci.",
+                                            style: TextStyle(
+                                              color: ColorPalette.primary,
+                                              fontSize: 14,
+                                              fontFamily: 'Inter',
+                                              fontWeight: FontWeight.w300,
+                                            ),
+                                          ),
+                                        ),
+                                        const SizedBox(height: 10),
+                                        Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Container(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 12,
+                                                      vertical: 4),
+                                              decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(10),
+                                                color: ColorPalette
+                                                    .accentDarkWhite,
+                                              ),
+                                              child:
+                                                  DropdownButtonHideUnderline(
+                                                child: DropdownButton(
+                                                  hint: const Text(
+                                                    "On Site Day 1",
+                                                    style: TextStyle(
                                                       fontFamily: 'Inter',
-                                                      color: ColorPalette
-                                                          .secondary),
+                                                      fontSize: 14,
+                                                      fontStyle:
+                                                          FontStyle.italic,
+                                                      fontWeight:
+                                                          FontWeight.w300,
+                                                    ),
+                                                  ),
+                                                  value: onSiteDay1Value,
+                                                  isExpanded: true,
+                                                  iconSize: 32,
+                                                  icon: const Icon(
+                                                    Icons.arrow_drop_down,
+                                                    color: ColorPalette.primary,
+                                                  ),
+                                                  items: HKSAStrings.onsite
+                                                      .map(
+                                                          buildMenuItemOnSiteDay1)
+                                                      .toList(),
+                                                  onChanged:
+                                                      ((onSiteDay1Value) =>
+                                                          setState(() {
+                                                            this.onSiteDay1Value =
+                                                                onSiteDay1Value ??
+                                                                    "";
+                                                            assignedProfDay1 =
+                                                                null;
+                                                          })),
                                                 ),
-                                              ],
-                                            );
-                                          }
-                                          if (prof1Snapshot.hasError) {
-                                            return Column(
-                                              children: const [
-                                                Icon(
-                                                  Icons.warning_rounded,
-                                                  size: 20,
-                                                  color:
-                                                      ColorPalette.errorColor,
+                                              ),
+                                            ),
+                                            const SizedBox(height: 2),
+                                            Text(
+                                              "On Site Day 1 was ${snapshot.data!.first.onSiteDay1}",
+                                              style: const TextStyle(
+                                                fontFamily: 'Inter',
+                                                fontSize: 11,
+                                                fontStyle: FontStyle.italic,
+                                                fontWeight: FontWeight.w300,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        const SizedBox(height: 18),
+                                        Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Container(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 12,
+                                                      vertical: 4),
+                                              decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(10),
+                                                color: ColorPalette
+                                                    .accentDarkWhite,
+                                              ),
+                                              child:
+                                                  DropdownButtonHideUnderline(
+                                                child: DropdownButton(
+                                                  hint: const Text(
+                                                    "On Site Day 2",
+                                                    style: TextStyle(
+                                                      fontFamily: 'Inter',
+                                                      fontSize: 14,
+                                                      fontStyle:
+                                                          FontStyle.italic,
+                                                      fontWeight:
+                                                          FontWeight.w300,
+                                                    ),
+                                                  ),
+                                                  value: onSiteDay2Value,
+                                                  isExpanded: true,
+                                                  iconSize: 32,
+                                                  icon: const Icon(
+                                                    Icons.arrow_drop_down,
+                                                    color: ColorPalette.primary,
+                                                  ),
+                                                  items: HKSAStrings.onsite
+                                                      .map(
+                                                          buildMenuItemOnSiteDay2)
+                                                      .toList(),
+                                                  onChanged:
+                                                      ((onSiteDay2Value) =>
+                                                          setState(() {
+                                                            this.onSiteDay2Value =
+                                                                onSiteDay2Value ??
+                                                                    "";
+                                                            assignedProfDay2 =
+                                                                null;
+                                                          })),
                                                 ),
-                                                Text(
-                                                  "Error, try again later!",
-                                                  style: TextStyle(
-                                                    fontSize: 12,
-                                                    fontFamily: 'Inter',
-                                                    fontWeight: FontWeight.w300,
+                                              ),
+                                            ),
+                                            const SizedBox(height: 2),
+                                            Text(
+                                              "On Site Day 2 was ${snapshot.data!.first.onSiteDay2}",
+                                              style: const TextStyle(
+                                                fontFamily: 'Inter',
+                                                fontSize: 11,
+                                                fontStyle: FontStyle.italic,
+                                                fontWeight: FontWeight.w300,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        const SizedBox(height: 18),
+                                        Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Container(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 12,
+                                                      vertical: 4),
+                                              decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(10),
+                                                color: ColorPalette
+                                                    .accentDarkWhite,
+                                              ),
+                                              child:
+                                                  DropdownButtonHideUnderline(
+                                                child: DropdownButton(
+                                                  hint: const Text(
+                                                    "Whole Day On Site",
+                                                    style: TextStyle(
+                                                      fontFamily: 'Inter',
+                                                      fontSize: 14,
+                                                      fontStyle:
+                                                          FontStyle.italic,
+                                                      fontWeight:
+                                                          FontWeight.w300,
+                                                    ),
+                                                  ),
+                                                  value: wholeDayValue,
+                                                  isExpanded: true,
+                                                  iconSize: 32,
+                                                  icon: const Icon(
+                                                    Icons.arrow_drop_down,
+                                                    color: ColorPalette.primary,
+                                                  ),
+                                                  items: HKSAStrings.onsite
+                                                      .map(
+                                                          buildMenuItemOnSiteWholeDay)
+                                                      .toList(),
+                                                  onChanged: ((wholeDayValue) =>
+                                                      setState(() {
+                                                        this.wholeDayValue =
+                                                            wholeDayValue ?? "";
+                                                        assignedProfWholeDay =
+                                                            null;
+                                                      })),
+                                                ),
+                                              ),
+                                            ),
+                                            const SizedBox(height: 2),
+                                            Text(
+                                              "Whole day On Site was ${snapshot.data!.first.wholeDayVacantTime}",
+                                              style: const TextStyle(
+                                                fontFamily: 'Inter',
+                                                fontSize: 11,
+                                                fontStyle: FontStyle.italic,
+                                                fontWeight: FontWeight.w300,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        const SizedBox(height: 18),
+                                        Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Container(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 12,
+                                                      vertical: 4),
+                                              decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(10),
+                                                color: ColorPalette
+                                                    .accentDarkWhite,
+                                              ),
+                                              child:
+                                                  DropdownButtonHideUnderline(
+                                                child: DropdownButton(
+                                                  hint: const Text(
+                                                    "Vacant Time Day 1",
+                                                    style: TextStyle(
+                                                      fontFamily: 'Inter',
+                                                      fontSize: 14,
+                                                      fontStyle:
+                                                          FontStyle.italic,
+                                                      fontWeight:
+                                                          FontWeight.w300,
+                                                    ),
+                                                  ),
+                                                  value: vacantTimeDay1Value,
+                                                  isExpanded: true,
+                                                  iconSize: 32,
+                                                  icon: const Icon(
+                                                    Icons.arrow_drop_down,
+                                                    color: ColorPalette.primary,
+                                                  ),
+                                                  items: HKSAStrings.vacanttime
+                                                      .map(
+                                                          buildMenuItemVacantTimeDay1)
+                                                      .toList(),
+                                                  onChanged:
+                                                      ((vacantTimeDay1Value) =>
+                                                          setState(() {
+                                                            this.vacantTimeDay1Value =
+                                                                vacantTimeDay1Value ??
+                                                                    "";
+                                                            assignedProfDay1 =
+                                                                null;
+                                                          })),
+                                                ),
+                                              ),
+                                            ),
+                                            const SizedBox(height: 2),
+                                            Text(
+                                              "Vacant Time Day 1 was ${snapshot.data!.first.vacantTimeDay1}",
+                                              style: const TextStyle(
+                                                fontFamily: 'Inter',
+                                                fontSize: 11,
+                                                fontStyle: FontStyle.italic,
+                                                fontWeight: FontWeight.w300,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        const SizedBox(height: 18),
+                                        Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Container(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 12,
+                                                      vertical: 4),
+                                              decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(10),
+                                                color: ColorPalette
+                                                    .accentDarkWhite,
+                                              ),
+                                              child:
+                                                  DropdownButtonHideUnderline(
+                                                child: DropdownButton(
+                                                  hint: const Text(
+                                                    "Vacant Time Day 2",
+                                                    style: TextStyle(
+                                                      fontFamily: 'Inter',
+                                                      fontSize: 14,
+                                                      fontStyle:
+                                                          FontStyle.italic,
+                                                      fontWeight:
+                                                          FontWeight.w300,
+                                                    ),
+                                                  ),
+                                                  value: vacantTimeDay2Value,
+                                                  isExpanded: true,
+                                                  iconSize: 32,
+                                                  icon: const Icon(
+                                                    Icons.arrow_drop_down,
+                                                    color: ColorPalette.primary,
+                                                  ),
+                                                  items: HKSAStrings.vacanttime
+                                                      .map(
+                                                          buildMenuItemVacantTimeDay2)
+                                                      .toList(),
+                                                  onChanged:
+                                                      ((vacantTimeDay2Value) =>
+                                                          setState(() {
+                                                            this.vacantTimeDay2Value =
+                                                                vacantTimeDay2Value ??
+                                                                    "";
+                                                            assignedProfDay2 =
+                                                                null;
+                                                          })),
+                                                ),
+                                              ),
+                                            ),
+                                            const SizedBox(height: 2),
+                                            Text(
+                                              "Vacant Time Day 2 was ${snapshot.data!.first.vacantTimeDay2}",
+                                              style: const TextStyle(
+                                                fontFamily: 'Inter',
+                                                fontSize: 11,
+                                                fontStyle: FontStyle.italic,
+                                                fontWeight: FontWeight.w300,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        const SizedBox(height: 18),
+                                        Container(
+                                            height: 1,
+                                            color: ColorPalette.primary),
+                                        const SizedBox(height: 15),
+                                        const Align(
+                                          alignment: Alignment.centerLeft,
+                                          child: Text(
+                                            "Assigned Professors:",
+                                            style: TextStyle(
+                                              color: ColorPalette.primary,
+                                              fontSize: 20,
+                                              fontFamily: 'Inter',
+                                              fontWeight: FontWeight.w700,
+                                            ),
+                                          ),
+                                        ),
+                                        const Align(
+                                          alignment: Alignment.centerLeft,
+                                          child: Text(
+                                            "This depends on the Faci's Schedule Infromation.",
+                                            style: TextStyle(
+                                              color: ColorPalette.primary,
+                                              fontSize: 14,
+                                              fontFamily: 'Inter',
+                                              fontWeight: FontWeight.w300,
+                                            ),
+                                          ),
+                                        ),
+                                        const SizedBox(height: 10),
+                                        FutureBuilder(
+                                          future: getProfessors(
+                                              scholarOnSiteDay1:
+                                                  onSiteDay1Value.toString(),
+                                              scholarOnSiteDay2:
+                                                  onSiteDay2Value.toString(),
+                                              scholarOnSiteWholeDay:
+                                                  wholeDayValue.toString(),
+                                              scholarVacantTimeDay1:
+                                                  vacantTimeDay1Value
+                                                      .toString(),
+                                              scholarVacantTimeDay2:
+                                                  vacantTimeDay2Value
+                                                      .toString()),
+                                          builder: (context, prof1Snapshot) {
+                                            professorNameForDay1.clear();
+                                            List<String>
+                                                professorsValueForDay1 = [];
+                                            if (prof1Snapshot
+                                                    .data?['profDay1'] !=
+                                                null) {
+                                              List<ProfScheduleMatch> profDay1 =
+                                                  prof1Snapshot
+                                                      .data?['profDay1'];
+                                              for (var i = 0;
+                                                  i < profDay1.length;
+                                                  i++) {
+                                                professorNameForDay1[profDay1[i]
+                                                    .id] = profDay1[i].name;
+
+                                                professorsValueForDay1
+                                                    .add(profDay1[i].id);
+                                              }
+                                            }
+                                            if (!prof1Snapshot.hasData) {
+                                              return Column(
+                                                children: const [
+                                                  SpinKitThreeBounce(
+                                                    color:
+                                                        ColorPalette.secondary,
+                                                    size: 15,
+                                                  ),
+                                                  Text(
+                                                    'Matching Day 1...',
+                                                    style: TextStyle(
+                                                        fontFamily: 'Inter',
+                                                        color: ColorPalette
+                                                            .secondary),
+                                                  ),
+                                                ],
+                                              );
+                                            }
+                                            if (prof1Snapshot.hasError) {
+                                              return Column(
+                                                children: const [
+                                                  Icon(
+                                                    Icons.warning_rounded,
+                                                    size: 20,
                                                     color:
                                                         ColorPalette.errorColor,
                                                   ),
-                                                )
-                                              ],
-                                            );
-                                          }
+                                                  Text(
+                                                    "Error, try again later!",
+                                                    style: TextStyle(
+                                                      fontSize: 12,
+                                                      fontFamily: 'Inter',
+                                                      fontWeight:
+                                                          FontWeight.w300,
+                                                      color: ColorPalette
+                                                          .errorColor,
+                                                    ),
+                                                  )
+                                                ],
+                                              );
+                                            }
 
-                                          return Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Container(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        horizontal: 12,
-                                                        vertical: 4),
-                                                decoration: BoxDecoration(
-                                                  borderRadius:
-                                                      BorderRadius.circular(10),
-                                                  color: ColorPalette
-                                                      .accentDarkWhite,
-                                                ),
-                                                child:
-                                                    DropdownButtonHideUnderline(
-                                                  child: DropdownButton(
-                                                    hint: Text(
-                                                      professorsValueForDay1
-                                                              .isEmpty
-                                                          ? "No Available Professors"
-                                                          : "Select Professors",
-                                                      style: const TextStyle(
-                                                        fontFamily: 'Inter',
-                                                        fontSize: 14,
-                                                        fontStyle:
-                                                            FontStyle.italic,
-                                                        fontWeight:
-                                                            FontWeight.w300,
+                                            return Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Container(
+                                                  padding: const EdgeInsets
+                                                          .symmetric(
+                                                      horizontal: 12,
+                                                      vertical: 4),
+                                                  decoration: BoxDecoration(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            10),
+                                                    color: ColorPalette
+                                                        .accentDarkWhite,
+                                                  ),
+                                                  child:
+                                                      DropdownButtonHideUnderline(
+                                                    child: DropdownButton(
+                                                      hint: Text(
+                                                        professorsValueForDay1
+                                                                .isEmpty
+                                                            ? "No Available Professors"
+                                                            : "Select Professors",
+                                                        style: const TextStyle(
+                                                          fontFamily: 'Inter',
+                                                          fontSize: 14,
+                                                          fontStyle:
+                                                              FontStyle.italic,
+                                                          fontWeight:
+                                                              FontWeight.w300,
+                                                        ),
                                                       ),
+                                                      value: assignedProfDay1,
+                                                      isExpanded: true,
+                                                      iconSize: 32,
+                                                      icon: const Icon(
+                                                        Icons.arrow_drop_down,
+                                                        color: ColorPalette
+                                                            .primary,
+                                                      ),
+                                                      items: professorsValueForDay1
+                                                          .map(
+                                                              buildMenuItemOnSiteProfDay1)
+                                                          .toList(),
+                                                      onChanged:
+                                                          ((assignedProfDay1) =>
+                                                              setState(() {
+                                                                this.assignedProfDay1 =
+                                                                    assignedProfDay1 ??
+                                                                        "";
+                                                              })),
                                                     ),
-                                                    value: assignedProfDay1,
-                                                    isExpanded: true,
-                                                    iconSize: 32,
-                                                    icon: const Icon(
-                                                      Icons.arrow_drop_down,
-                                                      color:
-                                                          ColorPalette.primary,
-                                                    ),
-                                                    items: professorsValueForDay1
-                                                        .map(
-                                                            buildMenuItemOnSiteProfDay1)
-                                                        .toList(),
-                                                    onChanged:
-                                                        ((assignedProfDay1) =>
-                                                            setState(() {
-                                                              this.assignedProfDay1 =
-                                                                  assignedProfDay1 ??
-                                                                      "";
-                                                            })),
                                                   ),
                                                 ),
-                                              ),
-                                              const SizedBox(height: 2),
-                                              Text(
-                                                "Assgined Prof on Day 1 was ${snapshot.data!.first.assignedProfD1}",
-                                                style: const TextStyle(
-                                                  fontFamily: 'Inter',
-                                                  fontSize: 11,
-                                                  fontStyle: FontStyle.italic,
-                                                  fontWeight: FontWeight.w300,
-                                                ),
-                                              ),
-                                            ],
-                                          );
-                                        },
-                                      ),
-                                      const SizedBox(height: 18),
-                                      FutureBuilder(
-                                        future: getProfessors(
-                                            scholarOnSiteDay1:
-                                                onSiteDay1Value.toString(),
-                                            scholarOnSiteDay2:
-                                                onSiteDay2Value.toString(),
-                                            scholarOnSiteWholeDay:
-                                                wholeDayValue.toString(),
-                                            scholarVacantTimeDay1:
-                                                vacantTimeDay1Value.toString(),
-                                            scholarVacantTimeDay2:
-                                                vacantTimeDay2Value.toString()),
-                                        builder: (context, prof2Snapshot) {
-                                          professorNameForDay2.clear();
-                                          List<String> professorsValueForDay2 =
-                                              [];
-                                          if (prof2Snapshot.data?['profDay2'] !=
-                                              null) {
-                                            List<ProfScheduleMatch> profDay2 =
-                                                prof2Snapshot.data?['profDay2'];
-                                            for (var i = 0;
-                                                i < profDay2.length;
-                                                i++) {
-                                              professorNameForDay2[profDay2[i]
-                                                  .id] = profDay2[i].name;
-
-                                              professorsValueForDay2
-                                                  .add(profDay2[i].id);
-                                            }
-                                          }
-
-                                          if (!prof2Snapshot.hasData) {
-                                            return Column(
-                                              children: const [
-                                                SpinKitThreeBounce(
-                                                  color: ColorPalette.secondary,
-                                                  size: 15,
-                                                ),
+                                                const SizedBox(height: 2),
                                                 Text(
-                                                  'Matching Day 2...',
-                                                  style: TextStyle(
-                                                      fontFamily: 'Inter',
-                                                      color: ColorPalette
-                                                          .secondary),
+                                                  "Assgined Prof on Day 1 was ${snapshot.data!.first.assignedProfD1}",
+                                                  style: const TextStyle(
+                                                    fontFamily: 'Inter',
+                                                    fontSize: 11,
+                                                    fontStyle: FontStyle.italic,
+                                                    fontWeight: FontWeight.w300,
+                                                  ),
                                                 ),
                                               ],
                                             );
-                                          }
-                                          if (prof2Snapshot.hasError) {
-                                            return Column(
-                                              children: const [
-                                                Icon(
-                                                  Icons.warning_rounded,
-                                                  size: 20,
-                                                  color:
-                                                      ColorPalette.errorColor,
-                                                ),
-                                                Text(
-                                                  "Error, try again later!",
-                                                  style: TextStyle(
-                                                    fontSize: 12,
-                                                    fontFamily: 'Inter',
-                                                    fontWeight: FontWeight.w300,
+                                          },
+                                        ),
+                                        const SizedBox(height: 18),
+                                        FutureBuilder(
+                                          future: getProfessors(
+                                              scholarOnSiteDay1:
+                                                  onSiteDay1Value.toString(),
+                                              scholarOnSiteDay2:
+                                                  onSiteDay2Value.toString(),
+                                              scholarOnSiteWholeDay:
+                                                  wholeDayValue.toString(),
+                                              scholarVacantTimeDay1:
+                                                  vacantTimeDay1Value
+                                                      .toString(),
+                                              scholarVacantTimeDay2:
+                                                  vacantTimeDay2Value
+                                                      .toString()),
+                                          builder: (context, prof2Snapshot) {
+                                            professorNameForDay2.clear();
+                                            List<String>
+                                                professorsValueForDay2 = [];
+                                            if (prof2Snapshot
+                                                    .data?['profDay2'] !=
+                                                null) {
+                                              List<ProfScheduleMatch> profDay2 =
+                                                  prof2Snapshot
+                                                      .data?['profDay2'];
+                                              for (var i = 0;
+                                                  i < profDay2.length;
+                                                  i++) {
+                                                professorNameForDay2[profDay2[i]
+                                                    .id] = profDay2[i].name;
+
+                                                professorsValueForDay2
+                                                    .add(profDay2[i].id);
+                                              }
+                                            }
+
+                                            if (!prof2Snapshot.hasData) {
+                                              return Column(
+                                                children: const [
+                                                  SpinKitThreeBounce(
+                                                    color:
+                                                        ColorPalette.secondary,
+                                                    size: 15,
+                                                  ),
+                                                  Text(
+                                                    'Matching Day 2...',
+                                                    style: TextStyle(
+                                                        fontFamily: 'Inter',
+                                                        color: ColorPalette
+                                                            .secondary),
+                                                  ),
+                                                ],
+                                              );
+                                            }
+                                            if (prof2Snapshot.hasError) {
+                                              return Column(
+                                                children: const [
+                                                  Icon(
+                                                    Icons.warning_rounded,
+                                                    size: 20,
                                                     color:
                                                         ColorPalette.errorColor,
                                                   ),
-                                                )
-                                              ],
-                                            );
-                                          }
-                                          return Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Container(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        horizontal: 12,
-                                                        vertical: 4),
-                                                decoration: BoxDecoration(
-                                                  borderRadius:
-                                                      BorderRadius.circular(10),
-                                                  color: ColorPalette
-                                                      .accentDarkWhite,
-                                                ),
-                                                child:
-                                                    DropdownButtonHideUnderline(
-                                                  child: DropdownButton(
-                                                    hint: Text(
-                                                      professorsValueForDay2
-                                                              .isEmpty
-                                                          ? "No Available Professors"
-                                                          : "Select Professors",
-                                                      style: const TextStyle(
-                                                        fontFamily: 'Inter',
-                                                        fontSize: 14,
-                                                        fontStyle:
-                                                            FontStyle.italic,
-                                                        fontWeight:
-                                                            FontWeight.w300,
+                                                  Text(
+                                                    "Error, try again later!",
+                                                    style: TextStyle(
+                                                      fontSize: 12,
+                                                      fontFamily: 'Inter',
+                                                      fontWeight:
+                                                          FontWeight.w300,
+                                                      color: ColorPalette
+                                                          .errorColor,
+                                                    ),
+                                                  )
+                                                ],
+                                              );
+                                            }
+                                            return Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Container(
+                                                  padding: const EdgeInsets
+                                                          .symmetric(
+                                                      horizontal: 12,
+                                                      vertical: 4),
+                                                  decoration: BoxDecoration(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            10),
+                                                    color: ColorPalette
+                                                        .accentDarkWhite,
+                                                  ),
+                                                  child:
+                                                      DropdownButtonHideUnderline(
+                                                    child: DropdownButton(
+                                                      hint: Text(
+                                                        professorsValueForDay2
+                                                                .isEmpty
+                                                            ? "No Available Professors"
+                                                            : "Select Professors",
+                                                        style: const TextStyle(
+                                                          fontFamily: 'Inter',
+                                                          fontSize: 14,
+                                                          fontStyle:
+                                                              FontStyle.italic,
+                                                          fontWeight:
+                                                              FontWeight.w300,
+                                                        ),
                                                       ),
+                                                      value: assignedProfDay2,
+                                                      isExpanded: true,
+                                                      iconSize: 32,
+                                                      icon: const Icon(
+                                                        Icons.arrow_drop_down,
+                                                        color: ColorPalette
+                                                            .primary,
+                                                      ),
+                                                      items: professorsValueForDay2
+                                                          .map(
+                                                              buildMenuItemOnSiteProfDay2)
+                                                          .toList(),
+                                                      onChanged:
+                                                          ((assignedProfDay2) =>
+                                                              setState(() {
+                                                                this.assignedProfDay2 =
+                                                                    assignedProfDay2 ??
+                                                                        "";
+                                                              })),
                                                     ),
-                                                    value: assignedProfDay2,
-                                                    isExpanded: true,
-                                                    iconSize: 32,
-                                                    icon: const Icon(
-                                                      Icons.arrow_drop_down,
-                                                      color:
-                                                          ColorPalette.primary,
-                                                    ),
-                                                    items: professorsValueForDay2
-                                                        .map(
-                                                            buildMenuItemOnSiteProfDay2)
-                                                        .toList(),
-                                                    onChanged:
-                                                        ((assignedProfDay2) =>
-                                                            setState(() {
-                                                              this.assignedProfDay2 =
-                                                                  assignedProfDay2 ??
-                                                                      "";
-                                                            })),
                                                   ),
                                                 ),
-                                              ),
-                                              const SizedBox(height: 2),
-                                              Text(
-                                                "Assgined Prof on Day 2 was ${snapshot.data!.first.assignedProfD2}",
-                                                style: const TextStyle(
-                                                  fontFamily: 'Inter',
-                                                  fontSize: 11,
-                                                  fontStyle: FontStyle.italic,
-                                                  fontWeight: FontWeight.w300,
-                                                ),
-                                              ),
-                                            ],
-                                          );
-                                        },
-                                      ),
-                                      const SizedBox(height: 18),
-                                      FutureBuilder(
-                                        future: getProfessors(
-                                            scholarOnSiteDay1:
-                                                onSiteDay1Value.toString(),
-                                            scholarOnSiteDay2:
-                                                onSiteDay2Value.toString(),
-                                            scholarOnSiteWholeDay:
-                                                wholeDayValue.toString(),
-                                            scholarVacantTimeDay1:
-                                                vacantTimeDay1Value.toString(),
-                                            scholarVacantTimeDay2:
-                                                vacantTimeDay2Value.toString()),
-                                        builder: (context, profWdSnapshot) {
-                                          professorNameForWholeDay.clear();
-                                          List<String>
-                                              professorsValueForWholeDay = [];
-                                          if (profWdSnapshot
-                                                  .data?['profWholeDay'] !=
-                                              null) {
-                                            List<ProfScheduleMatch>
-                                                profWholeDay = profWdSnapshot
-                                                    .data?['profWholeDay'];
-                                            for (var i = 0;
-                                                i < profWholeDay.length;
-                                                i++) {
-                                              professorNameForWholeDay[
-                                                      profWholeDay[i].id] =
-                                                  profWholeDay[i].name;
-
-                                              professorsValueForWholeDay
-                                                  .add(profWholeDay[i].id);
-                                            }
-                                          }
-                                          if (!profWdSnapshot.hasData) {
-                                            return Column(
-                                              children: const [
-                                                SpinKitThreeBounce(
-                                                  color: ColorPalette.secondary,
-                                                  size: 15,
-                                                ),
+                                                const SizedBox(height: 2),
                                                 Text(
-                                                  'Matching Whole Day...',
-                                                  style: TextStyle(
-                                                      fontFamily: 'Inter',
-                                                      color: ColorPalette
-                                                          .secondary),
+                                                  "Assgined Prof on Day 2 was ${snapshot.data!.first.assignedProfD2}",
+                                                  style: const TextStyle(
+                                                    fontFamily: 'Inter',
+                                                    fontSize: 11,
+                                                    fontStyle: FontStyle.italic,
+                                                    fontWeight: FontWeight.w300,
+                                                  ),
                                                 ),
                                               ],
                                             );
-                                          }
-                                          if (profWdSnapshot.hasError) {
-                                            return Column(
-                                              children: const [
-                                                Icon(
-                                                  Icons.warning_rounded,
-                                                  size: 20,
-                                                  color:
-                                                      ColorPalette.errorColor,
-                                                ),
-                                                Text(
-                                                  "Error, try again later!",
-                                                  style: TextStyle(
-                                                    fontSize: 12,
-                                                    fontFamily: 'Inter',
-                                                    fontWeight: FontWeight.w300,
+                                          },
+                                        ),
+                                        const SizedBox(height: 18),
+                                        FutureBuilder(
+                                          future: getProfessors(
+                                              scholarOnSiteDay1:
+                                                  onSiteDay1Value.toString(),
+                                              scholarOnSiteDay2:
+                                                  onSiteDay2Value.toString(),
+                                              scholarOnSiteWholeDay:
+                                                  wholeDayValue.toString(),
+                                              scholarVacantTimeDay1:
+                                                  vacantTimeDay1Value
+                                                      .toString(),
+                                              scholarVacantTimeDay2:
+                                                  vacantTimeDay2Value
+                                                      .toString()),
+                                          builder: (context, profWdSnapshot) {
+                                            professorNameForWholeDay.clear();
+                                            List<String>
+                                                professorsValueForWholeDay = [];
+                                            if (profWdSnapshot
+                                                    .data?['profWholeDay'] !=
+                                                null) {
+                                              List<ProfScheduleMatch>
+                                                  profWholeDay = profWdSnapshot
+                                                      .data?['profWholeDay'];
+                                              for (var i = 0;
+                                                  i < profWholeDay.length;
+                                                  i++) {
+                                                professorNameForWholeDay[
+                                                        profWholeDay[i].id] =
+                                                    profWholeDay[i].name;
+
+                                                professorsValueForWholeDay
+                                                    .add(profWholeDay[i].id);
+                                              }
+                                            }
+                                            if (!profWdSnapshot.hasData) {
+                                              return Column(
+                                                children: const [
+                                                  SpinKitThreeBounce(
+                                                    color:
+                                                        ColorPalette.secondary,
+                                                    size: 15,
+                                                  ),
+                                                  Text(
+                                                    'Matching Whole Day...',
+                                                    style: TextStyle(
+                                                        fontFamily: 'Inter',
+                                                        color: ColorPalette
+                                                            .secondary),
+                                                  ),
+                                                ],
+                                              );
+                                            }
+                                            if (profWdSnapshot.hasError) {
+                                              return Column(
+                                                children: const [
+                                                  Icon(
+                                                    Icons.warning_rounded,
+                                                    size: 20,
                                                     color:
                                                         ColorPalette.errorColor,
                                                   ),
-                                                )
-                                              ],
-                                            );
-                                          }
-                                          return Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Container(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        horizontal: 12,
-                                                        vertical: 4),
-                                                decoration: BoxDecoration(
-                                                  borderRadius:
-                                                      BorderRadius.circular(10),
-                                                  color: ColorPalette
-                                                      .accentDarkWhite,
-                                                ),
-                                                child:
-                                                    DropdownButtonHideUnderline(
-                                                  child: DropdownButton(
-                                                    hint: Text(
-                                                      professorsValueForWholeDay
-                                                              .isEmpty
-                                                          ? "No Available Professors"
-                                                          : "Select Professors",
-                                                      style: const TextStyle(
-                                                        fontFamily: 'Inter',
-                                                        fontSize: 14,
-                                                        fontStyle:
-                                                            FontStyle.italic,
-                                                        fontWeight:
-                                                            FontWeight.w300,
+                                                  Text(
+                                                    "Error, try again later!",
+                                                    style: TextStyle(
+                                                      fontSize: 12,
+                                                      fontFamily: 'Inter',
+                                                      fontWeight:
+                                                          FontWeight.w300,
+                                                      color: ColorPalette
+                                                          .errorColor,
+                                                    ),
+                                                  )
+                                                ],
+                                              );
+                                            }
+                                            return Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Container(
+                                                  padding: const EdgeInsets
+                                                          .symmetric(
+                                                      horizontal: 12,
+                                                      vertical: 4),
+                                                  decoration: BoxDecoration(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            10),
+                                                    color: ColorPalette
+                                                        .accentDarkWhite,
+                                                  ),
+                                                  child:
+                                                      DropdownButtonHideUnderline(
+                                                    child: DropdownButton(
+                                                      hint: Text(
+                                                        professorsValueForWholeDay
+                                                                .isEmpty
+                                                            ? "No Available Professors"
+                                                            : "Select Professors",
+                                                        style: const TextStyle(
+                                                          fontFamily: 'Inter',
+                                                          fontSize: 14,
+                                                          fontStyle:
+                                                              FontStyle.italic,
+                                                          fontWeight:
+                                                              FontWeight.w300,
+                                                        ),
                                                       ),
+                                                      value:
+                                                          assignedProfWholeDay,
+                                                      isExpanded: true,
+                                                      iconSize: 32,
+                                                      icon: const Icon(
+                                                        Icons.arrow_drop_down,
+                                                        color: ColorPalette
+                                                            .primary,
+                                                      ),
+                                                      items: professorsValueForWholeDay
+                                                          .map(
+                                                              buildMenuItemOnSiteProfWholeDay)
+                                                          .toList(),
+                                                      onChanged:
+                                                          ((assignedProfWholeDay) =>
+                                                              setState(() {
+                                                                this.assignedProfWholeDay =
+                                                                    assignedProfWholeDay ??
+                                                                        "";
+                                                              })),
                                                     ),
-                                                    value: assignedProfWholeDay,
-                                                    isExpanded: true,
-                                                    iconSize: 32,
-                                                    icon: const Icon(
-                                                      Icons.arrow_drop_down,
-                                                      color:
-                                                          ColorPalette.primary,
-                                                    ),
-                                                    items: professorsValueForWholeDay
-                                                        .map(
-                                                            buildMenuItemOnSiteProfWholeDay)
-                                                        .toList(),
-                                                    onChanged:
-                                                        ((assignedProfWholeDay) =>
-                                                            setState(() {
-                                                              this.assignedProfWholeDay =
-                                                                  assignedProfWholeDay ??
-                                                                      "";
-                                                            })),
                                                   ),
                                                 ),
-                                              ),
-                                              const SizedBox(height: 2),
-                                              Text(
-                                                "Assgined Prof on Whole Day was ${snapshot.data!.first.assignedProfWd}",
-                                                style: const TextStyle(
-                                                  fontFamily: 'Inter',
-                                                  fontSize: 11,
-                                                  fontStyle: FontStyle.italic,
-                                                  fontWeight: FontWeight.w300,
+                                                const SizedBox(height: 2),
+                                                Text(
+                                                  "Assgined Prof on Whole Day was ${snapshot.data!.first.assignedProfWd}",
+                                                  style: const TextStyle(
+                                                    fontFamily: 'Inter',
+                                                    fontSize: 11,
+                                                    fontStyle: FontStyle.italic,
+                                                    fontWeight: FontWeight.w300,
+                                                  ),
                                                 ),
-                                              ),
-                                            ],
-                                          );
-                                        },
-                                      ),
-                                      const SizedBox(height: 18),
-                                    ],
-                                  )
-                                : const SizedBox(height: 18),
-                            SizedBox(
-                              width: MediaQuery.of(context).size.width,
-                              height: 50,
-                              child: ElevatedButton(
-                                onPressed: (() {
-                                  if (!_formKey.currentState!.validate()) {
-                                    return;
-                                  }
-
-                                  List<String> changes = [];
-
-                                  String studentNumber =
-                                      _inputControllerStudentNumberID.text
-                                          .trim();
-                                  String fullName =
-                                      _inputControllerName.text.trim();
-                                  String? course = coursesValue;
-                                  String? hkType = hkTypeValue;
-                                  String email =
-                                      _inputControllerEmail.text.trim();
-                                  String phoneNumber =
-                                      _inputControllerPhoneNumber.text.trim();
-                                  String hours =
-                                      _inputControllerHours.text.trim();
-                                  String totalHoursInDuration =
-                                      getUpdatedDuration(
-                                          hours,
-                                          snapshot.data!.first
-                                              .totalHoursInDuration);
-                                  String totalHoursInDisplay =
-                                      totalHoursInDuration
-                                          .substring(0, 8)
-                                          .replaceAll('.', '');
-                                  String totalHoursRequired = "";
-
-                                  String currentFullName =
-                                      snapshot.data!.first.name;
-                                  String currentCourse =
-                                      snapshot.data!.first.course;
-                                  String currentEmail =
-                                      snapshot.data!.first.email;
-                                  String currentPhoneNumber =
-                                      snapshot.data!.first.phonenumber;
-                                  String currentTown =
-                                      snapshot.data!.first.town;
-                                  String currenthkType =
-                                      snapshot.data!.first.hkType;
-                                  String currentScholarType =
-                                      snapshot.data!.first.scholarType;
-                                  String currentHours =
-                                      snapshot.data!.first.hours;
-
-                                  String currentDay1 =
-                                      snapshot.data!.first.onSiteDay1;
-                                  String currentDay2 =
-                                      snapshot.data!.first.onSiteDay2;
-                                  String currentWholeDay =
-                                      snapshot.data!.first.wholeDayVacantTime;
-                                  String currentTime1 =
-                                      snapshot.data!.first.vacantTimeDay1;
-                                  String currentTime2 =
-                                      snapshot.data!.first.vacantTimeDay2;
-                                  String currentProfessorD1 =
-                                      snapshot.data!.first.assignedProfD1;
-                                  String currentProfessorD2 =
-                                      snapshot.data!.first.assignedProfD2;
-                                  String currentProfessorWD =
-                                      snapshot.data!.first.assignedProfWd;
-
-                                  String currentEmailVer =
-                                      snapshot.data!.first.isEmailVerified;
-                                  String currentPhoneNumVer =
-                                      snapshot.data!.first.isPhoneVerified;
-
-                                  if (scholarTypeValue == "Non-Faci") {
-                                    assignedProfDay1 = "";
-                                    assignedProfDay2 = "";
-                                    assignedProfWholeDay = "";
-                                    onSiteDay1Value = "NONE";
-                                    onSiteDay2Value = "NONE";
-                                    wholeDayValue = "NONE";
-                                    vacantTimeDay1Value = "NONE";
-                                    vacantTimeDay2Value = "NONE";
-                                  } else {
-                                    assignedProfDay1 ??= "";
-                                    assignedProfDay2 ??= "";
-                                    assignedProfWholeDay ??= "";
-                                  }
-
-                                  // Under this we will compare if what changes
-                                  // will changed.
-
-                                  if (currentFullName != fullName) {
-                                    changes.add(
-                                        "Changed name from $currentFullName to $fullName");
-                                  }
-
-                                  if (currentCourse != course) {
-                                    changes.add(
-                                        "Changed course from $currentCourse to $course");
-                                  }
-
-                                  if (currentEmail != email) {
-                                    changes.add(
-                                        "Changed email from $currentEmail to $email");
-                                  }
-
-                                  if (currentPhoneNumber != phoneNumber) {
-                                    changes.add(
-                                        "Changed phone number from $currentPhoneNumber to $phoneNumber");
-                                  }
-
-                                  if (currentTown != townValue) {
-                                    changes.add(
-                                        "Changed town from $currentTown to $townValue");
-                                  }
-
-                                  if (currenthkType != hkType) {
-                                    changes.add(
-                                        "Changed HK Type from $currenthkType to $hkType");
-                                  }
-
-                                  if (currentScholarType != scholarTypeValue) {
-                                    changes.add(
-                                        "Changed Scholar Type from $currentScholarType to $scholarTypeValue");
-                                  }
-
-                                  if (currentHours != hours) {
-                                    changes.add(
-                                        "Changed total hours from $currentHours to $hours");
-                                  }
-
-                                  if (scholarTypeValue == "Faci") {
-                                    if (currentDay1 != onSiteDay1Value) {
-                                      changes.add(
-                                          "Changed On Site Day 1 from $currentDay1 to $onSiteDay1Value");
+                                              ],
+                                            );
+                                          },
+                                        ),
+                                        const SizedBox(height: 18),
+                                      ],
+                                    )
+                                  : const SizedBox(height: 18),
+                              SizedBox(
+                                width: MediaQuery.of(context).size.width,
+                                height: 50,
+                                child: ElevatedButton(
+                                  onPressed: (() {
+                                    if (!_formKey.currentState!.validate()) {
+                                      return;
                                     }
 
-                                    if (currentDay2 != onSiteDay2Value) {
-                                      changes.add(
-                                          "Changed On Site Day 2 from $currentDay2 to $onSiteDay2Value");
+                                    List<String> changes = [];
+
+                                    String studentNumber =
+                                        _inputControllerStudentNumberID.text
+                                            .trim();
+                                    String fullName =
+                                        _inputControllerName.text.trim();
+                                    String? course = coursesValue;
+                                    String? hkType = hkTypeValue;
+                                    String email =
+                                        _inputControllerEmail.text.trim();
+                                    String phoneNumber =
+                                        _inputControllerPhoneNumber.text.trim();
+                                    String hours =
+                                        _inputControllerHours.text.trim();
+                                    String totalHoursInDuration =
+                                        getUpdatedDuration(
+                                            hours,
+                                            snapshot.data!.first
+                                                .totalHoursInDuration);
+                                    String totalHoursInDisplay =
+                                        totalHoursInDuration
+                                            .substring(0, 8)
+                                            .replaceAll('.', '');
+                                    String totalHoursRequired = "";
+
+                                    String currentFullName =
+                                        snapshot.data!.first.name;
+                                    String currentCourse =
+                                        snapshot.data!.first.course;
+                                    String currentEmail =
+                                        snapshot.data!.first.email;
+                                    String currentPhoneNumber =
+                                        snapshot.data!.first.phonenumber;
+                                    String currentTown =
+                                        snapshot.data!.first.town;
+                                    String currenthkType =
+                                        snapshot.data!.first.hkType;
+                                    String currentScholarType =
+                                        snapshot.data!.first.scholarType;
+                                    String currentHours =
+                                        snapshot.data!.first.hours;
+
+                                    String currentDay1 =
+                                        snapshot.data!.first.onSiteDay1;
+                                    String currentDay2 =
+                                        snapshot.data!.first.onSiteDay2;
+                                    String currentWholeDay =
+                                        snapshot.data!.first.wholeDayVacantTime;
+                                    String currentTime1 =
+                                        snapshot.data!.first.vacantTimeDay1;
+                                    String currentTime2 =
+                                        snapshot.data!.first.vacantTimeDay2;
+                                    String currentProfessorD1 =
+                                        snapshot.data!.first.assignedProfD1;
+                                    String currentProfessorD2 =
+                                        snapshot.data!.first.assignedProfD2;
+                                    String currentProfessorWD =
+                                        snapshot.data!.first.assignedProfWd;
+
+                                    String currentEmailVer =
+                                        snapshot.data!.first.isEmailVerified;
+                                    String currentPhoneNumVer =
+                                        snapshot.data!.first.isPhoneVerified;
+
+                                    if (scholarTypeValue == "Non-Faci") {
+                                      assignedProfDay1 = "";
+                                      assignedProfDay2 = "";
+                                      assignedProfWholeDay = "";
+                                      onSiteDay1Value = "NONE";
+                                      onSiteDay2Value = "NONE";
+                                      wholeDayValue = "NONE";
+                                      vacantTimeDay1Value = "NONE";
+                                      vacantTimeDay2Value = "NONE";
+                                    } else {
+                                      assignedProfDay1 ??= "";
+                                      assignedProfDay2 ??= "";
+                                      assignedProfWholeDay ??= "";
                                     }
 
-                                    if (currentWholeDay != wholeDayValue) {
+                                    // Under this we will compare if what changes
+                                    // will changed.
+
+                                    if (currentFullName != fullName) {
                                       changes.add(
-                                          "Changed On Site Whole Day from $currentWholeDay to $wholeDayValue");
+                                          "Changed name from $currentFullName to $fullName");
                                     }
 
-                                    if (currentTime1 != vacantTimeDay1Value) {
+                                    if (currentCourse != course) {
                                       changes.add(
-                                          "Changed Vacant Time Day 1 from $currentTime1 to $vacantTimeDay1Value");
+                                          "Changed course from $currentCourse to $course");
                                     }
 
-                                    if (currentTime2 != vacantTimeDay2Value) {
+                                    if (currentEmail != email) {
                                       changes.add(
-                                          "Changed Vacant Time Day 2 from $currentTime2 to $vacantTimeDay2Value");
+                                          "Changed email from $currentEmail to $email");
                                     }
 
-                                    if (currentProfessorD1 !=
-                                        assignedProfDay1) {
+                                    if (currentPhoneNumber != phoneNumber) {
                                       changes.add(
-                                          "Changed Assigned Day 1 Prof. from $currentProfessorD1 to $assignedProfDay1");
+                                          "Changed phone number from $currentPhoneNumber to $phoneNumber");
                                     }
 
-                                    if (currentProfessorD2 !=
-                                        assignedProfDay2) {
+                                    if (currentTown != townValue) {
                                       changes.add(
-                                          "Changed Assigned Day 1 Prof. from $currentProfessorD2 to $assignedProfDay2");
+                                          "Changed town from $currentTown to $townValue");
                                     }
 
-                                    if (currentProfessorWD !=
-                                        assignedProfWholeDay) {
+                                    if (currenthkType != hkType) {
                                       changes.add(
-                                          "Changed Assigned Whole Day Prof. from $currentProfessorWD to $assignedProfWholeDay");
+                                          "Changed HK Type from $currenthkType to $hkType");
                                     }
-                                  }
-                                  DialogConfirmEdit(
-                                      headertext: "Update the Scholar?",
-                                      changes: changes,
-                                      subtext:
-                                          "Please take a look first before you press confirm!",
-                                      callback: () {
-                                        Navigator.of(context,
-                                                rootNavigator: true)
-                                            .pop();
 
-                                        DialogLoading(subtext: "Changing")
-                                            .buildLoadingScreen(context);
+                                    if (currentScholarType !=
+                                        scholarTypeValue) {
+                                      changes.add(
+                                          "Changed Scholar Type from $currentScholarType to $scholarTypeValue");
+                                    }
 
-                                        Future.delayed(
-                                            const Duration(seconds: 2),
-                                            () async {
+                                    if (currentHours != hours) {
+                                      changes.add(
+                                          "Changed total hours from $currentHours to $hours");
+                                    }
+
+                                    if (scholarTypeValue == "Faci") {
+                                      if (currentDay1 != onSiteDay1Value) {
+                                        changes.add(
+                                            "Changed On Site Day 1 from $currentDay1 to $onSiteDay1Value");
+                                      }
+
+                                      if (currentDay2 != onSiteDay2Value) {
+                                        changes.add(
+                                            "Changed On Site Day 2 from $currentDay2 to $onSiteDay2Value");
+                                      }
+
+                                      if (currentWholeDay != wholeDayValue) {
+                                        changes.add(
+                                            "Changed On Site Whole Day from $currentWholeDay to $wholeDayValue");
+                                      }
+
+                                      if (currentTime1 != vacantTimeDay1Value) {
+                                        changes.add(
+                                            "Changed Vacant Time Day 1 from $currentTime1 to $vacantTimeDay1Value");
+                                      }
+
+                                      if (currentTime2 != vacantTimeDay2Value) {
+                                        changes.add(
+                                            "Changed Vacant Time Day 2 from $currentTime2 to $vacantTimeDay2Value");
+                                      }
+
+                                      if (currentProfessorD1 !=
+                                          assignedProfDay1) {
+                                        changes.add(
+                                            "Changed Assigned Day 1 Prof. from $currentProfessorD1 to $assignedProfDay1");
+                                      }
+
+                                      if (currentProfessorD2 !=
+                                          assignedProfDay2) {
+                                        changes.add(
+                                            "Changed Assigned Day 1 Prof. from $currentProfessorD2 to $assignedProfDay2");
+                                      }
+
+                                      if (currentProfessorWD !=
+                                          assignedProfWholeDay) {
+                                        changes.add(
+                                            "Changed Assigned Whole Day Prof. from $currentProfessorWD to $assignedProfWholeDay");
+                                      }
+                                    }
+                                    DialogConfirmEdit(
+                                        headertext: "Update the Scholar?",
+                                        changes: changes,
+                                        subtext:
+                                            "Please take a look first before you press confirm!",
+                                        callback: () {
                                           Navigator.of(context,
                                                   rootNavigator: true)
                                               .pop();
-                                          if (hkType == "HK25") {
-                                            totalHoursRequired = "60";
-                                          } else if (hkType == "HK50" ||
-                                              hkType == "HK75") {
-                                            totalHoursRequired = "90";
-                                          }
-                                          String isFinished =
-                                              snapshot.data!.first.isFinished;
 
-                                          Scholar scholarObj = Scholar(
-                                            studentNumber: studentNumber,
-                                            name: fullName,
-                                            course: course.toString(),
-                                            email: email,
-                                            phonenumber: phoneNumber,
-                                            hkType: hkType.toString(),
-                                            hours: hours,
-                                            status: snapshot.data!.first.status,
-                                            totalHoursInDisplay:
-                                                totalHoursInDisplay,
-                                            totalHoursInDuration:
-                                                totalHoursInDuration,
-                                            totalHoursRequired:
-                                                totalHoursRequired,
-                                            isFinished: isFinished,
-                                            profilePicture: snapshot
-                                                .data!.first.profilePicture,
-                                            onSiteDay1:
-                                                onSiteDay1Value.toString(),
-                                            onSiteDay2:
-                                                onSiteDay2Value.toString(),
-                                            vacantTimeDay1:
-                                                vacantTimeDay1Value.toString(),
-                                            vacantTimeDay2:
-                                                vacantTimeDay2Value.toString(),
-                                            wholeDayVacantTime:
-                                                wholeDayValue.toString(),
-                                            scholarType:
-                                                scholarTypeValue.toString(),
-                                            town: townValue.toString(),
-                                            assignedProfD1:
-                                                assignedProfDay1.toString(),
-                                            assignedProfD2:
-                                                assignedProfDay2.toString(),
-                                            assignedProfWd:
-                                                assignedProfWholeDay.toString(),
-                                            listeningTo: snapshot
-                                                .data!.first.listeningTo,
-                                            isEmailVerified: currentEmailVer,
-                                            isPhoneVerified: currentPhoneNumVer,
-                                          );
+                                          DialogLoading(subtext: "Changing")
+                                              .buildLoadingScreen(context);
 
-                                          await _dbReference
-                                              .child(studentNumber)
-                                              .set(scholarObj.toJson())
-                                              .then(
-                                            (value) {
-                                              String allChanges =
-                                                  changes.join(", ");
-                                              createHistory(
-                                                desc: changes.isNotEmpty
-                                                    ? "Updated the Scholar $fullName($studentNumber), here are the following changes: $allChanges"
-                                                    : "Just pressed the update without changing anything on the Scholar $fullName($studentNumber).",
-                                                timeStamp: DateTime.now()
-                                                    .microsecondsSinceEpoch
-                                                    .toString(),
-                                                userType: userType,
-                                                id: userID,
-                                              );
-                                              DialogSuccess(
-                                                headertext:
-                                                    "Successfully Modified!",
-                                                subtext:
-                                                    "Would you like to view the contacts? It's recommended so you can see the changes.",
-                                                textButton: "Contacts",
-                                                callback: () {
-                                                  setState(() {
-                                                    onSiteDay1Value = null;
-                                                    onSiteDay2Value = null;
-                                                    wholeDayValue = null;
-                                                    vacantTimeDay1Value = null;
-                                                    vacantTimeDay2Value = null;
-                                                    assignedProfDay1 = null;
-                                                    assignedProfDay2 = null;
-                                                    assignedProfWholeDay = null;
+                                          Future.delayed(
+                                              const Duration(seconds: 2),
+                                              () async {
+                                            Navigator.of(context,
+                                                    rootNavigator: true)
+                                                .pop();
+                                            if (hkType == "HK25") {
+                                              totalHoursRequired = "60";
+                                            } else if (hkType == "HK50" ||
+                                                hkType == "HK75") {
+                                              totalHoursRequired = "90";
+                                            }
+                                            String isFinished =
+                                                snapshot.data!.first.isFinished;
 
-                                                    selectedIndex = 1;
-                                                  });
-                                                  Navigator.of(context)
-                                                      .pushAndRemoveUntil(
-                                                          MaterialPageRoute(
-                                                              builder: (context) =>
-                                                                  const AdminContacts()),
-                                                          (Route<dynamic>
-                                                                  route) =>
-                                                              false);
-                                                },
-                                              ).buildSuccessScreen(context);
-                                            },
-                                          ).catchError(
-                                            (err) {
-                                              DialogUnsuccessful(
-                                                headertext: "Unsuccessful",
-                                                subtext:
-                                                    "Please try again later!",
-                                                textButton: "Close",
-                                                callback: () => Navigator.of(
-                                                        context,
-                                                        rootNavigator: true)
-                                                    .pop(),
-                                              ).buildUnsuccessfulScreen(
-                                                  context);
-                                            },
-                                          );
-                                        });
-                                      }).buildConfirmEditScreen(context);
-                                }),
-                                child: const Center(
-                                  child: Text(
-                                    "Update",
-                                    style: TextStyle(
-                                      color: ColorPalette.accentWhite,
-                                      fontFamily: 'Frank Ruhl Libre',
-                                      fontWeight: FontWeight.w400,
-                                      fontSize: 24,
+                                            Scholar scholarObj = Scholar(
+                                              studentNumber: studentNumber,
+                                              name: fullName,
+                                              course: course.toString(),
+                                              email: email,
+                                              phonenumber: phoneNumber,
+                                              hkType: hkType.toString(),
+                                              hours: hours,
+                                              status:
+                                                  snapshot.data!.first.status,
+                                              totalHoursInDisplay:
+                                                  totalHoursInDisplay,
+                                              totalHoursInDuration:
+                                                  totalHoursInDuration,
+                                              totalHoursRequired:
+                                                  totalHoursRequired,
+                                              isFinished: isFinished,
+                                              profilePicture: snapshot
+                                                  .data!.first.profilePicture,
+                                              onSiteDay1:
+                                                  onSiteDay1Value.toString(),
+                                              onSiteDay2:
+                                                  onSiteDay2Value.toString(),
+                                              vacantTimeDay1:
+                                                  vacantTimeDay1Value
+                                                      .toString(),
+                                              vacantTimeDay2:
+                                                  vacantTimeDay2Value
+                                                      .toString(),
+                                              wholeDayVacantTime:
+                                                  wholeDayValue.toString(),
+                                              scholarType:
+                                                  scholarTypeValue.toString(),
+                                              town: townValue.toString(),
+                                              assignedProfD1:
+                                                  assignedProfDay1.toString(),
+                                              assignedProfD2:
+                                                  assignedProfDay2.toString(),
+                                              assignedProfWd:
+                                                  assignedProfWholeDay
+                                                      .toString(),
+                                              listeningTo: snapshot
+                                                  .data!.first.listeningTo,
+                                              isEmailVerified: currentEmailVer,
+                                              isPhoneVerified:
+                                                  currentPhoneNumVer,
+                                            );
+
+                                            await _dbReference
+                                                .child(studentNumber)
+                                                .set(scholarObj.toJson())
+                                                .then(
+                                              (value) async {
+                                                String allChanges =
+                                                    changes.join(", ");
+                                                DialogSuccess(
+                                                  headertext:
+                                                      "Successfully Modified!",
+                                                  subtext:
+                                                      "Would you like to view the contacts? It's recommended so you can see the changes.",
+                                                  textButton: "Contacts",
+                                                  callback: () {
+                                                    setState(() {
+                                                      onSiteDay1Value = null;
+                                                      onSiteDay2Value = null;
+                                                      wholeDayValue = null;
+                                                      vacantTimeDay1Value =
+                                                          null;
+                                                      vacantTimeDay2Value =
+                                                          null;
+                                                      assignedProfDay1 = null;
+                                                      assignedProfDay2 = null;
+                                                      assignedProfWholeDay =
+                                                          null;
+
+                                                      selectedIndex = 1;
+                                                    });
+                                                    Navigator.of(context)
+                                                        .pushAndRemoveUntil(
+                                                            MaterialPageRoute(
+                                                                builder:
+                                                                    (context) =>
+                                                                        const AdminContacts()),
+                                                            (Route<dynamic>
+                                                                    route) =>
+                                                                false);
+                                                  },
+                                                ).buildSuccessScreen(context);
+                                                await createHistory(
+                                                  desc: changes.isNotEmpty
+                                                      ? "Updated the Scholar $fullName($studentNumber), here are the following changes: $allChanges"
+                                                      : "Just pressed the update without changing anything on the Scholar $fullName($studentNumber).",
+                                                  timeStamp: DateTime.now()
+                                                      .microsecondsSinceEpoch
+                                                      .toString(),
+                                                  userType: userType,
+                                                  id: userID,
+                                                );
+                                              },
+                                            ).catchError(
+                                              (err) {
+                                                DialogUnsuccessful(
+                                                  headertext: "Unsuccessful",
+                                                  subtext:
+                                                      "Please try again later!",
+                                                  textButton: "Close",
+                                                  callback: () => Navigator.of(
+                                                          context,
+                                                          rootNavigator: true)
+                                                      .pop(),
+                                                ).buildUnsuccessfulScreen(
+                                                    context);
+                                              },
+                                            );
+                                          });
+                                        }).buildConfirmEditScreen(context);
+                                  }),
+                                  child: const Center(
+                                    child: Text(
+                                      "Update",
+                                      style: TextStyle(
+                                        color: ColorPalette.accentWhite,
+                                        fontFamily: 'Frank Ruhl Libre',
+                                        fontWeight: FontWeight.w400,
+                                        fontSize: 24,
+                                      ),
                                     ),
                                   ),
                                 ),
                               ),
-                            ),
-                          ],
-                        )
-                      ],
-                    ),
-                  );
-                },
+                            ],
+                          )
+                        ],
+                      ),
+                    );
+                  },
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
