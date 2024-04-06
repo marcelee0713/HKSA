@@ -36,7 +36,7 @@ class DialogConfirmEdit {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       const Icon(
-                        Icons.edit_document,
+                        Icons.edit_note_rounded,
                         color: ColorPalette.accentWhite,
                         size: 150,
                       ),
